@@ -12,12 +12,12 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.lang.UScript;
 import com.ibm.icu.util.ULocale;
 
 @RunWith(Enclosed.class)
-public class DataDrivenUScriptTest extends TestFmwk {
+public class DataDrivenUScriptTest extends CoreTestFmwk {
 
     private static String scriptsToString(int[] scripts) {
         if (scripts == null) {
@@ -48,7 +48,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
         }
 
         @Parameterized.Parameters
-        public static Collection testData() {
+        public static Collection<Object[]> testData() {
             return Arrays.asList(new Object[][] { { new ULocale("en"), UScript.LATIN },
                     { new ULocale("en_US"), UScript.LATIN },
                     { new ULocale("sr"), UScript.CYRILLIC },
@@ -114,7 +114,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
     }
 
     @RunWith(Parameterized.class)
-    public static class TestMultipleUScript extends TestFmwk {
+    public static class TestMultipleUScript extends CoreTestFmwk {
         private String testLocaleName;
         private Locale testLocale;
         private int[] expected;
@@ -126,7 +126,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
         }
 
         @Parameterized.Parameters
-        public static Collection testData() {
+        public static Collection<Object[]> testData() {
             return Arrays.asList(new Object[][] {
                     { "ja", new int[] { UScript.KATAKANA, UScript.HIRAGANA, UScript.HAN }, Locale.JAPANESE },
                     { "ko_KR", new int[] { UScript.HANGUL, UScript.HAN }, Locale.KOREA },
@@ -165,7 +165,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
     }
 
     @RunWith(Parameterized.class)
-    public static class GetCodeTest extends TestFmwk {
+    public static class GetCodeTest extends CoreTestFmwk {
         private String testName;
         private int expected;
 
@@ -175,7 +175,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
         }
 
         @Parameterized.Parameters
-        public static Collection testData() {
+        public static Collection<Object[]> testData() {
             return Arrays.asList(new Object[][] {
                     /* test locale */
                     { "en", UScript.LATIN },
@@ -269,7 +269,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
         }
 
         @Parameterized.Parameters
-        public static Collection testData() {
+        public static Collection<Object[]> testData() {
             return Arrays.asList(new Object[][] {
                     { UScript.CYRILLIC, "Cyrillic" },
                     { UScript.DESERET, "Deseret" },
@@ -302,7 +302,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
         }
 
         @Parameterized.Parameters
-        public static Collection testData() {
+        public static Collection<Object[]> testData() {
             return Arrays.asList(new Object[][] {
                     { UScript.HAN, "Hani" },
                     { UScript.HANGUL, "Hang" },
@@ -338,7 +338,7 @@ public class DataDrivenUScriptTest extends TestFmwk {
         }
 
         @Parameterized.Parameters
-        public static Collection testData() {
+        public static Collection<int[]> testData() {
             return Arrays.asList(new int[][] {
                     { 0x0000FF9D, UScript.KATAKANA },
                     { 0x0000FFBE, UScript.HANGUL },

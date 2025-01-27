@@ -32,7 +32,7 @@ en_GB{
             ss{"WET"}
         }
         "meta:Gulf"{
-            ss{"GTS"}
+            ss{"GST"}
         }
     }
 }

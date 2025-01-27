@@ -105,7 +105,7 @@ final class NFRuleSet {
         this.owner = owner;
         String description = descriptions[index];
 
-        if (description.length() == 0) {
+        if (description.isEmpty()) {
             throw new IllegalArgumentException("Empty rule set description");
         }
 
@@ -119,12 +119,12 @@ final class NFRuleSet {
                 throw new IllegalArgumentException("Rule set name doesn't end in colon");
             }
             else {
-                String name = description.substring(0, pos);
-                this.isParseable = !name.endsWith("@noparse");
+                String ruleName = description.substring(0, pos);
+                this.isParseable = !ruleName.endsWith("@noparse");
                 if (!this.isParseable) {
-                    name = name.substring(0,name.length()-8); // Remove the @noparse from the name
+                    ruleName = ruleName.substring(0, ruleName.length() - 8); // Remove the @noparse from the name
                 }
-                this.name = name;
+                this.name = ruleName;
 
                 //noinspection StatementWithEmptyBody
                 while (pos < description.length() && PatternProps.isWhiteSpace(description.charAt(++pos))) {
@@ -140,7 +140,7 @@ final class NFRuleSet {
             isParseable = true;
         }
 
-        if (description.length() == 0) {
+        if (description.isEmpty()) {
             throw new IllegalArgumentException("Empty rule set description");
         }
 
@@ -748,10 +748,10 @@ final class NFRuleSet {
      * will be an instance of Long if it's an integral value; otherwise,
      * it will be an instance of Double.  This function always returns
      * a valid object: If nothing matched the input string at all,
-     * this function returns new Long(0), and the parse position is
+     * this function returns Long.valueOf(0), and the parse position is
      * left unchanged.
      */
-    public Number parse(String text, ParsePosition parsePosition, double upperBound, int nonNumericalExecutedRuleMask) {
+    public Number parse(String text, ParsePosition parsePosition, double upperBound, int nonNumericalExecutedRuleMask, int recursionCount) {
         // try matching each rule in the rule set against the text being
         // parsed.  Whichever one matches the most characters is the one
         // that determines the value we return.
@@ -759,6 +759,11 @@ final class NFRuleSet {
         ParsePosition highWaterMark = new ParsePosition(0);
         Number result = NFRule.ZERO;
         Number tempResult;
+
+        // dump out if we've reached the recursion limit
+        if (recursionCount >= RECURSION_LIMIT) {
+            throw new IllegalStateException("Recursion limit exceeded when applying ruleSet " + name);
+        }
 
         // dump out if there's no text to parse
         if (text.length() == 0) {
@@ -772,7 +777,7 @@ final class NFRuleSet {
                 // Mark this rule as being executed so that we don't try to execute it again.
                 nonNumericalExecutedRuleMask |= 1 << nonNumericalRuleIdx;
 
-                tempResult = nonNumericalRule.doParse(text, parsePosition, false, upperBound, nonNumericalExecutedRuleMask);
+                tempResult = nonNumericalRule.doParse(text, parsePosition, false, upperBound, nonNumericalExecutedRuleMask, recursionCount + 1);
                 if (parsePosition.getIndex() > highWaterMark.getIndex()) {
                     result = tempResult;
                     highWaterMark.setIndex(parsePosition.getIndex());
@@ -799,7 +804,7 @@ final class NFRuleSet {
                 continue;
             }
 
-            tempResult = rules[i].doParse(text, parsePosition, isFractionRuleSet, upperBound, nonNumericalExecutedRuleMask);
+            tempResult = rules[i].doParse(text, parsePosition, isFractionRuleSet, upperBound, nonNumericalExecutedRuleMask, recursionCount + 1);
             if (parsePosition.getIndex() > highWaterMark.getIndex()) {
                 result = tempResult;
                 highWaterMark.setIndex(parsePosition.getIndex());

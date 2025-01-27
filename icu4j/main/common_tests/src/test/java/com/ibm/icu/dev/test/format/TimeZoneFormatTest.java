@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.impl.TZDBTimeZoneNames;
 import com.ibm.icu.impl.ZoneMeta;
@@ -53,7 +54,7 @@ import com.ibm.icu.util.TimeZoneTransition;
 import com.ibm.icu.util.ULocale;
 
 @RunWith(JUnit4.class)
-public class TimeZoneFormatTest extends TestFmwk {
+public class TimeZoneFormatTest extends CoreTestFmwk {
 
     private static boolean JDKTZ = (TimeZone.getDefaultTimeZoneType() == TimeZone.TIMEZONE_JDK);
     private static final Pattern EXCL_TZ_PATTERN = Pattern.compile(".*/Riyadh8[7-9]");
@@ -273,8 +274,11 @@ public class TimeZoneFormatTest extends TestFmwk {
                                 }
                             } else {
                                 // Specific or generic: raw offset must be preserved.
-                                if (inOffsets[0] != outOffsets[0] && !(LOCALES[locidx].getName().startsWith("ku") && tzids[tzidx].equals("America/Miquelon")
-                                        && logKnownIssue("CLDR-17024", "TestTimeZoneRoundTrip exhaust. fail with tz=America/Miquelon, locale=ku"))) {
+                                if (inOffsets[0] != outOffsets[0] ) {
+                                    if ((LOCALES[locidx].toString().equals("tg") || LOCALES[locidx].toString().equals("tg_TJ"))
+                                            && logKnownIssue("ICU-22857", "Time zone round test fails for tg/tg_TJ")) {
+                                        continue;
+                                    }
                                     if (JDKTZ && tzids[tzidx].startsWith("SystemV/")) {
                                         // JDK uses rule SystemV for these zones while
                                         // ICU handles these zones as aliases of existing time zones
@@ -535,10 +539,10 @@ public class TimeZoneFormatTest extends TestFmwk {
     // These special cases do not round trip time as designed.
     private boolean isSpecialTimeRoundTripCase(ULocale loc, String id, String pattern, long time) {
         final Object[][] EXCLUSIONS = {
-            {null, "Asia/Chita", "zzzz", Long.valueOf(1414252800000L)},
-            {null, "Asia/Chita", "vvvv", Long.valueOf(1414252800000L)},
-            {null, "Asia/Srednekolymsk", "zzzz", Long.valueOf(1414241999999L)},
-            {null, "Asia/Srednekolymsk", "vvvv", Long.valueOf(1414241999999L)},
+            {null, "Asia/Chita", "zzzz", 1414252800000L},
+            {null, "Asia/Chita", "vvvv", 1414252800000L},
+            {null, "Asia/Srednekolymsk", "zzzz", 1414241999999L},
+            {null, "Asia/Srednekolymsk", "vvvv", 1414241999999L},
         };
         boolean isExcluded = false;
         for (Object[] excl : EXCLUSIONS) {
@@ -1229,7 +1233,7 @@ public class TimeZoneFormatTest extends TestFmwk {
         long date = System.currentTimeMillis();
         TimeZoneNames.Factory factory;
         try {
-            Class cls = Class.forName("com.ibm.icu.text.TimeZoneNames$DefaultTimeZoneNames$FactoryImpl");
+            Class<?> cls = Class.forName("com.ibm.icu.text.TimeZoneNames$DefaultTimeZoneNames$FactoryImpl");
             factory = (Factory) cls.newInstance();
         } catch (Exception e) {
             errln("Could not create class DefaultTimeZoneNames.FactoryImpl: " + e.getClass() + ": " + e.getMessage());

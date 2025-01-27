@@ -55,9 +55,6 @@ hi_Latn{
             }
         }
         length{
-            micrometer{
-                dnam{"micrometres"}
-            }
             mile-scandinavian{
                 dnam{"Scandinavian miles"}
             }
@@ -68,9 +65,17 @@ hi_Latn{
                 one{"{0} stone"}
                 other{"{0} stones"}
             }
+            ton{
+                one{"{0} tonne"}
+                other{"{0} tons"}
+            }
+            tonne{
+                one{"{0} metric ton"}
+                other{"{0} tonnes"}
+            }
         }
         pressure{
-            gasoline-equivalent{
+            gasoline-energy-density{
                 dnam{"gasoline equivalent"}
             }
             inch-ofhg{

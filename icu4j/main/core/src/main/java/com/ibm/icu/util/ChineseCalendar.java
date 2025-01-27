@@ -111,12 +111,6 @@ public class ChineseCalendar extends Calendar {
     private TimeZone zoneAstro;
 
     /**
-     * We have one instance per object, and we don't synchronize it because
-     * Calendar doesn't support multithreaded execution in the first place.
-     */
-    private transient CalendarAstronomer astro = new CalendarAstronomer();
-
-    /**
      * Cache that maps Gregorian year to local days of winter solstice.
      * @see #winterSolstice
      */
@@ -709,10 +703,9 @@ public class ChineseCalendar extends Calendar {
             // PST 1298 with a final result of Dec 14 10:31:59 PST 1299.
             long ms = daysToMillis(computeGregorianMonthStart(gyear, DECEMBER) +
                                    1 - EPOCH_JULIAN_DAY);
-            astro.setTime(ms);
             
             // Winter solstice is 270 degrees solar longitude aka Dongzhi
-            long solarLong = astro.getSunTime(CalendarAstronomer.WINTER_SOLSTICE,
+            long solarLong = (new CalendarAstronomer(ms)).getSunTime(CalendarAstronomer.WINTER_SOLSTICE,
                                               true);
             cacheValue = millisToDays(solarLong);
             winterSolsticeCache.put(gyear, cacheValue);
@@ -730,9 +723,7 @@ public class ChineseCalendar extends Calendar {
      * new moon after or before <code>days</code>
      */
     private int newMoonNear(int days, boolean after) {
-        
-        astro.setTime(daysToMillis(days));
-        long newMoon = astro.getMoonTime(CalendarAstronomer.NEW_MOON, after);
+        long newMoon = (new CalendarAstronomer(daysToMillis(days))).getMoonTime(CalendarAstronomer.NEW_MOON, after);
         
         return millisToDays(newMoon);
     }
@@ -755,11 +746,8 @@ public class ChineseCalendar extends Calendar {
      * @param days days after January 1, 1970 0:00 Asia/Shanghai
      */
     private int majorSolarTerm(int days) {
-        
-        astro.setTime(daysToMillis(days));
-
         // Compute (floor(solarLongitude / (pi/6)) + 2) % 12
-        int term = ((int) Math.floor(6 * astro.getSunLongitude() / Math.PI) + 2) % 12;
+        int term = ((int) Math.floor(6 * (new CalendarAstronomer(daysToMillis(days))).getSunLongitude() / Math.PI) + 2) % 12;
         if (term < 1) {
             term += 12;
         }
@@ -1055,7 +1043,6 @@ public class ChineseCalendar extends Calendar {
         stream.defaultReadObject();
 
         /* set up the transient caches... */
-        astro = new CalendarAstronomer();
         winterSolsticeCache = new CalendarCache();
         newYearCache = new CalendarCache();
     }
@@ -1073,7 +1060,7 @@ public class ChineseCalendar extends Calendar {
      * proposal.
      * @return true if the date in the fields is in a Temporal proposal
      *               defined leap year. False otherwise.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public boolean inTemporalLeapYear() {
         return getActualMaximum(DAY_OF_YEAR) > 360;
@@ -1093,7 +1080,7 @@ public class ChineseCalendar extends Calendar {
      * non-leap year and * in leap year with another monthCode in "M01L" .. "M12L".
      *
      * @return       One of 24 possible strings in {"M01".."M12", "M01L".."M12L"}.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public String getTemporalMonthCode() {
         // We need to call get, not internalGet, to force the calculation
@@ -1115,7 +1102,7 @@ public class ChineseCalendar extends Calendar {
      * in leap year with another monthCode in "M01L" .. "M12L".
      * @param temporalMonth One of 25 possible strings in {"M01".. "M12", "M13", "M01L",
      *  "M12L"}.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public void setTemporalMonthCode( String temporalMonth ) {
         if (temporalMonth.length() != 4 || temporalMonth.charAt(0) != 'M' || temporalMonth.charAt(3) != 'L') {
@@ -1140,7 +1127,9 @@ public class ChineseCalendar extends Calendar {
     /**
      * {@inheritDoc}
      * @internal
+     * @deprecated This API is ICU internal only.
      */
+    @Deprecated
     protected int internalGetMonth()
     {
         if (resolveFields(MONTH_PRECEDENCE) == MONTH) {
@@ -1161,7 +1150,9 @@ public class ChineseCalendar extends Calendar {
     /**
      * {@inheritDoc}
      * @internal
+     * @deprecated This API is ICU internal only.
      */
+    @Deprecated
     protected int internalGetMonth(int defaultValue)
     {
         if (resolveFields(MONTH_PRECEDENCE) == MONTH) {

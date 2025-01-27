@@ -8,15 +8,14 @@
  */
 package com.ibm.icu.dev.test.lang;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.lang.UCharacter;
 
 /**
@@ -24,7 +23,7 @@ import com.ibm.icu.lang.UCharacter;
  *
  */
 @RunWith(JUnit4.class)
-public class UCharacterThreadTest extends TestFmwk {
+public class UCharacterThreadTest extends CoreTestFmwk {
   // constructor -----------------------------------------------------------
 
     /**
@@ -42,7 +41,7 @@ public class UCharacterThreadTest extends TestFmwk {
     //
     @Test
     public void TestUCharactersGetName() throws InterruptedException {
-        List threads = new LinkedList();
+        List<GetNameThread> threads = new ArrayList<>();
         for(int t=0; t<20; t++) {
           int codePoint = 47 + t;
           String correctName = UCharacter.getName(codePoint);
@@ -50,9 +49,7 @@ public class UCharacterThreadTest extends TestFmwk {
           thread.start();
           threads.add(thread);
         }
-        ListIterator i = threads.listIterator();
-        while (i.hasNext()) {
-            GetNameThread thread = (GetNameThread)i.next();
+        for (GetNameThread thread : threads) {
             thread.join();
             if (!thread.correctName.equals(thread.actualName)) {
                 errln("FAIL, expected \"" + thread.correctName + "\", got \"" + thread.actualName + "\"");

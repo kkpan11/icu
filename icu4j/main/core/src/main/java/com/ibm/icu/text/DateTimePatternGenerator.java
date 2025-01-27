@@ -173,15 +173,28 @@ public class DateTimePatternGenerator implements Freezable<DateTimePatternGenera
 
     private void addICUPatterns(PatternInfo returnInfo, ULocale uLocale) {
         // first load with the ICU patterns
-        for (int i = DateFormat.FULL; i <= DateFormat.SHORT; ++i) {
-            SimpleDateFormat df = (SimpleDateFormat) DateFormat.getDateInstance(i, uLocale);
-            addPattern(df.toPattern(), false, returnInfo);
-            df = (SimpleDateFormat) DateFormat.getTimeInstance(i, uLocale);
-            addPattern(df.toPattern(), false, returnInfo);
+        ICUResourceBundle rb = (ICUResourceBundle) UResourceBundle.getBundleInstance(ICUData.ICU_BASE_NAME, uLocale);
+        String calendarTypeToUse = getCalendarTypeToUse(uLocale);
+        // TODO: See ICU-22867
+        ICUResourceBundle dateTimePatterns = rb.getWithFallback("calendar/" + calendarTypeToUse + "/DateTimePatterns");
+        if (dateTimePatterns.getType() != UResourceBundle.ARRAY || dateTimePatterns.getSize() < 8) {
+            throw new MissingResourceException("Resource in wrong format", "ICUResourceBundle", "calendar/" + calendarTypeToUse + "/DateTimePatterns");
+        }
+        for (int i = 0; i < 8; i++) { // no constants available for the resource indexes
+            String pattern;
+            UResourceBundle patternRes = dateTimePatterns.get(i);
 
-            if (i == DateFormat.SHORT) {
-                consumeShortTimePattern(df.toPattern(), returnInfo);
+            switch (patternRes.getType()) {
+                case UResourceBundle.STRING:
+                    pattern = patternRes.getString();
+                    break;
+                case UResourceBundle.ARRAY:
+                    pattern = patternRes.getString(0);
+                    break;
+                default:
+                    throw new MissingResourceException("Resource in wrong format", "ICUResourceBundle", "calendar/" + calendarTypeToUse + "/DateTimePatterns");
             }
+            addPattern(pattern, false, returnInfo);
         }
     }
 
@@ -268,7 +281,7 @@ public class DateTimePatternGenerator implements Freezable<DateTimePatternGenera
                 // Add pattern with its associated skeleton. Override any duplicate derived from std patterns,
                 // but not a previous availableFormats entry:
                 String formatValue = value.toString();
-                addPatternWithSkeleton(formatValue, formatKey, !isRoot, returnInfo);
+                addPatternWithSkeleton(formatValue, formatKey, true, returnInfo);
             }
         }
     }

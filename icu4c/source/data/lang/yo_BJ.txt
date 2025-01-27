@@ -4,9 +4,8 @@
 yo_BJ{
     Keys{
         calendar{"Kàlɛ́ńdà"}
-        cf{"Ìgúnrégé Kɔ́rɛ́ńsì"}
+        cf{"Ònà Ìgbekalɛ̀ owó"}
         collation{"Ètò Ɛlɛ́sɛɛsɛ"}
-        currency{"Kɔ́rɛ́ńsì"}
         ms{"Èto Ìdiwɔ̀n"}
         numbers{"Àwɔn nɔ́ńbà"}
     }
@@ -15,7 +14,7 @@ yo_BJ{
         bez{"Èdè Bɛ́nà"}
         chr{"Èdè Shɛ́rókiì"}
         cu{"Èdè Síláfííkì Ilé Ìjɔ́sìn"}
-        da{"Èdè Ilɛ̀ Denmark"}
+        cv{"Èdè Shufasi"}
         de_AT{"Èdè Jámánì (Ɔ́síríà )"}
         de_CH{"Èdè Ilɛ̀ Jámánì (Orílɛ́ède swítsàlandì)"}
         dje{"Shárúmà"}
@@ -33,6 +32,7 @@ yo_BJ{
         fr_CH{"Èdè Faranshé (Súwísàlaǹdì)"}
         gez{"Ede Gɛ́sì"}
         id{"Èdè Indonéshíà"}
+        ie{"Èdè àtɔwɔ́dá"}
         ii{"Shíkuán Yì"}
         jmc{"Máshámè"}
         khq{"Koira Shíínì"}
@@ -47,10 +47,12 @@ yo_BJ{
         nb{"Nɔ́ɔ́wè Bokímàl"}
         nds{"Jámánì ìpìlɛ̀"}
         nl{"Èdè Dɔ́ɔ̀shì"}
+        nl_BE{"Èdè Flemishi"}
         nmg{"Kíwáshíò"}
         nn{"Nɔ́ɔ́wè Nínɔ̀sìkì"}
         nus{"Núɛ̀"}
         nyn{"Ńyákɔ́lè"}
+        oc{"Èdè Ɔ̀kísítáànì"}
         om{"Òròmɔ́"}
         os{"Ɔshɛ́tíìkì"}
         prg{"Púrúshíànù"}
@@ -63,15 +65,18 @@ yo_BJ{
         seh{"Shɛnà"}
         shi{"Tashelíìtì"}
         sn{"Shɔnà"}
+        szl{"Silìshíànì"}
         teo{"Tɛ́sò"}
         tr{"Èdè Tɔɔkisi"}
         ug{"Yúgɔ̀"}
         und{"Èdè àìmɔ̀"}
+        vec{"Fènéshìànì"}
         vo{"Fɔ́lápùùkù"}
         wae{"Wɔsà"}
         wo{"Wɔ́lɔ́ɔ̀fù"}
         xog{"Shógà"}
         yav{"Yangbɛn"}
+        za{"Shúwáànù"}
         zgh{"Àfɛnùkò Támásáìtì ti Mòrókò"}
         zh{"Edè Sháínà"}
         zh_Hans{"Ɛdè Sháínà Onírɔ̀rùn"}
@@ -98,12 +103,11 @@ yo_BJ{
         Deva{"Dɛfanagárì"}
         Ethi{"Ɛtiópíìkì"}
         Geor{"Jɔ́jíànù"}
-        Grek{"Jɔ́jíà"}
         Hanb{"Han pɛ̀lú Bopomófò"}
         Hans{"tí wɔ́n mú rɔrùn."}
-        Hant{"Hans àtɔwɔ́dɔ́wɔ́"}
         Hrkt{"ìlànà àfɔwɔ́kɔ ará Jàpánù"}
         Khmr{"Kɛmɛ̀"}
+        Plrd{"Fonɛtiiki Polaadi"}
         Zmth{"Àmì Ìshèsìrò"}
         Zsym{"Àwɔn àmì"}
         Zxxx{"Aikɔsilɛ"}
@@ -121,6 +125,9 @@ yo_BJ{
             ethiopic{"Kàlɛ́ńdà Ɛtíópíìkì"}
             gregorian{"Kàlɛ́ńdà Gregory"}
             hebrew{"Kàlɛ́ńdà Hébérù"}
+            islamic{"Kàlɛ́ńdà Lárúbáwá"}
+            islamic-civil{"Kàlɛ́ńdà ti Musulumi"}
+            islamic-umalqura{"Kàlɛ́ńdà Musulumi"}
             iso8601{"Kàlɛ́ńdà ISO-8601"}
             japanese{"Kàlɛ́ńdà ti Jàpánù"}
             persian{"Kàlɛ́ńdà Pásíànù"}
@@ -128,7 +135,7 @@ yo_BJ{
         }
         cf{
             account{"Ìgúnrégé Ìshirò Owó Kɔ́rɛ́ńsì"}
-            standard{"Ìgúnrégé Gbèdéke Kɔ́rɛ́ńsì"}
+            standard{"Ònà ìgbekalɛ̀ owó tó jɛ́ àjùmɔ̀lò"}
         }
         collation{
             ducet{"Ètò Ɛlɛ́sɛɛsɛ Àkùàyàn Unicode"}
@@ -183,14 +190,11 @@ yo_BJ{
         }
     }
     characterLabelPattern{
-        category-list{"{0}: {1}"}
+        facing-left{"{0} ìdojúkɔ òsì"}
+        facing-right{"{0} ìdojúkɔ ɔ̀tún"}
         scripts{"àwɔ́n ìwé - {0}"}
     }
     codePatterns{
         script{"Ìshɔwɔ́kɔ̀wé: {0}"}
-    }
-    localeDisplayPattern{
-        keyTypePattern{"{0}: {1}"}
-        separator{"{0}, {1}"}
     }
 }

@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.impl.number.DecimalQuantity;
 import com.ibm.icu.text.DecimalFormat;
@@ -39,7 +40,7 @@ import com.ibm.icu.util.ULocale;
  *
  */
 @RunWith(JUnit4.class)
-public class PluralFormatUnitTest extends TestFmwk {
+public class PluralFormatUnitTest extends CoreTestFmwk {
     @Test
     public void TestConstructor() {
         // Test correct formatting of numbers.
@@ -83,7 +84,7 @@ public class PluralFormatUnitTest extends TestFmwk {
             String result = numberFmt.format(n*n);
             for (int k = 0; k < plFmts.length; ++k) {
                 sb.delete(0, sb.length());
-                String pfResult = plFmts[k].format(Long.valueOf(n*n), sb, ignore).toString();
+                String pfResult = plFmts[k].format((long)(n*n), sb, ignore).toString();
                 TestFmwk.assertEquals("PluralFormat's output is not as expected", result, pfResult);
             }
         }
@@ -214,11 +215,11 @@ public class PluralFormatUnitTest extends TestFmwk {
 
     @Test
     public void TestSamples() {
-        Map<ULocale,Set<ULocale>> same = new LinkedHashMap();
+        Map<ULocale,Set<ULocale>> same = new LinkedHashMap<>();
         for (ULocale locale : PluralRules.getAvailableULocales()) {
             ULocale otherLocale = PluralRules.getFunctionalEquivalent(locale, null);
             Set<ULocale> others = same.get(otherLocale);
-            if (others == null) same.put(otherLocale, others = new LinkedHashSet());
+            if (others == null) same.put(otherLocale, others = new LinkedHashSet<>());
             others.add(locale);
             continue;
         }
@@ -305,7 +306,7 @@ public class PluralFormatUnitTest extends TestFmwk {
         MessageFormat pfmt = new MessageFormat("The disk ''{0}'' contains {1, plural,  one {one ''''{1, number, #.0}'''' widget} other {# widgets}}.");
         logln("");
         for (int i = 0; i < 3; ++i) {
-            args[1] = new Integer(i);
+            args[1] = i;
             logln(pfmt.format(args));
         }
         /* ICU 4.8 returns null instead of a choice/plural/select Format object

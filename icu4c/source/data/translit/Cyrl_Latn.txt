@@ -10,9 +10,10 @@
 # Should add variants for Russian-English, Russian-German
 # Those can use this as a base, and then remap cases
 # like a $hat to ya or ja.
-# :: [\u0000-\u007E ʹ ʺ [:Cyrillic:] [:Latin:] [:nonspacing mark:]] ;
+# :: [\u0000-\u007E ʹ ʺ [:Cyrillic:] [:Latin:] [:Nonspacing_Mark:]] ;
 ### WARNING, \u0308 must be added to the generated filters, in both directions ###
 # MINIMAL FILTER
+# Cyrillic-Latin
 :: [ҺһңҢҰұҮүөӨҚқ\u0308Ă-ăĔ-ĕĞ-ğĬ-ĭŎ-ŏŬ-ŭ\u0306Ѐ-џҐ-ҕҘ-ҙӁ-ӂӐ-ӟӢ-ӧӬ-ӵӸ-ӹḜ-ḝẮ-ặᾰᾸῐῘῠῨ] ;
 :: NFD (NFC) ;
 $modprime = ʹ;
@@ -69,13 +70,10 @@ $beforeLower = $ignoreForCase * $lower ;
 Ћ ↔ C $acute ; # CYRILLIC CAPITAL LETTER TSHE
 џ ↔ d $hat ; # CYRILLIC SMALL LETTER DZHE
 Џ ↔ D $hat ; # CYRILLIC CAPITAL LETTER DZHE
-х ↔ kh ; # CYRILLIC SMALL LETTER HA
-Х } $beforeLower ↔ Kh ;
-Х ↔ KH; # CYRILLIC CAPITAL LETTER HA
-# Insert separator between K and characters that result in h
-# And delete going the other way
-[Kk] { } [Һһ] → ‧ ;
-← ‧ ;
+# https://www.eki.ee/wgrs/v2_2/rom2_az.htm
+# but modified to not collide with Cyrillic HA
+һ ↔ h $breveBelow ; # CYRILLIC SMALL LETTER SHHA
+Һ ↔ H $breveBelow; # CYRILLIC CAPITAL LETTER SHHA
 # Normal order
 а ↔ a ; # CYRILLIC SMALL LETTER A
 А ↔ A ; # CYRILLIC CAPITAL LETTER A
@@ -170,9 +168,8 @@ $beforeLower = $ignoreForCase * $lower ;
 # Ѹ ↔ XXX ; # CYRILLIC CAPITAL LETTER UK
 ф ↔ f ; # CYRILLIC SMALL LETTER EF
 Ф ↔ F ; # CYRILLIC CAPITAL LETTER EF
-#https://www.eki.ee/wgrs/v2_2/rom2_az.htm
-һ ↔ h ; # CYRILLIC SMALL LETTER SHHA
-Һ ↔ H ; # CYRILLIC CAPITAL LETTER SHHA
+х ↔ h ; # CYRILLIC SMALL LETTER HA
+Х ↔ H; # CYRILLIC CAPITAL LETTER HA
 # ҳ ↔ XXX ; # CYRILLIC SMALL LETTER HA WITH DESCENDER
 # Ҳ ↔ XXX ; # CYRILLIC CAPITAL LETTER HA WITH DESCENDER
 # ѡ ↔ XXX ; # CYRILLIC SMALL LETTER OMEGA
@@ -278,13 +275,13 @@ $ignore = [[:Mark:]''] * ;
 | K ← Q ;
 | u ← w ;
 | U ← W ;
-| KS ← X } $ignore [:UppercaseLetter:] ;
-| KS ← [:UppercaseLetter:] $ignore { X ;
+| KS ← X } $ignore [:Uppercase_Letter:] ;
+| KS ← [:Uppercase_Letter:] $ignore { X ;
 | Ks ← X ;
 | ks ← x ;
 :: NFC (NFD) ;
 # note: a global filter is more efficient, but MUST include all source chars!!
-# :: ([\u0000-\u007E ʹ ʺ [:Cyrillic:] [:Latin:] [:nonspacing mark:] ‧]);
+# :: ([\u0000-\u007E ʹ ʺ [:Cyrillic:] [:Latin:] [:Nonspacing_Mark:] ‧]);
 # MINIMAL FILTER: Latin-Cyrillic
-:: ( [‧ˌ\u0308A-Za-zÀ-ÏÑ-ÖÙ-Ýà-ïñ-öù-ýÿ-ĥĨ-İĴ-ķĹ-ľŃ-ňŌ-őŔ-ťŨ-žƏƠ-ơƯ-ưǍ-ǜǞ-ǣǦ-ǰǴ-ǵǸ-țȞ-ȟȦ-ȳəʹ-ʺ\u0300-\u0302\u0306-\u0307\u030C\u0326\u0331\u0340-\u0341\u0344ʹ΅-ΆΈ-ΊΌΎ-ΐά-ΰό-ώϓЀЃЌ-ЎЙйѐѓќ-ўӁ-ӂӐ-ӑӖ-ӗḀ-ẙẛẠ-ỹἂ-ἅἊ-Ἅἒ-ἕἚ-Ἕἢ-ἥἪ-Ἥἲ-ἵἺ-Ἵὂ-ὅὊ-Ὅὒ-ὕὛὝὢ-ὥὪ-Ὥὰ-ώᾂ-ᾅᾊ-ᾍᾒ-ᾕᾚ-ᾝᾢ-ᾥᾪ-ᾭᾰᾲᾴᾸᾺ-ΆῂῄῈ-Ή῍-῎ῐῒ-ΐῘῚ-Ί῝-῞ῠῢ-ΰῨῪ-Ύ῭-΅ῲῴῸ-ΏK-Å] ) ;
+:: ( [ḫḪhH‧ˌ\u0308A-Za-zÀ-ÏÑ-ÖÙ-Ýà-ïñ-öù-ýÿ-ĥĨ-İĴ-ķĹ-ľŃ-ňŌ-őŔ-ťŨ-žƏƠ-ơƯ-ưǍ-ǜǞ-ǣǦ-ǰǴ-ǵǸ-țȞ-ȟȦ-ȳəʹ-ʺ\u0300-\u0302\u0306-\u0307\u030C\u0326\u0331\u0340-\u0341\u0344ʹ΅-ΆΈ-ΊΌΎ-ΐά-ΰό-ώϓЀЃЌ-ЎЙйѐѓќ-ўӁ-ӂӐ-ӑӖ-ӗḀ-ẙẛẠ-ỹἂ-ἅἊ-Ἅἒ-ἕἚ-Ἕἢ-ἥἪ-Ἥἲ-ἵἺ-Ἵὂ-ὅὊ-Ὅὒ-ὕὛὝὢ-ὥὪ-Ὥὰ-ώᾂ-ᾅᾊ-ᾍᾒ-ᾕᾚ-ᾝᾢ-ᾥᾪ-ᾭᾰᾲᾴᾸᾺ-ΆῂῄῈ-Ή῍-῎ῐῒ-ΐῘῚ-Ί῝-῞ῠῢ-ΰῨῪ-Ύ῭-΅ῲῴῸ-ΏK-Å] ) ;
 

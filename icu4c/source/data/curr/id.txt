@@ -891,9 +891,13 @@ id{
             "SKK",
             "Koruna Slovakia",
         }
+        SLE{
+            "SLE",
+            "Leone Sierra Leone",
+        }
         SLL{
             "SLL",
-            "Leone Sierra Leone",
+            "Leone Sierra Leone (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1213,8 +1217,5 @@ id{
         YUD{
             other{"Dinar Keras Yugoslavia"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }
