@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ka{
     units{
         acceleration{
@@ -275,6 +275,12 @@ ka{
                 dnam{"ნანოწამი"}
                 one{"{0} ნანოწამი"}
                 other{"{0} ნანოწამი"}
+            }
+            night{
+                dnam{"ღამე"}
+                one{"{0} ღამე"}
+                other{"{0} ღამე"}
+                per{"{0}/ღამე"}
             }
             quarter{
                 dnam{"კვარტალი"}
@@ -884,6 +890,12 @@ ka{
             month{
                 per{"{0}/თ."}
             }
+            night{
+                dnam{"ღამე"}
+                one{"{0} ღამე"}
+                other{"{0} ღამე"}
+                per{"{0}/ღამე"}
+            }
             second{
                 one{"{0}წმ"}
                 other{"{0}წმ"}
@@ -1219,6 +1231,12 @@ ka{
                 dnam{"ნწმ"}
                 one{"{0} ნწმ"}
                 other{"{0} ნწმ"}
+            }
+            night{
+                dnam{"ღამე"}
+                one{"{0} ღამე"}
+                other{"{0} ღამე"}
+                per{"{0}/ღამე"}
             }
             quarter{
                 dnam{"კვარტ"}

@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 fr_CA{
     units{
         acceleration{
@@ -967,10 +967,6 @@ fr_CA{
             calorie{
                 one{"{0} cal"}
                 other{"{0} cal"}
-            }
-            foodcalorie{
-                one{"{0} kcal"}
-                other{"{0} kcal"}
             }
             joule{
                 one{"{0} J"}

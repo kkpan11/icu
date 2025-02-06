@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -46,7 +47,7 @@ import com.ibm.icu.util.ULocale;
  * 4174361 4177484 4197699 4209071 4288792
  */
 @RunWith(JUnit4.class)
-public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
+public class CalendarRegressionTest extends CoreTestFmwk {
     static final String[] FIELD_NAME = {
             "ERA", "YEAR", "MONTH", "WEEK_OF_YEAR", "WEEK_OF_MONTH",
             "DAY_OF_MONTH", "DAY_OF_YEAR", "DAY_OF_WEEK",
@@ -687,14 +688,10 @@ public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
         // Test field disambiguation with a few special hard-coded cases.
         // This shouldn't fail if the above cases aren't failing.
         Object[] DISAM = {
-            new Integer(1998), new Integer(1), new Integer(Calendar.SUNDAY),
-                d[0],
-            new Integer(1998), new Integer(2), new Integer(Calendar.SATURDAY),
-                d[1],
-            new Integer(1998), new Integer(53), new Integer(Calendar.THURSDAY),
-                d[2],
-            new Integer(1998), new Integer(53), new Integer(Calendar.FRIDAY),
-                d[3],
+            1998, 1, Calendar.SUNDAY, d[0],
+            1998, 2, Calendar.SATURDAY, d[1],
+            1998, 53, Calendar.THURSDAY, d[2],
+            1998, 53, Calendar.FRIDAY, d[3],
         };
         testCal.setMinimalDaysInFirstWeek(3);
         testCal.setFirstDayOfWeek(Calendar.SUNDAY);
@@ -738,10 +735,10 @@ public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
         d[7] = tempcal.getTime();
 
         Object[] ADDROLL = {
-            ADD, new Integer(1), d[0], d[1],
-            ADD, new Integer(1), d[2], d[3],
-            ROLL, new Integer(1), d[4], d[5],
-            ROLL, new Integer(1), d[6], d[7],
+            ADD, 1, d[0], d[1],
+            ADD, 1, d[2], d[3],
+            ROLL, 1, d[4], d[5],
+            ROLL, 1, d[6], d[7],
         };
         testCal.setMinimalDaysInFirstWeek(3);
         testCal.setFirstDayOfWeek(Calendar.SUNDAY);
@@ -1692,9 +1689,9 @@ public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
         d[5] = tempcal.getTime();
         // Test specific failure reported in bug
         Object[] DATA = {
-            new Integer(1), d[0], new Integer(4), d[1],
-            new Integer(8), d[2], new Integer(-1), d[3],
-            new Integer(-4), d[4], new Integer(-8), d[5],
+            1, d[0], 4, d[1],
+            8, d[2], -1, d[3],
+            -4, d[4], -8, d[5],
         };
         for (int i=0; i<DATA.length; i+=2) {
             cal.clear();
@@ -2181,7 +2178,7 @@ public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
             {"en@calendar=islamic",     "gregorian"},
             {"zh_TW",       "gregorian", "roc", "chinese"},
             {"ar_IR",       "persian", "gregorian", "islamic", "islamic-civil", "islamic-tbla"},
-            {"th@rg=SAZZZZ", "islamic-umalqura", "gregorian", "islamic", "islamic-rgsa"},
+            {"th@rg=SAZZZZ", "gregorian", "islamic-umalqura", "islamic", "islamic-rgsa"},
 
             // tests for ICU-22364
             { "zh_CN@rg=TW",           "gregorian", "chinese" }, // invalid subdivision code
@@ -2193,11 +2190,10 @@ public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
             { "zh_TW@rg=IT53",         "gregorian" }, // two-digit subdivision code
             { "zh_TW@rg=AUnsw",        "gregorian" }, // three-letter subdivision code
             { "zh_TW@rg=EE130",        "gregorian" }, // three-digit subdivision code
-            { "zh_TW@rg=417zzzz",      "gregorian" }, // three-digit region code
         };
 
         String[] ALL = Calendar.getKeywordValuesForLocale("calendar", ULocale.getDefault(), false);
-        HashSet ALLSET = new HashSet();
+        HashSet<String> ALLSET = new HashSet<>();
         for (int i = 0; i < ALL.length; i++) {
             if (ALL[i] == "unknown") {
                 errln("Calendar.getKeywordValuesForLocale should not return \"unknown\"");
@@ -2709,6 +2705,46 @@ public class CalendarRegressionTest extends com.ibm.icu.dev.test.TestFmwk {
                     expectedValues[i],
                     Calendar.getInstance(Locale.forLanguageTag(localeIds[i])).getFirstDayOfWeek());
         }
+    }
+
+    @Test
+    public void TestIslamicUmalquraCalendarSlow() { // ICU-22513
+        Locale loc = new Locale("th@calendar=islamic-umalqura");
+        Calendar cal = Calendar.getInstance(loc);
+        cal.clear();
+        cal.add(Calendar.YEAR, 1229080905);
+        cal.roll(Calendar.WEEK_OF_MONTH, 1499050699);
+        cal.fieldDifference(new Date(0), Calendar.YEAR_WOY);
+
+    }
+
+    @Test
+    public void TestMaxActualLimitsWithoutGet23006() {
+        Calendar calendar = Calendar.getInstance(new Locale("zh_zh@calendar=chinese"));
+        // set day equal to 8th August 2025 in Gregorian calendar
+        // this is a leap month in Chinese calendar
+        GregorianCalendar gc = new GregorianCalendar(TimeZone.GMT_ZONE);
+        gc.clear();
+        gc.set(2025, Calendar.AUGUST, 8);
+        calendar.setTimeInMillis(gc.getTimeInMillis());
+        int actualMaximumBeforeCallingGet = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        assertTrue("get(ERA)", calendar.get(Calendar.ERA) > 0); // calling get will cause to compute fields
+        int actualMaximumAfterCallingGet = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        assertEquals("calling getActualMaximum before/after calling get should be the same",
+            actualMaximumBeforeCallingGet, actualMaximumAfterCallingGet);
+        assertEquals("calling getActualMaximum before should return 29",
+            29, actualMaximumBeforeCallingGet);
+
+        gc.set(2026, Calendar.AUGUST, 8);
+        calendar.setTimeInMillis(gc.getTimeInMillis());
+        actualMaximumBeforeCallingGet = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        assertTrue("get(ERA)", calendar.get(Calendar.ERA) > 0); // calling get will cause to compute fields
+        actualMaximumAfterCallingGet = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        assertEquals("calling getActualMaximum before/after calling get should be the same",
+            actualMaximumBeforeCallingGet, actualMaximumAfterCallingGet);
+        assertEquals("calling getActualMaximum before should return 30",
+            30, actualMaximumBeforeCallingGet);
+
     }
 }
 //eof

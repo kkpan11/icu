@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ky{
     Currencies{
         AED{
@@ -515,9 +515,13 @@ ky{
             "SHP",
             "Ыйык Елена аралынын фунту",
         }
+        SLE{
+            "SLE",
+            "Сиерра-Леоне леонеси",
+        }
         SLL{
             "SLL",
-            "Сиерра-Леоне леонеси",
+            "Сиерра-Леоне леонеси (1964—2022)",
         }
         SOS{
             "SOS",
@@ -691,9 +695,5 @@ ky{
             one{"(белгисиз акча бирдиги)"}
             other{"(белгисиз акча)"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

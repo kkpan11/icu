@@ -1,28 +1,12 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 es_419{
     NumberElements{
         latn{
             patterns{
                 currencyFormat{"¤#,##0.00"}
                 percentFormat{"#,##0%"}
-            }
-            patternsLong{
-                decimalFormat{
-                    1000000000000{
-                        one{"0 billón"}
-                        other{"0 billón"}
-                    }
-                    10000000000000{
-                        one{"00 billones"}
-                        other{"00 billones"}
-                    }
-                    100000000000000{
-                        one{"000 billones"}
-                        other{"000 billones"}
-                    }
-                }
             }
             patternsShort{
                 currencyFormat{
@@ -171,10 +155,10 @@ es_419{
         }
         generic{
             DateTimePatterns{
-                "HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
+                "h:mm:ss a zzzz",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
                 "EEEE, d 'de' MMMM 'de' y G",
                 "d 'de' MMMM 'de' y G",
                 "d 'de' MMM 'de' y G",
@@ -186,10 +170,10 @@ es_419{
                 "{1}, {0}",
             }
             DateTimeSkeletons{
-                "HHmmsszzzz",
-                "HHmmssz",
-                "HHmmss",
-                "HHmm",
+                "ahmmsszzzz",
+                "ahmmssz",
+                "ahmmss",
+                "ahmm",
                 "GyMMMMEEEEd",
                 "GyMMMMd",
                 "GyMMMd",
@@ -247,10 +231,10 @@ es_419{
                 "p.m.",
             }
             DateTimePatterns{
-                "HH:mm:ss zzzz",
-                "HH:mm:ss z",
-                "HH:mm:ss",
-                "HH:mm",
+                "h:mm:ss a zzzz",
+                "h:mm:ss a z",
+                "h:mm:ss a",
+                "h:mm a",
                 "EEEE, d 'de' MMMM 'de' y",
                 "d 'de' MMMM 'de' y",
                 "d MMM y",
@@ -262,10 +246,10 @@ es_419{
                 "{1}, {0}",
             }
             DateTimeSkeletons{
-                "HHmmsszzzz",
-                "HHmmssz",
-                "HHmmss",
-                "HHmm",
+                "ahmmsszzzz",
+                "ahmmssz",
+                "ahmmss",
+                "ahmm",
                 "yMMMMEEEEd",
                 "yMMMMd",
                 "yMMMd",
@@ -515,7 +499,7 @@ es_419{
         building{"edificio"}
         consonantal_jamo{"Jamo consonántico"}
         currency_symbols{"símbolos de monedas"}
-        dash_connector{"Guión/conector"}
+        dash_connector{"Guion/conector"}
         digits{"dígitos"}
         downwards_upwards_arrows{"Flechas hacia arriba y hacia abajo"}
         european_scripts{"Símbolos de escritura de Europa"}
@@ -584,30 +568,6 @@ es_419{
         }
         dayperiod{
             dn{"a.m./p.m."}
-        }
-        fri-narrow{
-            relativeTime{
-                past{
-                    one{"hace {0} viernes"}
-                    other{"hace {0} viernes"}
-                }
-            }
-        }
-        fri-short{
-            relativeTime{
-                past{
-                    one{"hace {0} viernes"}
-                    other{"hace {0} viernes"}
-                }
-            }
-        }
-        sat-narrow{
-            relativeTime{
-                past{
-                    one{"hace {0} sábados"}
-                    other{"hace {0} sábados"}
-                }
-            }
         }
         sun{
             relativeTime{

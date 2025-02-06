@@ -112,7 +112,7 @@ final class NFRule {
     /**
      * The RuleBasedNumberFormat that owns this rule
      */
-    private final RuleBasedNumberFormat formatter;
+    final RuleBasedNumberFormat formatter;
 
     //-----------------------------------------------------------------------
     // construction
@@ -162,6 +162,7 @@ final class NFRule {
             // then it's really shorthand for two rules (with one exception)
             NFRule rule2 = null;
             StringBuilder sbuf = new StringBuilder();
+            int orElseOp = description.indexOf('|');
 
             // we'll actually only split the rule into two rules if its
             // base value is an even multiple of its divisor (or it's one
@@ -203,11 +204,15 @@ final class NFRule {
                 rule2.radix = rule1.radix;
                 rule2.exponent = rule1.exponent;
 
-                // rule2's rule text omits the stuff in brackets: initialize
-                // its rule text and substitutions accordingly
-                sbuf.append(description.substring(0, brack1));
+                // By default, rule2's rule text omits the stuff in brackets,
+                // unless it contains a | between the brackets.
+                // Initialize its rule text and substitutions accordingly
+                sbuf.append(description, 0, brack1);
+                if (orElseOp >= 0) {
+                    sbuf.append(description, orElseOp + 1, brack2);
+                }
                 if (brack2 + 1 < description.length()) {
-                    sbuf.append(description.substring(brack2 + 1));
+                    sbuf.append(description, brack2 + 1, description.length());
                 }
                 rule2.extractSubstitutions(owner, sbuf.toString(), predecessor);
             }
@@ -216,8 +221,13 @@ final class NFRule {
             // the brackets themselves: initialize _its_ rule text and
             // substitutions accordingly
             sbuf.setLength(0);
-            sbuf.append(description.substring(0, brack1));
-            sbuf.append(description.substring(brack1 + 1, brack2));
+            sbuf.append(description, 0, brack1);
+            if (orElseOp >= 0) {
+                sbuf.append(description, brack1 + 1, orElseOp);
+            }
+            else {
+                sbuf.append(description, brack1 + 1, brack2);
+            }
             if (brack2 + 1 < description.length()) {
                 sbuf.append(description.substring(brack2 + 1));
             }
@@ -394,7 +404,7 @@ final class NFRule {
         // finally, if the rule body begins with an apostrophe, strip it off
         // (this is generally used to put whitespace at the beginning of
         // a rule's rule text)
-        if (description.length() > 0 && description.charAt(0) == '\'') {
+        if (!description.isEmpty() && description.charAt(0) == '\'') {
             description = description.substring(1);
         }
 
@@ -730,6 +740,13 @@ final class NFRule {
         return power(radix, exponent);
     }
 
+    /**
+     * Internal function used by the rounding code in MultiplierSubstitution.
+     */
+    boolean hasModulusSubstitution() {
+        return (sub1 instanceof ModulusSubstitution) || (sub2 instanceof ModulusSubstitution);
+    }
+
     //-----------------------------------------------------------------------
     // formatting
     //-----------------------------------------------------------------------
@@ -895,18 +912,18 @@ final class NFRule {
      * character not consumed by matching the text against this rule
      * (if this rule doesn't match the text at all, the parse position
      * if left unchanged (presumably at 0) and the function returns
-     * new Long(0)).
+     * Long.valueOf(0)).
      * @param isFractionRule True if this rule is contained within a
      * fraction rule set.  This is only used if the rule has no
      * substitutions.
      * @return If this rule matched the text, this is the rule's base value
      * combined appropriately with the results of parsing the substitutions.
-     * If nothing matched, this is new Long(0) and the parse position is
+     * If nothing matched, this is Long.valueOf(0) and the parse position is
      * left unchanged.  The result will be an instance of Long if the
      * result is an integer and Double otherwise.  The result is never null.
      */
     public Number doParse(String text, ParsePosition parsePosition, boolean isFractionRule,
-                          double upperBound, int nonNumericalExecutedRuleMask) {
+                          double upperBound, int nonNumericalExecutedRuleMask, int recursionCount) {
 
         // internally we operate on a copy of the string being parsed
         // (because we're going to change it) and use our own ParsePosition
@@ -979,7 +996,7 @@ final class NFRule {
             pp.setIndex(0);
             double partialResult = matchToDelimiter(workText, start, tempBaseValue,
                                                     ruleText.substring(sub1Pos, sub2Pos), rulePatternFormat,
-                                                    pp, sub1, upperBound, nonNumericalExecutedRuleMask).doubleValue();
+                                                    pp, sub1, upperBound, nonNumericalExecutedRuleMask, recursionCount).doubleValue();
 
             // if we got a successful match (or were trying to match a
             // null substitution), pp is now pointing at the first unmatched
@@ -997,7 +1014,7 @@ final class NFRule {
                 // a real result
                 partialResult = matchToDelimiter(workText2, 0, partialResult,
                                                  ruleText.substring(sub2Pos), rulePatternFormat, pp2, sub2,
-                                                 upperBound, nonNumericalExecutedRuleMask).doubleValue();
+                                                 upperBound, nonNumericalExecutedRuleMask, recursionCount).doubleValue();
 
                 // if we got a successful match on this second
                 // matchToDelimiter() call, update the high-water mark
@@ -1052,9 +1069,9 @@ final class NFRule {
 
         // return the result as a Long if possible, or as a Double
         if (result == (long)result) {
-            return Long.valueOf((long)result);
+            return (long) result;
         } else {
-            return new Double(result);
+            return result;
         }
     }
 
@@ -1119,13 +1136,13 @@ final class NFRule {
      * consider rules with base values lower than this value.
      * @return If there's a match, this is the result of composing
      * baseValue with the result of matching the substitution.  Otherwise,
-     * this is new Long(0).  It's never null.  If the result is an integer,
+     * this is Long.valueOf(0).  It's never null.  If the result is an integer,
      * this will be an instance of Long; otherwise, it's an instance of
      * Double.
      */
     private Number matchToDelimiter(String text, int startPos, double baseVal,
                                     String delimiter, PluralFormat pluralFormatDelimiter, ParsePosition pp, NFSubstitution sub,
-                                    double upperBound, int nonNumericalExecutedRuleMask) {
+                                    double upperBound, int nonNumericalExecutedRuleMask, int recursionCount) {
         // if "delimiter" contains real (i.e., non-ignorable) text, search
         // it for "delimiter" beginning at "start".  If that succeeds, then
         // use "sub"'s doParse() method to match the text before the
@@ -1148,7 +1165,7 @@ final class NFRule {
                 String subText = text.substring(0, dPos);
                 if (subText.length() > 0) {
                     tempResult = sub.doParse(subText, tempPP, baseVal, upperBound,
-                                             formatter.lenientParseEnabled(), nonNumericalExecutedRuleMask);
+                                             formatter.lenientParseEnabled(), nonNumericalExecutedRuleMask, recursionCount);
 
                     // if the substitution could match all the text up to
                     // where we found "delimiter", then this function has
@@ -1196,7 +1213,7 @@ final class NFRule {
             Number result = ZERO;
             // try to match the whole string against the substitution
             Number tempResult = sub.doParse(text, tempPP, baseVal, upperBound,
-                    formatter.lenientParseEnabled(), nonNumericalExecutedRuleMask);
+                    formatter.lenientParseEnabled(), nonNumericalExecutedRuleMask, recursionCount);
             if (tempPP.getIndex() != 0) {
                 // if there's a successful match (or it's a null
                 // substitution), update pp to point to the first

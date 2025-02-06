@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 vi{
     units{
         acceleration{
@@ -178,6 +178,13 @@ vi{
             terabyte{
                 dnam{"terabyte"}
                 other{"{0} terabyte"}
+            }
+        }
+        duration{
+            night{
+                dnam{"đêm"}
+                other{"{0} đêm"}
+                per{"{0}/đêm"}
             }
         }
         electric{
@@ -645,6 +652,11 @@ vi{
             millisecond{
                 other{"{0}miligiây"}
             }
+            night{
+                dnam{"đêm"}
+                other{"{0} đêm"}
+                per{"{0}/đêm"}
+            }
         }
         energy{
             electronvolt{
@@ -856,6 +868,11 @@ vi{
             nanosecond{
                 dnam{"nano giây"}
                 other{"{0} nano giây"}
+            }
+            night{
+                dnam{"đêm"}
+                other{"{0} đêm"}
+                per{"{0}/đêm"}
             }
             quarter{
                 dnam{"quý"}

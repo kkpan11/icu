@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.impl.CurrencyData;
 import com.ibm.icu.text.CurrencyDisplayNames;
 import com.ibm.icu.text.CurrencyMetaInfo;
@@ -43,7 +43,7 @@ import com.ibm.icu.util.ULocale;
  * @summary General test of Currency
  */
 @RunWith(JUnit4.class)
-public class CurrencyTest extends TestFmwk {
+public class CurrencyTest extends CoreTestFmwk {
     /**
      * Test of basic API.
      */
@@ -226,7 +226,7 @@ public class CurrencyTest extends TestFmwk {
                 "US$",
                 USD.getName(en_CA, Currency.SYMBOL_NAME, isChoiceFormat));
         assertEquals("USD.getName(NARROW_SYMBOL_NAME, en_CA)",
-                "US$",
+                "$",
                 USD.getName(en_CA, Currency.NARROW_SYMBOL_NAME, isChoiceFormat));
         assertEquals("USD.getName(SYMBOL_NAME) in en_NZ",
                 "US$",
@@ -799,7 +799,7 @@ public class CurrencyTest extends TestFmwk {
         };
 
         String[] ALL = Currency.getKeywordValuesForLocale("currency", ULocale.getDefault(), false);
-        HashSet ALLSET = new HashSet();
+        HashSet<String> ALLSET = new HashSet<>();
         for (int i = 0; i < ALL.length; i++) {
             ALLSET.add(ALL[i]);
         }

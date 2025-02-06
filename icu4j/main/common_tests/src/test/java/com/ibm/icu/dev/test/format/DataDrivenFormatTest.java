@@ -17,12 +17,12 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.ModuleTest;
 import com.ibm.icu.dev.test.ModuleTest.TestDataPair;
 import com.ibm.icu.dev.test.TestDataModule;
 import com.ibm.icu.dev.test.TestDataModule.DataMap;
 import com.ibm.icu.dev.test.TestDataModule.TestData;
-import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.dev.test.util.CalendarFieldsSet;
 import com.ibm.icu.dev.test.util.DateTimeStyleSet;
 import com.ibm.icu.text.DateFormat;
@@ -40,7 +40,7 @@ import junitparams.Parameters;
  *
  */
 @RunWith(JUnitParamsRunner.class)
-public class DataDrivenFormatTest extends TestFmwk {
+public class DataDrivenFormatTest extends CoreTestFmwk {
 
     /**
      * @param baseName
@@ -86,10 +86,10 @@ public class DataDrivenFormatTest extends TestFmwk {
         DateFormat basicFmt = new SimpleDateFormat("EEE MMM dd yyyy / YYYY'-W'ww-ee");
 
         int n = 0;
-        for (Iterator iter = testData.getDataIterator(); iter.hasNext();) {
+        for (Iterator<DataMap> iter = testData.getDataIterator(); iter.hasNext();) {
             ++n;
             long now = System.currentTimeMillis();
-            DataMap currentCase = (DataMap) iter.next();
+            DataMap currentCase = iter.next();
             String caseString = "["+testData.getName()+"#"+n+(fmt?"format":"parse")+"]";
             
             String locale = currentCase.getString("locale");

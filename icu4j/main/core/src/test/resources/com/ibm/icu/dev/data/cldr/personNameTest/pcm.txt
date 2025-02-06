@@ -1,9 +1,8 @@
-# Test data for unit conversions
-#  Copyright © 1991-2023 Unicode, Inc.
+# Test data for Person Name Data
+#  Copyright © 1991-2025 Unicode, Inc.
 #  For terms of use, see http://www.unicode.org/copyright.html
-#  SPDX-License-Identifier: Unicode-DFS-2016
+#  SPDX-License-Identifier: Unicode-3.0
 #  CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
-#
 # CLDR person name formatting test data for: pcm
 #
 # Test lines have the following structure:
@@ -225,17 +224,9 @@ parameters; surnameFirst; medium; referring; formal
 parameters; surnameFirst; medium; addressing; formal
 parameters; surnameFirst; short; addressing; formal
 
-expectedResult; Watson, J. H.
+expectedResult; Watson, J.H.
 
 parameters; sorting; short; referring; formal
-
-expectedResult; J. H. Watson
-
-parameters; givenFirst; short; referring; formal
-
-expectedResult; Watson J. H.
-
-parameters; surnameFirst; short; referring; formal
 
 expectedResult; Watson, John
 
@@ -243,10 +234,18 @@ parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
+expectedResult; J.H. Watson
+
+parameters; givenFirst; short; referring; formal
+
 expectedResult; John Watson
 
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
+
+expectedResult; Watson J.H.
+
+parameters; surnameFirst; short; referring; formal
 
 expectedResult; Watson John
 
@@ -338,23 +337,23 @@ parameters; givenFirst; long; referring; formal
 parameters; givenFirst; medium; referring; formal
 parameters; givenFirst; medium; addressing; formal
 
-expectedResult; bin Stromae, E. W. M. T.
+expectedResult; Stromae, E.W.M.T. bin
 
 parameters; sorting; short; referring; formal
 
-expectedResult; bin Stromae E. W. M. T.
+expectedResult; bin Stromae E.W.M.T.
 
 parameters; surnameFirst; short; referring; formal
-
-expectedResult; E. W. M. T. bin Stromae
-
-parameters; givenFirst; short; referring; formal
 
 expectedResult; bin Stromae, Lilibet
 
 parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
+
+expectedResult; E.W.M.T. bin Stromae
+
+parameters; givenFirst; short; referring; formal
 
 expectedResult; bin Stromae Lilibet
 
@@ -366,7 +365,7 @@ expectedResult; Lilibet bin Stromae
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; bin Stromae E. W.
+expectedResult; bin Stromae E.W.
 
 parameters; surnameFirst; short; referring; informal
 
@@ -376,7 +375,7 @@ parameters; givenFirst; long; addressing; formal
 parameters; givenFirst; short; addressing; formal
 parameters; surnameFirst; long; addressing; formal
 
-expectedResult; Lilibet b. S.
+expectedResult; Lilibet b.S.
 
 parameters; givenFirst; short; referring; informal
 
@@ -587,33 +586,33 @@ parameters; givenFirst; long; referring; formal
 parameters; givenFirst; medium; referring; formal
 parameters; givenFirst; medium; addressing; formal
 
-expectedResult; Okeke, T. S.
-
-parameters; sorting; short; referring; formal
-
 expectedResult; Okeke, Tunde
 
 parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; Okeke T. S.
-
-parameters; surnameFirst; short; referring; formal
-
 expectedResult; Okeke Tunde
 
 parameters; surnameFirst; long; referring; informal
 parameters; surnameFirst; medium; referring; informal
 
-expectedResult; T. S. Okeke
+expectedResult; Okeke, T.S.
 
-parameters; givenFirst; short; referring; formal
+parameters; sorting; short; referring; formal
 
 expectedResult; Tunde Okeke
 
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
+
+expectedResult; Okeke T.S.
+
+parameters; surnameFirst; short; referring; formal
+
+expectedResult; T.S. Okeke
+
+parameters; givenFirst; short; referring; formal
 
 expectedResult; Okeke T.
 
@@ -700,23 +699,23 @@ parameters; surnameFirst; medium; referring; formal
 parameters; surnameFirst; medium; addressing; formal
 parameters; surnameFirst; short; addressing; formal
 
-expectedResult; ván den Wólf, A. C. Ẹ́. S.
-
-parameters; sorting; short; referring; formal
-
-expectedResult; A. C. Ẹ́. S. ván den Wólf
-
-parameters; givenFirst; short; referring; formal
-
-expectedResult; ván den Wólf A. C. Ẹ́. S.
-
-parameters; surnameFirst; short; referring; formal
-
 expectedResult; Prọf. Dọk. ván den Wólf
 
 parameters; givenFirst; long; addressing; formal
 parameters; givenFirst; short; addressing; formal
 parameters; surnameFirst; long; addressing; formal
+
+expectedResult; Wólf, A.C.Ẹ́.S. ván den
+
+parameters; sorting; short; referring; formal
+
+expectedResult; A.C.Ẹ́.S. ván den Wólf
+
+parameters; givenFirst; short; referring; formal
+
+expectedResult; ván den Wólf A.C.Ẹ́.S.
+
+parameters; surnameFirst; short; referring; formal
 
 expectedResult; ván den Wólf, Néele
 
@@ -729,16 +728,16 @@ expectedResult; Néele ván den Wólf
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; ván den Wólf A. C.
-
-parameters; surnameFirst; short; referring; informal
-
 expectedResult; ván den Wólf Néele
 
 parameters; surnameFirst; long; referring; informal
 parameters; surnameFirst; medium; referring; informal
 
-expectedResult; Néele v. d. W.
+expectedResult; ván den Wólf A.C.
+
+parameters; surnameFirst; short; referring; informal
+
+expectedResult; Néele v.d.W.
 
 parameters; givenFirst; short; referring; informal
 

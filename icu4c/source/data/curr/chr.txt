@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 chr{
     Currencies{
         AED{
@@ -507,9 +507,13 @@ chr{
             "SHP",
             "ᎤᏓᏅᏘ ᎮᎵᎾ ᎠᏕᎳ",
         }
+        SLE{
+            "SLE",
+            "ᏏᎡᎳᎴᎣᏂ ᎠᏕᎳ",
+        }
         SLL{
             "SLL",
-            "ᏏᎡᎳᎴᎣᏂ ᎠᏕᎳ",
+            "ᏏᎡᎳᎴᎣᏂ ᎠᏕᎳ (1964—2022)",
         }
         SOS{
             "SOS",
@@ -668,9 +672,5 @@ chr{
             one{"(ᏄᏬᎵᏍᏛᎾ ᎠᏕᎳ)"}
             other{"(ᏄᏬᎵᏍᏛᎾ ᎠᏕᎳ)"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 en{
     units{
         acceleration{
@@ -341,6 +341,12 @@ en{
                 dnam{"nanoseconds"}
                 one{"{0} nanosecond"}
                 other{"{0} nanoseconds"}
+            }
+            night{
+                dnam{"nights"}
+                one{"{0} night"}
+                other{"{0} nights"}
+                per{"{0} per night"}
             }
             quarter{
                 dnam{"quarters"}
@@ -780,7 +786,7 @@ en{
                 one{"{0} bar"}
                 other{"{0} bars"}
             }
-            gasoline-equivalent{
+            gasoline-energy-density{
                 dnam{"of gasoline equivalent"}
                 one{"{0} of gasoline equivalent"}
                 other{"{0} of gasoline equivalent"}
@@ -841,6 +847,11 @@ en{
                 dnam{"knots"}
                 one{"{0} knot"}
                 other{"{0} knots"}
+            }
+            light-speed{
+                dnam{"light"}
+                one{"{0} light"}
+                other{"{0} light"}
             }
             meter-per-second{
                 dnam{"meters per second"}
@@ -1405,6 +1416,12 @@ en{
                 one{"{0}ns"}
                 other{"{0}ns"}
             }
+            night{
+                dnam{"nights"}
+                one{"{0}night"}
+                other{"{0}nights"}
+                per{"{0}/night"}
+            }
             quarter{
                 dnam{"qtr"}
                 one{"{0}q"}
@@ -1843,7 +1860,7 @@ en{
                 one{"{0}bar"}
                 other{"{0}bar"}
             }
-            gasoline-equivalent{
+            gasoline-energy-density{
                 dnam{"gas-equiv"}
                 one{"{0}gas-equiv"}
                 other{"{0}gas-equiv"}
@@ -1904,6 +1921,11 @@ en{
                 dnam{"kn"}
                 one{"{0}kn"}
                 other{"{0}kn"}
+            }
+            light-speed{
+                dnam{"light"}
+                one{"{0}light"}
+                other{"{0}light"}
             }
             meter-per-second{
                 dnam{"m/s"}
@@ -2468,6 +2490,12 @@ en{
                 one{"{0} ns"}
                 other{"{0} ns"}
             }
+            night{
+                dnam{"nights"}
+                one{"{0} night"}
+                other{"{0} nights"}
+                per{"{0}/night"}
+            }
             quarter{
                 dnam{"qtr"}
                 one{"{0} qtr"}
@@ -2906,7 +2934,7 @@ en{
                 one{"{0} bar"}
                 other{"{0} bar"}
             }
-            gasoline-equivalent{
+            gasoline-energy-density{
                 dnam{"gas-equiv"}
                 one{"{0} gas-equiv"}
                 other{"{0} gas-equiv"}
@@ -2967,6 +2995,11 @@ en{
                 dnam{"kn"}
                 one{"{0} kn"}
                 other{"{0} kn"}
+            }
+            light-speed{
+                dnam{"light"}
+                one{"{0} light"}
+                other{"{0} light"}
             }
             meter-per-second{
                 dnam{"meters/sec"}

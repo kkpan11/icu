@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ms{
     Currencies{
         AED{
@@ -531,9 +531,13 @@ ms{
             "SHP",
             "Paun Saint Helena",
         }
+        SLE{
+            "SLE",
+            "Leone Sierra Leone",
+        }
         SLL{
             "SLL",
-            "Leone Sierra Leone",
+            "Leone Sierra Leone (1964—2022)",
         }
         SOS{
             "SOS",
@@ -709,8 +713,5 @@ ms{
         XXX{
             other{"(mata wang tidak diketahui)"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }

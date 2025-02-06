@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ko{
     Currencies{
         ADP{
@@ -871,6 +871,10 @@ ko{
             "SKK",
             "슬로바키아 코루나",
         }
+        SLE{
+            "SLE",
+            "시에라리온 리온",
+        }
         SLL{
             "SLL",
             "시에라리온 리온(1964~2022)",
@@ -953,7 +957,7 @@ ko{
         }
         TRY{
             "TRY",
-            "터키 리라",
+            "튀르키예 리라",
         }
         TTD{
             "TTD",
@@ -1181,11 +1185,11 @@ ko{
         NIC{
             other{"니카라과 코르도바 오로(1988~1991)"}
         }
+        TRY{
+            other{"튀르키예 리라"}
+        }
         XXX{
             other{"(알 수 없는 통화 단위)"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }
