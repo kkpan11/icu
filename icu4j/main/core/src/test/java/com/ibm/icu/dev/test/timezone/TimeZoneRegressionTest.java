@@ -14,6 +14,7 @@
  */
 
 package com.ibm.icu.dev.test.timezone;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
@@ -37,7 +38,7 @@ import com.ibm.icu.util.TimeZone;
 import com.ibm.icu.util.ULocale;
 
 @RunWith(JUnit4.class)
-public class TimeZoneRegressionTest extends TestFmwk {
+public class TimeZoneRegressionTest extends CoreTestFmwk {
     @Test
     public void Test4052967() {
         logln("*** CHECK TIMEZONE AGAINST HOST OS SETTING ***");
@@ -256,8 +257,8 @@ public class TimeZoneRegressionTest extends TestFmwk {
                                     dow,
                                     millis);
         tzRawOffset = testTZ.getRawOffset();
-        tzOffsetFloat = new Float((float)tzOffset/(float)3600000);
-        tzRawOffsetFloat = new Float((float)tzRawOffset/(float)3600000);
+        tzOffsetFloat = (float)tzOffset/3600000f;
+        tzRawOffsetFloat = (float)tzRawOffset/3600000f;
 
         Date testDate = testCal.getTime();
 

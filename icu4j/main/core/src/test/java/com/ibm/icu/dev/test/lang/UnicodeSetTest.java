@@ -21,16 +21,18 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
-import com.ibm.icu.dev.util.CollectionUtilities;
 import com.ibm.icu.impl.SortedSetRelation;
 import com.ibm.icu.impl.Utility;
 import com.ibm.icu.lang.CharacterProperties;
@@ -56,9 +58,19 @@ import com.ibm.icu.util.OutputInt;
  * @summary General test of UnicodeSet
  */
 @RunWith(JUnit4.class)
-public class UnicodeSetTest extends TestFmwk {
+public class UnicodeSetTest extends CoreTestFmwk {
 
     static final String NOT = "%%%%";
+
+    // Used to test iterators and streams
+    final static UnicodeSet[] UNICODE_SETS_TO_ITERATE = {
+            UnicodeSet.EMPTY,
+            new UnicodeSet(0, 0), // one code point, zero
+            new UnicodeSet(0x0000, 0x0010), // from zero
+            new UnicodeSet(0x10FFFF, 0x10FFFF), // one code point, max
+            new UnicodeSet(0x10FF00, 0x10FFFF), // end in max
+            populateUnicodeSet()
+    };
 
     private static final boolean isCccValue(int ccc) {
         switch (ccc) {
@@ -769,8 +781,8 @@ public class UnicodeSetTest extends TestFmwk {
             //    Ram also add a similar test to UtilityTest.java
             logln("Testing addAll(Collection) ... ");
             String[] array = {"a", "b", "c", "de"};
-            List list = Arrays.asList(array);
-            Set aset = new HashSet(list);
+            List<String> list = Arrays.asList(array);
+            Set<String> aset = new HashSet<>(list);
             logln(" *** The source set's size is: " + aset.size());
 
             set.clear();
@@ -782,16 +794,16 @@ public class UnicodeSetTest extends TestFmwk {
                 logln("OK: After addAll, the UnicodeSet size got " + set.size());
             }
 
-            List list2 = new ArrayList();
+            List<String> list2 = new ArrayList<>();
             set.addAllTo(list2);
 
             //verify the result
             log(" *** The elements are: ");
             String s = set.toPattern(true);
             logln(s);
-            Iterator myiter = list2.iterator();
+            Iterator<String> myiter = list2.iterator();
             while(myiter.hasNext()) {
-                log(myiter.next().toString() + "  ");
+                log(myiter.next() + "  ");
             }
             logln("");  // a new line
         }
@@ -841,24 +853,14 @@ public class UnicodeSetTest extends TestFmwk {
         }
     }
 
-    static final Integer
-    I_ANY = new Integer(SortedSetRelation.ANY),
-    I_CONTAINS = new Integer(SortedSetRelation.CONTAINS),
-    I_DISJOINT = new Integer(SortedSetRelation.DISJOINT),
-    I_NO_B = new Integer(SortedSetRelation.NO_B),
-    I_ISCONTAINED = new Integer(SortedSetRelation.ISCONTAINED),
-    I_EQUALS = new Integer(SortedSetRelation.EQUALS),
-    I_NO_A = new Integer(SortedSetRelation.NO_A),
-    I_NONE = new Integer(SortedSetRelation.NONE);
-
     @Test
     public void TestSetRelation() {
 
         String[] choices = {"a", "b", "cd", "ef"};
         int limit = 1 << choices.length;
 
-        SortedSet iset = new TreeSet();
-        SortedSet jset = new TreeSet();
+        SortedSet<String> iset = new TreeSet<>();
+        SortedSet<String> jset = new TreeSet<>();
 
         for (int i = 0; i < limit; ++i) {
             pick(i, choices, iset);
@@ -880,12 +882,12 @@ public class UnicodeSetTest extends TestFmwk {
 
     public void SetSpeed2(int size) {
 
-        SortedSet iset = new TreeSet();
-        SortedSet jset = new TreeSet();
+        SortedSet<Integer> iset = new TreeSet<>();
+        SortedSet<Integer> jset = new TreeSet<>();
 
         for (int i = 0; i < size*2; i += 2) { // only even values
-            iset.add(new Integer(i));
-            jset.add(new Integer(i));
+            iset.add(i);
+            jset.add(i);
         }
 
         int iterations = 1000000 / size;
@@ -895,22 +897,22 @@ public class UnicodeSetTest extends TestFmwk {
 
         CheckSpeed(iset, jset, "when a = b", iterations);
 
-        iset.add(new Integer(size + 1));    // add odd value in middle
+        iset.add(size + 1);    // add odd value in middle
 
         CheckSpeed(iset, jset, "when a contains b", iterations);
         CheckSpeed(jset, iset, "when b contains a", iterations);
 
-        jset.add(new Integer(size - 1));    // add different odd value in middle
+        jset.add(size - 1);    // add different odd value in middle
 
         CheckSpeed(jset, iset, "when a, b are disjoint", iterations);
     }
 
-    void CheckSpeed(SortedSet iset, SortedSet jset, String message, int iterations) {
+    void CheckSpeed(SortedSet<Integer> iset, SortedSet<Integer> jset, String message, int iterations) {
         CheckSpeed2(iset, jset, message, iterations);
         CheckSpeed3(iset, jset, message, iterations);
     }
 
-    void CheckSpeed2(SortedSet iset, SortedSet jset, String message, int iterations) {
+    void CheckSpeed2(SortedSet<Integer> iset, SortedSet<Integer> jset, String message, int iterations) {
         boolean x;
         boolean y;
 
@@ -937,7 +939,7 @@ public class UnicodeSetTest extends TestFmwk {
                 + ", Utility: " + utime + ", u:j: " + nf.format(utime/jtime));
     }
 
-    void CheckSpeed3(SortedSet iset, SortedSet jset, String message, int iterations) {
+    void CheckSpeed3(SortedSet<Integer> iset, SortedSet<Integer> jset, String message, int iterations) {
         boolean x;
         boolean y;
 
@@ -965,7 +967,7 @@ public class UnicodeSetTest extends TestFmwk {
                 + ", Utility: " + utime + ", u:j: " + nf.format(utime/jtime));
     }
 
-    void pick(int bits, Object[] examples, SortedSet output) {
+    void pick(int bits, String[] examples, SortedSet<String> output) {
         output.clear();
         for (int k = 0; k < 32; ++k) {
             if (((1<<k) & bits) != 0) output.add(examples[k]);
@@ -982,8 +984,8 @@ public class UnicodeSetTest extends TestFmwk {
         "contains",
         "any", };
 
-    boolean dumbHasRelation(Collection A, int filter, Collection B) {
-        Collection ab = new TreeSet(A);
+    boolean dumbHasRelation(Collection<String> A, int filter, Collection<String> B) {
+        Collection<String> ab = new TreeSet<>(A);
         ab.retainAll(B);
         if (ab.size() > 0 && (filter & SortedSetRelation.A_AND_B) == 0) return false;
 
@@ -997,7 +999,7 @@ public class UnicodeSetTest extends TestFmwk {
         return true;
     }
 
-    void checkSetRelation(SortedSet a, SortedSet b, String message) {
+    void checkSetRelation(SortedSet<String> a, SortedSet<String> b, String message) {
         for (int i = 0; i < 8; ++i) {
 
             boolean hasRelation = SortedSetRelation.hasRelation(a, i, b);
@@ -1766,16 +1768,16 @@ public class UnicodeSetTest extends TestFmwk {
         set1.addAllTo(list1);
         assertEquals("iteration test", oldList, list1);
 
-        list1 = set1.addAllTo(new ArrayList<String>());
+        list1 = set1.addAllTo(new ArrayList<>());
         assertEquals("addAllTo", oldList, list1);
 
-        ArrayList<String> list2 = set2.addAllTo(new ArrayList<String>());
-        ArrayList<String> list3 = set3.addAllTo(new ArrayList<String>());
+        ArrayList<String> list2 = set2.addAllTo(new ArrayList<>());
+        ArrayList<String> list3 = set3.addAllTo(new ArrayList<>());
 
         // put them into different order, to check that order doesn't matter
-        TreeSet sorted1 = set1.addAllTo(new TreeSet<String>());
-        TreeSet sorted2 = set2.addAllTo(new TreeSet<String>());
-        TreeSet sorted3 = set3.addAllTo(new TreeSet<String>());
+        TreeSet<String> sorted1 = set1.addAllTo(new TreeSet<>());
+        TreeSet<String> sorted2 = set2.addAllTo(new TreeSet<>());
+        TreeSet<String> sorted3 = set3.addAllTo(new TreeSet<>());
 
         //containsAll(Collection<String> collection)
         assertTrue("containsAll", set1.containsAll(list1));
@@ -1835,7 +1837,7 @@ public class UnicodeSetTest extends TestFmwk {
         List<UnicodeSet> goalLongest = Arrays.asList(set1, set3, set2);
         List<UnicodeSet> goalLex = Arrays.asList(set1, set2, set3);
 
-        List<UnicodeSet> sorted = new ArrayList(new TreeSet<>(unsorted));
+        List<UnicodeSet> sorted = new ArrayList<>(new TreeSet<>(unsorted));
         assertNotEquals("compareTo-shorter-first", unsorted, sorted);
         assertEquals("compareTo-shorter-first", goalShortest, sorted);
 
@@ -1846,7 +1848,7 @@ public class UnicodeSetTest extends TestFmwk {
                 return o1.compareTo(o2, ComparisonStyle.LONGER_FIRST);
             }});
         sorted1.addAll(unsorted);
-        sorted = new ArrayList(sorted1);
+        sorted = new ArrayList<>(sorted1);
         assertNotEquals("compareTo-longer-first", unsorted, sorted);
         assertEquals("compareTo-longer-first", goalLongest, sorted);
 
@@ -1857,7 +1859,7 @@ public class UnicodeSetTest extends TestFmwk {
                 return o1.compareTo(o2, ComparisonStyle.LEXICOGRAPHIC);
             }});
         sorted1.addAll(unsorted);
-        sorted = new ArrayList(sorted1);
+        sorted = new ArrayList<>(sorted1);
         assertNotEquals("compareTo-lex", unsorted, sorted);
         assertEquals("compareTo-lex", goalLex, sorted);
 
@@ -1929,8 +1931,8 @@ public class UnicodeSetTest extends TestFmwk {
         UnicodeSet t = new UnicodeSet(3,5, 7,7);
         assertEquals("new constructor", w, t);
         // check to make sure right exceptions are thrown
-        Class expected = IllegalArgumentException.class;
-        Class actual;
+        Class<? extends RuntimeException> expected = IllegalArgumentException.class;
+        Class<? extends RuntimeException> actual;
 
         try {
             actual = null;
@@ -2020,7 +2022,7 @@ public class UnicodeSetTest extends TestFmwk {
                     case 0: test.add(0); break;
                     case 1: test.add(0,1); break;
                     case 2: test.add("a"); break;
-                    case 3: List a = new ArrayList(); a.add("a"); test.addAll(a); break;
+                    case 3: List<String> a = new ArrayList<>(); a.add("a"); test.addAll(a); break;
                     case 4: test.addAll("ab"); break;
                     case 5: test.addAll(new UnicodeSet("[ab]")); break;
                     case 6: test.applyIntPropertyValue(0,0); break;
@@ -2133,7 +2135,7 @@ public class UnicodeSetTest extends TestFmwk {
     //    }
 
     public class TokenSymbolTable implements SymbolTable {
-        HashMap contents = new HashMap();
+        HashMap<String, char[]> contents = new HashMap<>();
 
         /**
          * (Non-SymbolTable API) Add the given variable and value to
@@ -2161,8 +2163,8 @@ public class UnicodeSetTest extends TestFmwk {
         @Override
         public char[] lookup(String s) {
             logln("TokenSymbolTable: lookup \"" + s + "\" => \"" +
-                    new String((char[]) contents.get(s)) + "\"");
-            return (char[])contents.get(s);
+                    new String(contents.get(s)) + "\"");
+            return contents.get(s);
         }
 
         /* (non-Javadoc)
@@ -2658,7 +2660,11 @@ public class UnicodeSetTest extends TestFmwk {
     @Test
     public void TestIteration() {
         UnicodeSet us1 = new UnicodeSet("[abcM{xy}]");
-        assertEquals("", "M, a-c", CollectionUtilities.join(us1.ranges(), ", "));
+        StringJoiner joiner = new StringJoiner(", ");
+        for (EntryRange range : us1.ranges()) {
+            joiner.add(range.toString());
+        }
+        assertEquals("", "M, a-c", joiner.toString());
 
         // Sample code
         for (@SuppressWarnings("unused") EntryRange range : us1.ranges()) {
@@ -3202,5 +3208,157 @@ public class UnicodeSetTest extends TestFmwk {
                     notBasic.contains("🐿\uFE0F"));
             assertFalse("[:Basic_Emoji:].complement() --> no bicycle", notBasic.contains("🚲"));
         }
+    }
+
+    private static UnicodeSet populateUnicodeSet() {
+        // Trying to cover the most interesting combinations:
+        final UnicodeSet unicodeSet = new UnicodeSet();
+        // Patterns
+        unicodeSet.applyPattern("\\p{sc=Ethi}");
+        unicodeSet.applyPattern("\\p{Number}");
+        // Single code point
+        unicodeSet.add('X'); // adds a code point in the ASCII range
+        unicodeSet.add('Σ'); // adds a code point in the Greek block
+        unicodeSet.add(0x1F600); // adds a code point above BMP (😀)
+        // Code point ranges and from CharSequence
+        unicodeSet.add('A', 'F'); // adds a code point range in the ASCII range
+        unicodeSet.add('α', 'ζ'); // adds a code point range in the Greek block
+        unicodeSet.add(0x1F347, 0x1F353); // adds a code point range above BMP (🍇-🍓)
+        // Strings
+        unicodeSet.add("world"); // adds string
+        unicodeSet.addAll("one", "two", "three"); // adds strings
+        return (UnicodeSet) unicodeSet.freeze();
+    }
+
+    @Test
+    public void testIterationMethodsCodepoints() {
+        for (UnicodeSet us : UNICODE_SETS_TO_ITERATE) {
+            // Build the reference test result
+            UnicodeSetIterator usi = new UnicodeSetIterator(us);
+            StringJoiner joiner = newResult();
+            while (usi.next() && usi.codepoint != UnicodeSetIterator.IS_STRING) {
+                joiner.add(codePointToString(usi.codepoint));
+            }
+            String expected = joiner.toString();
+
+            StringJoiner fromIterable = newResult();
+            for (Integer cp : us.codePoints()) {
+                fromIterable.add(codePointToString(cp));
+            }
+            assertEquals("code points :: codePoints", expected, fromIterable.toString());
+
+            StringJoiner fromStream = newResult();
+            us.codePointStream().forEach(cp -> fromStream.add(codePointToString(cp)));
+            assertEquals("code points :: codePointStream", expected, fromStream.toString());
+        }
+    }
+
+    @Test
+    public void testIterationMethodsRanges() {
+        for (UnicodeSet us : UNICODE_SETS_TO_ITERATE) {
+            // Build the reference test result
+            StringJoiner expected = newResult();
+            for (EntryRange r : us.ranges()) {
+                expected.add(rangeToString(r));
+            }
+
+            StringJoiner actual = newResult();
+            us.rangeStream().forEach(r -> actual.add(rangeToString(r)));
+            assertEquals("ranges :: rangeStream", expected.toString(), actual.toString());
+        }
+    }
+
+    @Test
+    public void testIterationMethodsStrings() {
+        for (UnicodeSet us : UNICODE_SETS_TO_ITERATE) {
+            // Build the reference test result
+            StringJoiner expected = newResult();
+            for (String str : us.strings()) {
+                expected.add(stringToString(str));
+            }
+
+            StringJoiner actual = newResult();
+            us.stringStream().map(UnicodeSetTest::stringToString).forEach(actual::add);
+            assertEquals("strings :: stringStream", expected.toString(), actual.toString());
+        }
+    }
+
+    @Test
+    // Iterates on strings AND on code points (converted to strings)
+    public void testIterationMethodsCodepointsAndStrings() {
+        for (UnicodeSet us : UNICODE_SETS_TO_ITERATE) {
+            // Build the reference test result
+            StringJoiner expected = newResult();
+            for (String str : us) {
+                expected.add(stringToString(str));
+            }
+
+            StringJoiner fromStream = newResult();
+            us.stream().map(UnicodeSetTest::stringToString).forEach(fromStream::add);
+
+            assertEquals("code points + strings :: stream", expected.toString(), fromStream.toString());
+        }
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testMisuseIterator() {
+        UnicodeSet us = new UnicodeSet(0x10FFFE, 0x10FFFF);
+        assertEquals("Even length, last range ends at HIGH", 2, us.size());
+        Iterator<Integer> cpIter = us.codePoints().iterator();
+        assertEquals("", (Integer) 0x10FFFE, cpIter.next());
+        assertEquals("", (Integer) 0x10FFFF, cpIter.next());
+        cpIter.next(); // NoSuchElementException
+    }
+
+    /*
+     * Helper methods for testing various iterations.
+     * The main goal is to make the results of any possible failures more readable
+     * by formatting code points to something like U+03A3(Σ) and wrapping strings in double quotes.
+     */
+
+    private static String codePointToString(int cp) {
+        String fromCodePoint = UTF16.valueOf(cp);
+        return String.format("U+%04X(%s)", cp, fromCodePoint);
+    }
+
+    private static String rangeToString(EntryRange range) {
+        return rangeToString(range.codepoint, range.codepointEnd);
+    }
+
+    private static String rangeToString(int cpStart, int cpEnd) {
+        return String.format("%s-%s", codePointToString(cpStart), codePointToString(cpEnd));
+    }
+
+    private static String stringToString(String str) {
+        return String.format("\"%s\"", str);
+    }
+
+    private static StringJoiner newResult() {
+        return new StringJoiner(", ");
+    }
+
+    @Test
+    public void testParallelStreams() {
+        if (!isVerbose()) {
+            return;
+        }
+        UnicodeSet us = UnicodeSet.ALL_CODE_POINTS;
+
+        long start = System.nanoTime();
+        int sumNormal = us.codePointStream().sum();
+        long timeNormal = System.nanoTime() - start;
+        System.out.println("codePointStream.normal   : " + timeNormal);
+
+        start = System.nanoTime();
+        int sumParallel = us.codePointStream().parallel().sum();
+        long timeParallel = System.nanoTime() - start;
+        System.out.println("codePointStream.parallel : " + timeParallel);
+
+        // On my machines this is about 1.4-1.5, so it is a bit faster.
+        // Unlikely to have any practical benefit, this is more to test that the
+        // parallel stream works the same as the normal one, by comparing the sums.
+        System.out.println("Speed (normal/parallel)  : " + (double) timeNormal / timeParallel);
+
+        assertEquals("normal and parallel give different sum", sumNormal, sumParallel);
     }
 }

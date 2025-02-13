@@ -27,6 +27,7 @@ import com.ibm.icu.impl.units.UnitsRouter;
 import com.ibm.icu.util.Measure;
 import com.ibm.icu.util.MeasureUnit;
 import com.ibm.icu.util.ULocale;
+import com.ibm.icu.util.MeasureUnit.Complexity;
 
 public class UnitsTest {
 
@@ -279,6 +280,9 @@ public class UnitsTest {
                 new TestData("percent", "portion", UnitsConverter.Convertibility.CONVERTIBLE),
                 new TestData("ofhg", "kilogram-per-square-meter-square-second", UnitsConverter.Convertibility.CONVERTIBLE),
                 new TestData("second-per-meter", "meter-per-second", UnitsConverter.Convertibility.RECIPROCAL),
+                new TestData("mile-per-hour", "meter-per-second", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("knot", "meter-per-second", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("beaufort", "meter-per-second", UnitsConverter.Convertibility.CONVERTIBLE),
         };
         ConversionRates conversionRates = new ConversionRates();
 
@@ -392,6 +396,8 @@ public class UnitsTest {
                 new TestCase("cubic-meter-per-kilogram", "specific-volume"),
                 new TestCase("meter-per-second", "speed"),
                 new TestCase("second-per-meter", "speed"),
+                new TestCase("knot", "speed"),
+                new TestCase("beaufort", "speed"),
                 new TestCase("mile-per-gallon", "consumption"),
                 new TestCase("liter-per-100-kilometer", "consumption"),
                 new TestCase("cubic-meter-per-meter", "consumption"),
@@ -447,6 +453,19 @@ public class UnitsTest {
                 new TestData("ton", "pound", 1.0, 2000),
                 new TestData("stone", "pound", 1.0, 14),
                 new TestData("stone", "kilogram", 1.0, 6.35029),
+                // Speed
+                new TestData("mile-per-hour", "meter-per-second", 1.0, 0.44704),
+                new TestData("knot", "meter-per-second", 1.0, 0.514444),
+                new TestData("beaufort", "meter-per-second", 1.0, 0.95),
+                new TestData("beaufort", "meter-per-second", 4.0, 6.75),
+                new TestData("beaufort", "meter-per-second", 7.0, 15.55),
+                new TestData("beaufort", "meter-per-second", 10.0, 26.5),
+                new TestData("beaufort", "meter-per-second", 13.0, 39.15),
+                new TestData("beaufort", "mile-per-hour", 1.0, 2.12509),
+                new TestData("beaufort", "mile-per-hour", 4.0, 15.099319971367215),
+                new TestData("beaufort", "mile-per-hour", 7.0, 34.784359341445956),
+                new TestData("beaufort", "mile-per-hour", 10.0, 59.2788),
+                new TestData("beaufort", "mile-per-hour", 13.0, 87.5761),
                 // Temperature
                 new TestData("celsius", "fahrenheit", 0.0, 32.0),
                 new TestData("celsius", "fahrenheit", 10.0, 50.0),
@@ -488,6 +507,25 @@ public class UnitsTest {
                 new TestData("dot-per-centimeter", "pixel-per-centimeter", 1.0, 1.0),
                 new TestData("dot-per-inch", "pixel-per-inch", 1.0, 1.0),
                 new TestData("dot", "pixel", 1.0, 1.0),
+
+                // With constants
+                new TestData("meter-per-10", "foot", 1.0, 0.328084),
+                new TestData("meter", "foot-per-10", 1.0, 32.8084),
+                new TestData("meter", "foot-per-100", 1.0, 328.084),
+                new TestData("portion", "portion-per-1000", 1.0, 1000),
+                new TestData("portion", "portion-per-10000", 1.0, 10000),
+                new TestData("portion", "portion-per-100000", 1.0, 100000),
+                new TestData("portion", "portion-per-1000000", 1.0, 1000000),
+                new TestData("portion-per-10", "portion", 1.0, 0.1),
+                new TestData("portion-per-100", "portion", 1.0, 0.01),
+                new TestData("portion-per-1000", "portion", 1.0, 0.001),
+                new TestData("portion-per-10000", "portion", 1.0, 0.0001),
+                new TestData("portion-per-100000", "portion", 1.0, 0.00001),
+                new TestData("portion-per-1000000", "portion", 1.0, 0.000001),
+                new TestData("mile-per-hour", "meter-per-second", 1.0, 0.44704),
+                new TestData("mile-per-100-hour", "meter-per-100-second", 1.0, 0.44704),
+                new TestData("mile-per-hour", "meter-per-100-second", 1.0, 44.704),
+                new TestData("mile-per-100-hour", "meter-per-second", 1.0, 0.0044704),
         };
 
         ConversionRates conversionRates = new ConversionRates();
@@ -797,6 +835,48 @@ public class UnitsTest {
             } else {
                 fail(t.name + ": failed to find preferences");
             }
+        }
+    }
+
+    @Test
+    public void testWithConstantDenominator() {
+        class TestCase {
+            String unitIdentifier;
+            long constantDenominator;
+            Complexity expectedComplexity;
+
+            TestCase(String unitIdentifier, long constantDenominator, Complexity expectedComplexity) {
+                this.unitIdentifier = unitIdentifier;
+                this.constantDenominator = constantDenominator;
+                this.expectedComplexity = expectedComplexity;
+            }
+        }
+
+        TestCase[] testCases = {
+                new TestCase("meter-per-second", 100, Complexity.COMPOUND),
+                new TestCase("meter-per-100-second", 0, Complexity.COMPOUND),
+                new TestCase("portion", 100, Complexity.COMPOUND),
+                new TestCase("portion-per-100", 0, Complexity.SINGLE),
+        };
+
+        for (TestCase testCase : testCases) {
+            MeasureUnit unit = MeasureUnit.forIdentifier(testCase.unitIdentifier);
+            unit = unit.withConstantDenominator(testCase.constantDenominator);
+
+            long actualDenominator = unit.getConstantDenominator();
+            Complexity actualComplexity = unit.getComplexity();
+
+            assertEquals(testCase.constantDenominator, actualDenominator);
+            assertEquals(testCase.expectedComplexity, actualComplexity);
+        }
+
+        // Test invalid withConstantDenominator
+        MeasureUnit unit = MeasureUnit.forIdentifier("meter-per-second");
+        try {
+            unit = unit.withConstantDenominator(-1);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // Expected exception
         }
     }
 }

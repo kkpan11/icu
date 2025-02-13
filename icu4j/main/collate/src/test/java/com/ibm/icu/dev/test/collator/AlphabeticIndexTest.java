@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.ibm.icu.dev.test.TestFmwk;
-import com.ibm.icu.dev.util.CollectionUtilities;
 import com.ibm.icu.impl.ICUDebug;
 import com.ibm.icu.impl.Row;
 import com.ibm.icu.impl.Row.R4;
@@ -53,7 +52,7 @@ public class AlphabeticIndexTest extends TestFmwk {
     private static final String ARROW = "\u2192";
     private static final boolean DEBUG = ICUDebug.enabled("alphabeticindex");
 
-    public static Set<String> KEY_LOCALES = new LinkedHashSet(Arrays.asList(
+    public static Set<String> KEY_LOCALES = new LinkedHashSet<>(Arrays.asList(
             "en", "es", "de", "fr", "ja", "it", "tr", "pt", "zh", "nl",
             "pl", "ar", "ru", "zh_Hant", "ko", "th", "sv", "fi", "da",
             "he", "nb", "el", "hr", "bg", "sk", "lt", "vi", "lv", "sr",
@@ -81,7 +80,7 @@ public class AlphabeticIndexTest extends TestFmwk {
             /* Japanese*/   {"ja", "\u3042:\u304B:\u3055:\u305F:\u306A:\u306F:\u307E:\u3084:\u3089:\u308F"},
             /* Korean*/ {"ko", "\u3131:\u3134:\u3137:\u3139:\u3141:\u3142:\u3145:\u3147:\u3148:\u314A:\u314B:\u314C:\u314D:\u314E"},
             /* Lithuanian*/ {"lt", "A:B:C:\u010C:D:E:F:G:H:I:J:K:L:M:N:O:P:R:S:\u0160:T:U:V:Z:\u017D"},
-            /* Latvian*/    {"lv", "A:B:C:\u010C:D:E:F:G:\u0122:H:I:J:K:\u0136:L:\u013B:M:N:\u0145:O:P:Q:R:S:\u0160:T:U:V:W:X:Z:\u017D"},
+            /* Latvian*/    {"lv", "A:\u0100:B:C:\u010C:D:E:\u0112:F:G:\u0122:H:I:Y:\u012A:J:K:\u0136:L:\u013B:M:N:\u0145:O:P:Q:R:S:\u0160:T:U:\u016A:V:W:X:Z:\u017D"},
             /* Norwegian Bokm\u00E5l*/  {"nb", "A:B:C:D:E:F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z:\u00C6:\u00D8:\u00C5"},
             /* Dutch*/  {"nl", "A:B:C:D:E:F:G:H:I:J:K:L:M:N:O:P:Q:R:S:T:U:V:W:X:Y:Z"},
             /* Polish*/ {"pl", "A:B:C:\u0106:D:E:F:G:H:I:J:K:L:\u0141:M:N:O:\u00D3:P:Q:R:S:\u015A:T:U:V:W:X:Y:Z:\u0179:\u017B"},
@@ -225,7 +224,7 @@ public class AlphabeticIndexTest extends TestFmwk {
             final String probe = test[1];
             final String expectedLabel = test[2];
             alphabeticIndex.addRecord(probe, 1);
-            List labels = alphabeticIndex.getBucketLabels();
+            List<String> labels = alphabeticIndex.getBucketLabels();
             logln(labels.toString());
             Bucket<Integer> bucket = find(alphabeticIndex, probe);
             assertEquals("locale " + test[0] + " name=" + probe + " in bucket",
@@ -247,7 +246,7 @@ public class AlphabeticIndexTest extends TestFmwk {
     @Test
     public void TestFirstCharacters() {
 
-        AlphabeticIndex alphabeticIndex = new AlphabeticIndex(Locale.ENGLISH);
+        AlphabeticIndex<String> alphabeticIndex = new AlphabeticIndex<>(Locale.ENGLISH);
         RuleBasedCollator collator = alphabeticIndex.getCollator();
         collator.setStrength(Collator.IDENTICAL);
         Collection<String> firsts = alphabeticIndex.getFirstCharactersInScripts();
@@ -317,7 +316,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         locales.addAll(Arrays.asList(ULocale.getAvailableLocales()));
         for (ULocale locale : locales) {
             try {
-                AlphabeticIndex<String> alphabeticIndex = new AlphabeticIndex(locale);
+                AlphabeticIndex<String> alphabeticIndex = new AlphabeticIndex<>(locale);
                 alphabeticIndex.addRecord("hi", "HI");
                 for (Bucket<String> bucket : alphabeticIndex) {
                     @SuppressWarnings("unused")
@@ -332,7 +331,7 @@ public class AlphabeticIndexTest extends TestFmwk {
 
     @Test
     public void TestSetGetSpecialLabels() {
-        AlphabeticIndex index = new AlphabeticIndex(Locale.GERMAN).addLabels(new Locale("ru"));
+        AlphabeticIndex<String> index = new AlphabeticIndex<String>(Locale.GERMAN).addLabels(new Locale("ru"));
         index.setUnderflowLabel("__");
         index.setInflowLabel("--");
         index.setOverflowLabel("^^");
@@ -340,7 +339,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         assertEquals("inflow label", "--", index.getInflowLabel());
         assertEquals("overflow label", "^^", index.getOverflowLabel());
 
-        ImmutableIndex ii = index.buildImmutableIndex();
+        ImmutableIndex<String> ii = index.buildImmutableIndex();
         assertEquals("0 -> underflow", "__", ii.getBucket(ii.getBucketIndex("0")).getLabel());
         assertEquals("Ω -> inflow", "--", ii.getBucket(ii.getBucketIndex("Ω")).getLabel());
         assertEquals("字 -> overflow", "^^", ii.getBucket(ii.getBucketIndex("字")).getLabel());
@@ -358,7 +357,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         };
         for (Object[] test : tests) {
             int expected = (Integer) test[0];
-            AlphabeticIndex<Double> alphabeticIndex = new AlphabeticIndex((ULocale)test[1]);
+            AlphabeticIndex<Double> alphabeticIndex = new AlphabeticIndex<>((ULocale)test[1]);
             for (int i = 2; i < test.length; ++i) {
                 if (test[i] instanceof ULocale) {
                     alphabeticIndex.addLabels((ULocale)test[i]);
@@ -366,7 +365,7 @@ public class AlphabeticIndexTest extends TestFmwk {
                     alphabeticIndex.addLabels((UnicodeSet)test[i]);
                 }
             }
-            Counter<AlphabeticIndex.Bucket.LabelType> counter = new Counter();
+            Counter<LabelType> counter = new Counter<>();
             for (Bucket<Double> bucket : alphabeticIndex) {
                 LabelType labelType = bucket.getLabelType();
                 counter.add(labelType, 1);
@@ -376,7 +375,7 @@ public class AlphabeticIndexTest extends TestFmwk {
             assertEquals(LabelType.INFLOW + "\t" + printList, expected, counter.get(LabelType.INFLOW));
             if (expected != counter.get(LabelType.INFLOW)) {
                 // for debugging
-                AlphabeticIndex<Double> indexCharacters2 = new AlphabeticIndex((ULocale)test[1]);
+                AlphabeticIndex<Double> indexCharacters2 = new AlphabeticIndex<>((ULocale)test[1]);
                 for (int i = 2; i < test.length; ++i) {
                     if (test[i] instanceof ULocale) {
                         indexCharacters2.addLabels((ULocale)test[i]);
@@ -384,7 +383,8 @@ public class AlphabeticIndexTest extends TestFmwk {
                         indexCharacters2.addLabels((UnicodeSet)test[i]);
                     }
                 }
-                List<Bucket<Double>> buckets = CollectionUtilities.addAll(alphabeticIndex.iterator(), new ArrayList<Bucket<Double>>());
+                List<Bucket<Double>> buckets = new ArrayList<>(alphabeticIndex.getBucketCount());
+                alphabeticIndex.iterator().forEachRemaining(buckets::add);
                 logln(buckets.toString());
             }
             assertEquals(LabelType.OVERFLOW + "\t" + printList, 1, counter.get(LabelType.OVERFLOW));
@@ -398,7 +398,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         // Create a simple index where the values for the strings are Integers, and add the strings
         AlphabeticIndex<Integer> index = new AlphabeticIndex<Integer>(desiredLocale).addLabels(additionalLocale);
         int counter = 0;
-        Counter<String> itemCount = new Counter();
+        Counter<String> itemCount = new Counter<>();
         for (String item : test) {
             index.addRecord(item, counter++);
             itemCount.add(item, 1);
@@ -524,7 +524,7 @@ public class AlphabeticIndexTest extends TestFmwk {
 
     private Counter<String> getKeys(AlphabeticIndex.Bucket<Integer> entry) {
         Counter<String> keys = new Counter<String>();
-        for (AlphabeticIndex.Record x : entry) {
+        for (AlphabeticIndex.Record<Integer> x : entry) {
             String key = x.getName().toString();
             keys.add(key, 1);
         }
@@ -536,7 +536,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         for (String[] localeAndIndexCharacters : localeAndIndexCharactersLists) {
             ULocale locale = new ULocale(localeAndIndexCharacters[0]);
             String expectedIndexCharacters = "\u2026:" + localeAndIndexCharacters[1] + ":\u2026";
-            Collection<String> alphabeticIndex = new AlphabeticIndex(locale).getBucketLabels();
+            Collection<String> alphabeticIndex = new AlphabeticIndex<>(locale).getBucketLabels();
 
             // Join the elements of the list to a string with delimiter ":"
             StringBuilder sb = new StringBuilder();
@@ -561,7 +561,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         ULocale[] list = ULocale.getAvailableLocales();
         // get keywords combinations
         // don't bother with multiple combinations at this point
-        List keywords = new ArrayList();
+        List<String> keywords = new ArrayList<>();
         keywords.add("");
 
         String[] collationValues = Collator.getKeywordValues("collation");
@@ -570,8 +570,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         }
 
         for (int i = 0; i < list.length; ++i) {
-            for (Iterator it = keywords.iterator(); it.hasNext();) {
-                String collationValue = (String) it.next();
+            for (String collationValue : keywords) {
                 String localeString = list[i].toString();
                 if (!KEY_LOCALES.contains(localeString)) continue; // TODO change in exhaustive
                 ULocale locale = new ULocale(localeString + collationValue);
@@ -584,13 +583,13 @@ public class AlphabeticIndexTest extends TestFmwk {
                     continue;
                 }
                 boolean isUnihan = collationValue.contains("unihan");
-                AlphabeticIndex alphabeticIndex = new AlphabeticIndex(locale);
+                AlphabeticIndex<String> alphabeticIndex = new AlphabeticIndex<>(locale);
                 if (isUnihan) {
                     // Unihan tailorings have a label per radical, and there are at least 214,
                     // if not more when simplified radicals are distinguished.
                     alphabeticIndex.setMaxLabelCount(500);
                 }
-                final Collection mainChars = alphabeticIndex.getBucketLabels();
+                final Collection<String> mainChars = alphabeticIndex.getBucketLabels();
                 String mainCharString = mainChars.toString();
                 if (mainCharString.length() > 500) {
                     mainCharString = mainCharString.substring(0,500) + "...";
@@ -687,7 +686,7 @@ public class AlphabeticIndexTest extends TestFmwk {
     @Test
     public void TestFirstScriptCharacters() {
         Collection<String> firstCharacters =
-                new AlphabeticIndex(ULocale.ENGLISH).getFirstCharactersInScripts();
+                new AlphabeticIndex<>(ULocale.ENGLISH).getFirstCharactersInScripts();
         Collection<String> expectedFirstCharacters = firstStringsInScript((RuleBasedCollator) Collator.getInstance(ULocale.ROOT));
         Collection<String> diff = new TreeSet<String>(firstCharacters);
         diff.removeAll(expectedFirstCharacters);
@@ -923,7 +922,7 @@ public class AlphabeticIndexTest extends TestFmwk {
     public void TestHaniFirst() {
         RuleBasedCollator coll = (RuleBasedCollator) Collator.getInstance(ULocale.ROOT);
         coll.setReorderCodes(UScript.HAN);
-        AlphabeticIndex index = new AlphabeticIndex(coll);
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(coll);
         assertEquals("getBucketCount()", 1, index.getBucketCount());   // ... (underflow only)
         index.addLabels(Locale.ENGLISH);
         assertEquals("getBucketCount()", 28, index.getBucketCount());  // ... A-Z ...
@@ -947,7 +946,7 @@ public class AlphabeticIndexTest extends TestFmwk {
     public void TestPinyinFirst() {
         RuleBasedCollator coll = (RuleBasedCollator) Collator.getInstance(ULocale.CHINESE);
         coll.setReorderCodes(UScript.HAN);
-        AlphabeticIndex index = new AlphabeticIndex(coll);
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(coll);
         assertEquals("getBucketCount()", 28, index.getBucketCount());   // ... A-Z ...
         index.addLabels(Locale.CHINESE);
         assertEquals("getBucketCount()", 28, index.getBucketCount());  // ... A-Z ...
@@ -969,10 +968,10 @@ public class AlphabeticIndexTest extends TestFmwk {
      */
     @Test
     public void TestSchSt() {
-        AlphabeticIndex index = new AlphabeticIndex(ULocale.GERMAN);
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(ULocale.GERMAN);
         index.addLabels(new UnicodeSet("[Æ{Sch*}{St*}]"));
         // ... A Æ B-R S Sch St T-Z ...
-        ImmutableIndex immIndex = index.buildImmutableIndex();
+        ImmutableIndex<String> immIndex = index.buildImmutableIndex();
         assertEquals("getBucketCount()", 31, index.getBucketCount());
         assertEquals("immutable getBucketCount()", 31, immIndex.getBucketCount());
         String[][] testCases = new String[][] {
@@ -993,7 +992,7 @@ public class AlphabeticIndexTest extends TestFmwk {
         List<String> labels = index.getBucketLabels();
         for (String[] testCase : testCases) {
             String name = testCase[0];
-            int bucketIndex = Integer.valueOf(testCase[1]);
+            int bucketIndex = Integer.parseInt(testCase[1]);
             String label = testCase[2];
             String msg = "getBucketIndex(" + name + ")";
             assertEquals(msg, bucketIndex, index.getBucketIndex(name));
@@ -1028,8 +1027,8 @@ public class AlphabeticIndexTest extends TestFmwk {
      */
     @Test
     public void TestChineseZhuyin() {
-        AlphabeticIndex index = new AlphabeticIndex(ULocale.forLanguageTag("zh-u-co-zhuyin"));
-        ImmutableIndex immIndex = index.buildImmutableIndex();
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(ULocale.forLanguageTag("zh-u-co-zhuyin"));
+        ImmutableIndex<String> immIndex = index.buildImmutableIndex();
         assertEquals("getBucketCount()", 38, immIndex.getBucketCount());  // ... ㄅ ㄆ ㄇ ㄈ ㄉ -- ㄩ ...
         assertEquals("label 1", "ㄅ", immIndex.getBucket(1).getLabel());
         assertEquals("label 2", "ㄆ", immIndex.getBucket(2).getLabel());
@@ -1040,8 +1039,8 @@ public class AlphabeticIndexTest extends TestFmwk {
 
     @Test
     public void TestJapaneseKanji() {
-        AlphabeticIndex index = new AlphabeticIndex(ULocale.JAPANESE);
-        AlphabeticIndex.ImmutableIndex immIndex = index.buildImmutableIndex();
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(ULocale.JAPANESE);
+        AlphabeticIndex.ImmutableIndex<String> immIndex = index.buildImmutableIndex();
         // There are no index characters for Kanji in the Japanese standard collator.
         // They should all go into the overflow bucket.
         final int[] kanji = { 0x4E9C, 0x95C7, 0x4E00, 0x58F1 };
@@ -1061,17 +1060,17 @@ public class AlphabeticIndexTest extends TestFmwk {
         // The AlphabeticIndex constructor used to throw an exception
         // because it cloned the collator (which preserves frozenness)
         // and set the clone's strength to PRIMARY.
-        AlphabeticIndex index = new AlphabeticIndex(coll);
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(coll);
         assertEquals("same strength as input Collator",
                 Collator.IDENTICAL, index.getCollator().getStrength());
     }
 
     @Test
     public void TestChineseUnihan() {
-        AlphabeticIndex index = new AlphabeticIndex(new ULocale("zh-u-co-unihan"));
+        AlphabeticIndex<String> index = new AlphabeticIndex<>(new ULocale("zh-u-co-unihan"));
         index.setMaxLabelCount(500);  // ICU 54 default is 99.
         assertEquals("getMaxLabelCount()", 500, index.getMaxLabelCount());  // code coverage
-        AlphabeticIndex.ImmutableIndex immIndex = index.buildImmutableIndex();
+        AlphabeticIndex.ImmutableIndex<String> immIndex = index.buildImmutableIndex();
         int bucketCount = immIndex.getBucketCount();
         if(bucketCount < 216) {
             // There should be at least an underflow and overflow label,
@@ -1085,17 +1084,18 @@ public class AlphabeticIndexTest extends TestFmwk {
             logln("Chinese/unihan has " + bucketCount + " buckets/labels");
         }
         // bucketIndex = radical number, adjusted for simplified radicals in lower buckets.
+        // CLDR 46+/ICU 76+ use a radical-stroke order matching UAX #38
+        // which has buckets only for traditional radicals.
         int bucketIndex = index.getBucketIndex("\u4e5d");
         assertEquals("getBucketIndex(U+4E5D)", 5, bucketIndex);
-        // radical 100, and there is a 90' since Unicode 8
         bucketIndex = index.getBucketIndex("\u7527");
-        assertEquals("getBucketIndex(U+7527)", 101, bucketIndex);
+        assertEquals("getBucketIndex(U+7527)", 100, bucketIndex);
     }
 
     @Test
     public void testAddLabels_Locale() {
-        AlphabeticIndex<?> ulocaleIndex = new AlphabeticIndex<String>(ULocale.CANADA);
-        AlphabeticIndex<?> localeIndex = new AlphabeticIndex<String>(Locale.CANADA);
+        AlphabeticIndex<?> ulocaleIndex = new AlphabeticIndex<>(ULocale.CANADA);
+        AlphabeticIndex<?> localeIndex = new AlphabeticIndex<>(Locale.CANADA);
         ulocaleIndex.addLabels(ULocale.SIMPLIFIED_CHINESE);
         localeIndex.addLabels(Locale.SIMPLIFIED_CHINESE);
         assertEquals("getBucketLables() results of ulocaleIndex and localeIndex differ",
@@ -1170,12 +1170,12 @@ public class AlphabeticIndexTest extends TestFmwk {
     }
 
     private void checkHasBuckets(Locale locale, int script) {
-        AlphabeticIndex.ImmutableIndex index =
+        AlphabeticIndex.ImmutableIndex<String> index =
                 new AlphabeticIndex<String>(locale).buildImmutableIndex();
         String loc = locale.toString();
         assertTrue(loc + " at least 3 buckets", index.getBucketCount() >= 3);
-        AlphabeticIndex.Bucket bucket = index.getBucket(1);
-        assertEquals(loc + " real bucket", AlphabeticIndex.Bucket.LabelType.NORMAL,
+        AlphabeticIndex.Bucket<String> bucket = index.getBucket(1);
+        assertEquals(loc + " real bucket", LabelType.NORMAL,
                 bucket.getLabelType());
         assertEquals(loc + " expected script", script,
                 UScript.getScript(bucket.getLabel().codePointAt(0)));

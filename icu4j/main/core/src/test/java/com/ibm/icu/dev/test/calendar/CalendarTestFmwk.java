@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ import com.ibm.icu.util.SimpleTimeZone;
  * A base class for classes that test individual Calendar subclasses.
  * Defines various useful utility methods and constants
  */
-public class CalendarTestFmwk extends TestFmwk {
+public class CalendarTestFmwk extends CoreTestFmwk {
 
     // Constants for use by subclasses, solely to save typing
     public final static int SUN = Calendar.SUNDAY;
@@ -240,7 +241,7 @@ public class CalendarTestFmwk extends TestFmwk {
 
         // Keep a record of minima and maxima that we actually see.
         // These are kept in an array of arrays of hashes.
-        Map[][] limits = new Map[fieldsToTest.length][2];
+        Map<Integer, Object>[][] limits = new Map[fieldsToTest.length][2];
         Object nub = new Object(); // Meaningless placeholder
 
         // This test can run for a long time; show progress.
@@ -272,13 +273,13 @@ public class CalendarTestFmwk extends TestFmwk {
 
                 // Fetch the hash for this field and keep track of the
                 // minima and maxima.
-                Map[] h = limits[j];
+                Map<Integer, Object>[] h = limits[j];
                 if (h[0] == null) {
-                    h[0] = new HashMap();
-                    h[1] = new HashMap();
+                    h[0] = new HashMap<>();
+                    h[1] = new HashMap<>();
                 }
-                h[0].put(new Integer(minActual), nub);
-                h[1].put(new Integer(maxActual), nub);
+                h[0].put(minActual, nub);
+                h[1].put(maxActual, nub);
 
                 if (minActual < minLow || minActual > minHigh) {
                     errln("Fail: " + ymdToString(cal) +
@@ -310,7 +311,7 @@ public class CalendarTestFmwk extends TestFmwk {
             int f = fieldsToTest[j];
             buf.setLength(0);
             buf.append(FIELD_NAME[f]);
-            Map[] h = limits[j];
+            Map<Integer, Object>[] h = limits[j];
             boolean fullRangeSeen = true;
             for (int k=0; k<2; ++k) {
                 int rangeLow = (k==0) ?
@@ -319,8 +320,8 @@ public class CalendarTestFmwk extends TestFmwk {
                     cal.getGreatestMinimum(f) : cal.getMaximum(f);
                 // If either the top of the range or the bottom was never
                 // seen, then there may be a problem.
-                if (h[k].get(new Integer(rangeLow)) == null ||
-                    h[k].get(new Integer(rangeHigh)) == null) {
+                if (h[k].get(rangeLow) == null ||
+                    h[k].get(rangeHigh) == null) {
                     fullRangeSeen = false;
                 }
                 buf.append(k==0 ? " minima seen=(" : "; maxima seen=(");

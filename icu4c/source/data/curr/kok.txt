@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 kok{
     Currencies{
         AED{
@@ -499,9 +499,13 @@ kok{
             "SHP",
             "सेंट हेलिना पावंड",
         }
+        SLE{
+            "SLE",
+            "सिएरा लियॉनी लियॉन",
+        }
         SLL{
             "SLL",
-            "सिएरा लियॉनी लियॉन",
+            "सिएरा लियॉनी लियॉन (1964—2022)",
         }
         SOS{
             "SOS",
@@ -970,8 +974,11 @@ kok{
         SHP{
             other{"सेंट हेलिना पावंड्स"}
         }
-        SLL{
+        SLE{
             other{"सिएरा लियॉनी लियॉन्स"}
+        }
+        SLL{
+            other{"सिएरा लियॉनी लियॉन्स (1964—2022)"}
         }
         SOS{
             other{"सोमाली शिलिंग्स"}
@@ -1045,8 +1052,5 @@ kok{
         ZMW{
             other{"झांबियन क्वाचास"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }

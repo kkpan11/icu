@@ -43,7 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.impl.ICUData;
 import com.ibm.icu.impl.ICUResourceBundle;
 import com.ibm.icu.text.DateFormat;
@@ -56,7 +56,7 @@ import com.ibm.icu.util.ULocale;
 import com.ibm.icu.util.VersionInfo;
 
 @RunWith(JUnit4.class)
-public class NumberRegressionTests extends TestFmwk {
+public class NumberRegressionTests extends CoreTestFmwk {
     private static final char EURO = '\u20ac';
 
     /**
@@ -392,7 +392,7 @@ public class NumberRegressionTests extends TestFmwk {
     {
         DecimalFormat df = new DecimalFormat();
         String str = "0.1234";
-        Double d1 = new Double(str);
+        Double d1 = Double.parseDouble(str);
         Number d2 = df.parse(str, new ParsePosition(0));
         logln(d1.toString());
         if (d2.doubleValue() != d1.doubleValue())
@@ -849,7 +849,7 @@ public class NumberRegressionTests extends TestFmwk {
         DecimalFormat fmt = new DecimalFormat("#,##0.00");
         StringBuffer formatted = new StringBuffer();
         FieldPosition field = new FieldPosition(0);
-        Double num = new Double(1234.5);
+        Double num = 1234.5;
         fmt.format(num, formatted, field);
         if (field.getBeginIndex() != 0 && field.getEndIndex() != 5)
             errln("Format 1234.5 failed. Begin index: " + field.getBeginIndex() + " End index: " + field.getEndIndex());
@@ -1388,13 +1388,13 @@ public class NumberRegressionTests extends TestFmwk {
         {
             ParsePosition ppos = new ParsePosition(0);
             Number result = df.parse("-0.0", ppos);
-            assertEquals("Should parse to double -0.0", new Double(-0.0), result);
+            assertEquals("Should parse to double -0.0", -0.0d, result);
         }
         df.setParseIntegerOnly(true);
         {
             ParsePosition ppos = new ParsePosition(0);
             Number result = df.parse("-0.0", ppos);
-            assertEquals("Should parse to an integer type, not a double", new Long(0), result);
+            assertEquals("Should parse to an integer type, not a double", 0L, result);
         }
     }
 
@@ -1672,10 +1672,10 @@ public class NumberRegressionTests extends TestFmwk {
     @Test
     public void Test4217661() {
         Object[] DATA = {
-            new Double(0.001), "0",
-            new Double(1.001), "1",
-            new Double(0.006), "0.01",
-            new Double(1.006), "1.01",
+            0.001d, "0",
+            1.001d, "1",
+            0.006d, "0.01",
+            1.006d, "1.01",
         };
         NumberFormat fmt = NumberFormat.getInstance(Locale.US);
         fmt.setMaximumFractionDigits(2);
@@ -1835,6 +1835,11 @@ public class NumberRegressionTests extends TestFmwk {
         }
         Locale.setDefault(savedLocale);
     }
+
+    @Test
+    public void test22983LongFraction() {
+        DecimalFormat format = new DecimalFormat("0.0000000000000001");
+    }
 }
 
 class myformat implements Serializable
@@ -1869,7 +1874,7 @@ class MyNumberFormat extends NumberFormat {
     }
     @Override
   public Number parse(String text, ParsePosition parsePosition) {
-        return new Integer(0);
+        return 0;
     }
     @Override
   public StringBuffer format(java.math.BigDecimal number, StringBuffer toAppendTo, FieldPosition pos) {

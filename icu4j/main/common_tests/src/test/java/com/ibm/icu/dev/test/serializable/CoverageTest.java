@@ -15,7 +15,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.serializable.SerializableTestUtility.Handler;
 
 import junitparams.JUnitParamsRunner;
@@ -27,12 +27,12 @@ import junitparams.Parameters;
  *
  */
 @RunWith(JUnitParamsRunner.class)
-public class CoverageTest extends TestFmwk {
+public class CoverageTest extends CoreTestFmwk {
 
     @Test
     @Parameters(method="generateClassList")
     public void testSerialization(String className) throws ClassNotFoundException, IOException {
-        Class c = Class.forName(className);
+        Class<?> c = Class.forName(className);
         int m = c.getModifiers();
 
         Handler classHandler = SerializableTestUtility.getHandler(className);

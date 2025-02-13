@@ -3,7 +3,6 @@
 package com.ibm.icu.impl.personname;
 
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.text.BreakIterator;
@@ -36,6 +35,12 @@ abstract class FieldModifierImpl {
                 return NOOP_MODIFIER;
             case MONOGRAM:
                 return MONOGRAM_MODIFIER;
+            case GENITIVE:
+                // no built-in implementation for deriving genitive from nominative; PersonName object must supply
+                return NOOP_MODIFIER;
+            case VOCATIVE:
+                // no built-in implementation for deriving vocative from nominative; PersonName object must supply
+                return NOOP_MODIFIER;
             default:
                 throw new IllegalArgumentException("Invalid modifier ID " + modifierID);
         }
@@ -142,7 +147,10 @@ abstract class FieldModifierImpl {
                     } else {
                         result = initialSequenceFormatter.format(result, initialFormatter.format(curInitial));
                     }
-                } else if (!Character.isWhitespace(word.charAt(0))) {
+                } else if (Character.isWhitespace(word.charAt(0))) {
+                    // coalesce a sequence of whitespace characters down to a single space
+                    separator = separator + word.charAt(0);
+                } else {
                     separator = separator + word;
                 }
             }

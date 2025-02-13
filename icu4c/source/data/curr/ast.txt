@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ast{
     Currencies{
         ADP{
@@ -895,8 +895,8 @@ ast{
             "SKK",
             "Corona eslovaca",
         }
-        SLL{
-            "SLL",
+        SLE{
+            "SLE",
             "leone sierralleonés",
         }
         SOS{
@@ -2113,7 +2113,7 @@ ast{
             one{"corona eslovaca"}
             other{"corones eslovaques"}
         }
-        SLL{
+        SLE{
             one{"leone sierralleonés"}
             other{"leones sierralleoneses"}
         }

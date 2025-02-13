@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 yue_Hans{
     %%Parent{"root"}
     units{
@@ -29,6 +29,12 @@ yue_Hans{
         }
         compound{
             per{"每 {1} {0}"}
+        }
+        concentr{
+            portion-per-1e9{
+                dnam{"十亿分点浓度"}
+                other{"{0} 十亿分点浓度"}
+            }
         }
         consumption{
             liter-per-100-kilometer{
@@ -60,6 +66,11 @@ yue_Hans{
             month{
                 per{"每月 {0}"}
             }
+            night{
+                dnam{"晚"}
+                other{"{0} 晚"}
+                per{"{0}/晚"}
+            }
             quarter{
                 per{"每季 {0}"}
             }
@@ -81,6 +92,9 @@ yue_Hans{
         energy{
             calorie{
                 other{"{0} 卡路里"}
+            }
+            foodcalorie{
+                dnam{"卡路里"}
             }
             joule{
                 other{"{0} 焦耳"}
@@ -175,6 +189,10 @@ yue_Hans{
                 dnam{"每小时公里"}
                 other{"每小时 {0} 公里"}
             }
+            light-speed{
+                dnam{"光速"}
+                other{"{0} 光速"}
+            }
             meter-per-second{
                 dnam{"每秒公尺"}
                 other{"每秒 {0} 米"}
@@ -229,6 +247,11 @@ yue_Hans{
                 other{"{0}m/s²"}
             }
         }
+        concentr{
+            portion-per-1e9{
+                other{"{0}ppb"}
+            }
+        }
         consumption{
             liter-per-100-kilometer{
                 dnam{"升/100公里"}
@@ -238,6 +261,13 @@ yue_Hans{
             byte{
                 dnam{"B"}
                 other{"{0}byte"}
+            }
+        }
+        duration{
+            night{
+                dnam{"晚"}
+                other{"{0}晚"}
+                per{"{0}/晚"}
             }
         }
         graphics{
@@ -283,6 +313,10 @@ yue_Hans{
         speed{
             kilometer-per-hour{
                 other{"{0}公里/小时"}
+            }
+            light-speed{
+                dnam{"光速"}
+                other{"{0}光速"}
             }
             meter-per-second{
                 other{"{0}m/s"}
@@ -393,7 +427,9 @@ yue_Hans{
             10p-2{"厘{0}"}
             10p-21{"仄{0}"}
             10p-24{"么{0}"}
+            10p-27{"ronto {0}"}
             10p-3{"毫{0}"}
+            10p-30{"quecto {0}"}
             10p-6{"微{0}"}
             10p-9{"纳{0}"}
             10p1{"十{0}"}
@@ -403,7 +439,9 @@ yue_Hans{
             10p2{"百{0}"}
             10p21{"泽{0}"}
             10p24{"尧{0}"}
+            10p27{"ronna {0}"}
             10p3{"千{0}"}
+            10p30{"quetta {0}"}
             10p6{"兆{0}"}
             10p9{"吉{0}"}
             power2{
@@ -449,6 +487,9 @@ yue_Hans{
             permyriad{
                 dnam{"点子"}
                 other{"{0} 点子"}
+            }
+            portion-per-1e9{
+                dnam{"浓度/十亿"}
             }
         }
         consumption{
@@ -517,6 +558,11 @@ yue_Hans{
                 dnam{"奈秒"}
                 other{"{0} 奈秒"}
             }
+            night{
+                dnam{"晚"}
+                other{"{0} 晚"}
+                per{"{0}/晚"}
+            }
             quarter{
                 dnam{"季"}
                 other{"{0} 季"}
@@ -568,6 +614,10 @@ yue_Hans{
             electronvolt{
                 dnam{"电子伏特"}
                 other{"{0} 电子伏特"}
+            }
+            foodcalorie{
+                dnam{"大卡"}
+                other{"{0} 大卡"}
             }
             joule{
                 dnam{"焦耳"}
@@ -623,6 +673,18 @@ yue_Hans{
             }
         }
         graphics{
+            dot{
+                dnam{"圆点"}
+                other{"{0} 个圆点"}
+            }
+            dot-per-centimeter{
+                dnam{"每厘米点数"}
+                other{"{0} 点/厘米"}
+            }
+            dot-per-inch{
+                dnam{"每吋点数"}
+                other{"{0} 点/吋"}
+            }
             megapixel{
                 dnam{"百万像素"}
                 other{"{0} 百万像素"}
@@ -881,6 +943,10 @@ yue_Hans{
             }
         }
         speed{
+            beaufort{
+                dnam{"蒲福氏风级"}
+                other{"蒲福氏风级 {0} 级"}
+            }
             kilometer-per-hour{
                 dnam{"公里/小时"}
                 other{"每小时{0}公里"}
@@ -888,6 +954,10 @@ yue_Hans{
             knot{
                 dnam{"节"}
                 other{"{0} 节"}
+            }
+            light-speed{
+                dnam{"光速"}
+                other{"{0} 光速"}
             }
             meter-per-second{
                 dnam{"公尺/秒"}

@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 it{
     Currencies{
         ADP{
@@ -816,6 +816,10 @@ it{
             "SKK",
             "corona slovacca",
         }
+        SLE{
+            "SLE",
+            "leone della Sierra Leone",
+        }
         SLL{
             "SLL",
             "leone della Sierra Leone (1964–2022)",
@@ -1612,6 +1616,10 @@ it{
             one{"sterlina di Sant’Elena"}
             other{"sterline di Sant’Elena"}
         }
+        SLE{
+            one{"leone della Sierra Leone"}
+            other{"leoni della Sierra Leone"}
+        }
         SLL{
             one{"leone della Sierra Leone (1964–2022)"}
             other{"leoni della Sierra Leone (1964–2022)"}
@@ -1752,9 +1760,5 @@ it{
             one{"kwacha zambiano"}
             other{"kwacha zambiani"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }
