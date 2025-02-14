@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 pt{
     Currencies{
         ADP{
@@ -895,9 +895,13 @@ pt{
             "SKK",
             "Coroa eslovaca",
         }
+        SLE{
+            "SLE",
+            "Leone de Serra Leoa",
+        }
         SLL{
             "SLL",
-            "Leone de Serra Leoa",
+            "Leone de Serra Leoa (1964—2022)",
         }
         SOS{
             "SOS",
@@ -2095,9 +2099,13 @@ pt{
             one{"Coroa eslovaca"}
             other{"Coroas eslovacas"}
         }
-        SLL{
+        SLE{
             one{"Leone de Serra Leoa"}
             other{"Leones de Serra Leoa"}
+        }
+        SLL{
+            one{"Leone de Serra Leoa (1964—2022)"}
+            other{"Leones de Serra Leoa (1964—2022)"}
         }
         SOS{
             one{"Xelim somali"}
@@ -2391,9 +2399,5 @@ pt{
             one{"Dólar do Zimbábue (2008)"}
             other{"Dólares do Zimbábue (2008)"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

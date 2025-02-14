@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.NumberFormat;
@@ -34,7 +34,7 @@ import com.ibm.icu.text.SimpleDateFormat;
  * verifies that it works on a basic level.
  */
 @RunWith(JUnit4.class)
-public class IntlTestDateFormatAPIC extends TestFmwk {
+public class IntlTestDateFormatAPIC extends CoreTestFmwk {
     /**
      * Test hiding of parse() and format() APIs in the Format hierarchy.
      * We test the entire hierarchy, even though this test is located in
@@ -47,7 +47,7 @@ public class IntlTestDateFormatAPIC extends TestFmwk {
         // compile-time name hiding.
 
         Date dateObj = new Date(0);
-        Number numObj = new Double(3.1415926535897932384626433832795);
+        Number numObj = 3.1415926535897932384626433832795;
         StringBuffer strBuffer = new StringBuffer("");
         String str;
         FieldPosition fpos = new FieldPosition(0);

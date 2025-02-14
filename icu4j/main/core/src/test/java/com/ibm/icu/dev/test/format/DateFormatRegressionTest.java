@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
@@ -46,7 +46,7 @@ import com.ibm.icu.util.ULocale;
  * Performs regression test for DateFormat
  **/
 @RunWith(JUnit4.class)
-public class DateFormatRegressionTest extends TestFmwk {
+public class DateFormatRegressionTest extends CoreTestFmwk {
     /**
      * @bug 4029195
      */
@@ -988,7 +988,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what + "=" + s);
             first = s.charAt(0);
             if(first<kHindiZero || first>(kHindiZero+9)) {
-                errln(what + "- wrong digit,  got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + "- wrong digit,  got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
 
@@ -999,7 +999,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what + ": " + s);
             first = s.charAt(0);
             if(first<kArabicZero || first>(kArabicZero+9)) {
-                errln(what + " wrong digit, got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + " wrong digit, got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
 
@@ -1010,7 +1010,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what + ": " + s);
             first = s.charAt(0);
             if(first<kArabicZero || first>(kArabicZero+9)) {
-                errln(what + " wrong  digit but got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + " wrong  digit but got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
         {
@@ -1020,7 +1020,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what + ": " + s);
             first = s.charAt(0);
             if(first<kLatinZero || first>(kLatinZero+9)) {
-                errln(what + " wrong  digit but got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + " wrong  digit but got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
 
@@ -1031,7 +1031,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what+ ": " + s);
             first = s.charAt(0);
             if(first<kArabicZero || first>(kArabicZero+9)) {
-                errln(what + " wrong  digit but got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + " wrong  digit but got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
 
@@ -1042,7 +1042,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what+ ": " + s);
             first = s.charAt(0);
             if(first<kArabicZero || first>(kArabicZero+9)) {
-                errln(what + " wrong  digit but got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + " wrong  digit but got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
 
@@ -1053,7 +1053,7 @@ public class DateFormatRegressionTest extends TestFmwk {
             logln(what+ ": " + s);
             first = s.charAt(0);
             if(first<kArabicZero || first>(kArabicZero+9)) {
-                errln(what + " wrong  digit but got " + s + " (integer digit value " + new Integer(first).toString());
+                errln(what + " wrong  digit but got " + s + " (integer digit value " + Integer.valueOf(first));
             }
         }
     }

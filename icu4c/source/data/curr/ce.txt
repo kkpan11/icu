@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ce{
     Currencies{
         AED{
@@ -499,9 +499,13 @@ ce{
             "SHP",
             "Сийлахьчу Еленин гӀайрен фунт",
         }
+        SLE{
+            "SLE",
+            "Леоне",
+        }
         SLL{
             "SLL",
-            "Леоне",
+            "Леоне (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1137,9 +1141,13 @@ ce{
             one{"Сийлахьчу Еленин гӀайрен фунт"}
             other{"Сийлахьчу Еленин гӀайрен фунташ"}
         }
-        SLL{
+        SLE{
             one{"леоне"}
             other{"леонеш"}
+        }
+        SLL{
+            one{"леоне (1964—2022)"}
+            other{"леонеш (1964—2022)"}
         }
         SOS{
             one{"Сомалин шиллинг"}

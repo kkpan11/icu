@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.RuleBasedBreakIterator;
@@ -35,7 +36,7 @@ import com.ibm.icu.util.ULocale;
  * API Test the RuleBasedBreakIterator class
  */
 @RunWith(JUnit4.class)
-public class RBBIAPITest extends TestFmwk {
+public class RBBIAPITest extends CoreTestFmwk {
     /**
      * Tests clone() and equals() methods of RuleBasedBreakIterator
      **/
@@ -483,5 +484,36 @@ public class RBBIAPITest extends TestFmwk {
         TestFmwk.assertNotEquals("Title instance break iterator not correctly instantiated", bi.first(), null);
         bi.setText("Here is some Text");
         TestFmwk.assertEquals("Title instance break iterator not correctly instantiated", bi.first(), 0);
+    }
+
+    @Test
+    public void TestBug22580() {
+        try {
+            RuleBasedBreakIterator bi = new RuleBasedBreakIterator("'");
+        } catch(IllegalArgumentException e) {
+            // nothing.
+        }
+        boolean quick = TestFmwk.getExhaustiveness() <= 5;
+        if (quick) {
+            return;
+        }
+        // Test any 1 or 2 ASCII chars as rule will not cause infinity loop.
+        // only in exhaust mode
+        for (char u1 = ' '; u1 < '~'; u1++) {
+            try {
+                char array[] = {u1};
+                RuleBasedBreakIterator bi = new RuleBasedBreakIterator(new String(array));
+            } catch(IllegalArgumentException e) {
+                // nothing.
+            }
+            for (char u2 = ' '; u2 < '~'; u2++) {
+                try {
+                    char array[] = {u1, u2};
+                    RuleBasedBreakIterator bi = new RuleBasedBreakIterator(new String(array));
+                } catch(IllegalArgumentException e) {
+                // nothing.
+                }
+            }
+        }
     }
 }

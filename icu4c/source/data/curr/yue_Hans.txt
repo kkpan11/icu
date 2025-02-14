@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 yue_Hans{
     %%Parent{"root"}
     Currencies{
@@ -896,9 +896,13 @@ yue_Hans{
             "SKK",
             "斯洛伐克克朗",
         }
+        SLE{
+            "SLE",
+            "狮子山利昂",
+        }
         SLL{
             "SLL",
-            "狮子山利昂",
+            "狮子山利昂 (1964—2022)",
         }
         SOS{
             "SOS",

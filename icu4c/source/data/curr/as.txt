@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 as{
     Currencies{
         AED{
@@ -503,9 +503,13 @@ as{
             "SHP",
             "ছেইণ্ট হেলেনা পাউণ্ড",
         }
+        SLE{
+            "SLE",
+            "চিয়েৰা লিঅ’নৰ লিঅ’ন",
+        }
         SLL{
             "SLL",
-            "চিয়েৰা লিঅ’নৰ লিঅ’ন",
+            "চিয়েৰা লিঅ’নৰ লিঅ’ন (1964—2022)",
         }
         SOS{
             "SOS",

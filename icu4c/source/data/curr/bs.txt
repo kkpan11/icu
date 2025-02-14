@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 bs{
     Currencies{
         ADP{
@@ -887,9 +887,13 @@ bs{
             "SKK",
             "Slovačka kruna",
         }
+        SLE{
+            "SLE",
+            "Sijeraleonski leone",
+        }
         SLL{
             "SLL",
-            "Sijeraleonski leone",
+            "Sijeraleonski leone (1964—2022)",
         }
         SOS{
             "SOS",
@@ -2297,10 +2301,15 @@ bs{
             one{"slovačka kuna"}
             other{"slovačkih kuna"}
         }
-        SLL{
+        SLE{
             few{"sijeraleonska leona"}
             one{"sijeraleonski leone"}
             other{"sijeraleonskih leona"}
+        }
+        SLL{
+            few{"sijeraleonska leona (1964—2022)"}
+            one{"sijeraleonski leone (1964—2022)"}
+            other{"sijeraleonskih leona (1964—2022)"}
         }
         SOS{
             few{"somalska šilinga"}
@@ -2677,10 +2686,5 @@ bs{
             one{"zimbabvejski dolaz (2008)"}
             other{"zimbabvejskih dolara (2008)"}
         }
-    }
-    CurrencyUnitPatterns{
-        few{"{0} {1}"}
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

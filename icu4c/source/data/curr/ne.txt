@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ne{
     Currencies{
         AED{
@@ -519,9 +519,13 @@ ne{
             "SHP",
             "सेन्ट हेलेना पाउन्ड",
         }
+        SLE{
+            "SLE",
+            "सियरा लियोनेन लियोन",
+        }
         SLL{
             "SLL",
-            "सियरा लियोनेन लियोन",
+            "सियरा लियोनेन लियोन (१९६४—२०२२)",
         }
         SOS{
             "SOS",
@@ -759,6 +763,10 @@ ne{
         SEK{
             one{"स्विडिश क्रोना"}
             other{"स्विडिश क्रोनर"}
+        }
+        SLL{
+            one{"सियरा लियोनेन लियोन (१९६४—२०२२)"}
+            other{"सियरा लियोनेन लियोन (१९६४—२०२२)"}
         }
         SZL{
             one{"स्वाजी लिलान्गेनी"}

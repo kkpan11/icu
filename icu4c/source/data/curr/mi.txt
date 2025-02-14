@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 mi{
     Currencies{
         AED{
@@ -499,9 +499,13 @@ mi{
             "SHP",
             "Pāuna Hato Herena",
         }
+        SLE{
+            "SLE",
+            "Leone Araone",
+        }
         SLL{
             "SLL",
-            "Leone Araone",
+            "Leone Araon (1964—2022)e",
         }
         SOS{
             "SOS",
@@ -993,8 +997,11 @@ mi{
         SHP{
             other{"pāuna Hato Herena"}
         }
-        SLL{
+        SLE{
             other{"leone Araone"}
+        }
+        SLL{
+            other{"leone Araone (1964—2022)"}
         }
         SOS{
             other{"hereni Hūmārie"}
@@ -1036,7 +1043,7 @@ mi{
             other{"tāra Tirinaki Tōpako"}
         }
         TWD{
-            other{"tāra Taiwana hou"}
+            other{"tāra Taiwana Hou"}
         }
         TZS{
             other{"hereni Tānahia"}
@@ -1089,8 +1096,5 @@ mi{
         ZMW{
             other{"kwacha Tāmipia"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }

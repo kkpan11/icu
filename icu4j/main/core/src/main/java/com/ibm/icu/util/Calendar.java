@@ -12,11 +12,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.StringCharacterIterator;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
-import java.util.List;
 import java.util.MissingResourceException;
 
 import com.ibm.icu.impl.CalType;
@@ -977,7 +976,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * is associated with ORDINAL_MONTH value 6 because 4665 is a leap year
      * and there is an extra "Leap Month 5" which associated with ORDINAL_MONTH
      * value 5 before "Month 6" of year 4664.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public static final int ORDINAL_MONTH = 23;
 
@@ -1357,9 +1356,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     /**
      * Pseudo-time-stamps which specify when each field was set. There
      * are two special values, UNSET and INTERNALLY_SET. Values from
-     * MINIMUM_USER_SET to Integer.MAX_VALUE are legal user set values.
+     * MINIMUM_USER_SET to STAMP_MAX are legal user set values.
      */
-    private transient int           stamp[];
+    private transient byte           stamp[];
 
     /**
      * The currently set time for this calendar, expressed in milliseconds after
@@ -1509,10 +1508,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * The next available value for <code>stamp[]</code>, an internal array.
      * @serial
      */
-    private transient int             nextStamp = MINIMUM_USER_STAMP;
+    private transient byte             nextStamp = MINIMUM_USER_STAMP;
 
     /* Max value for stamp allowable before recalculation */
-    private static int STAMP_MAX = 10000;
+    private static byte STAMP_MAX = Byte.MAX_VALUE;
 
     // the internal serial version which says which version was written
     // - 0 (default) for version up to JDK 1.1.5
@@ -1686,7 +1685,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
 
     private void recalculateStamp() {
         int index;
-        int currentValue;
+        byte currentValue;
         int j, i;
 
         nextStamp = 1;
@@ -1723,7 +1722,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
             throw new IllegalStateException("Invalid fields[]");
         }
         ///CLOVER:ON
-        stamp = new int[fields.length];
+        stamp = new byte[fields.length];
         int mask = (1 << ERA) |
                 (1 << YEAR) |
                 (1 << MONTH) |
@@ -1858,10 +1857,13 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         case ISO8601:
             // Only differs week numbering rule from Gregorian
             cal = new GregorianCalendar(zone, locale);
-            String type = locale.getUnicodeLocaleType("fw");
-            // Only set fw to Monday for ISO8601 if there aer no fw keyword.
-            // If there is a fw keyword, the Calendar constructor already set it to the fw value.
-            if (locale.getKeywordValue("fw") == null) {
+            // Based on UTS35 "First Day Overrides"
+            // https://unicode.org/reports/tr35/tr35-dates.html#first-day-overrides
+            // Only set fw to Monday for ISO8601 if there are no fw nor rg keywords.
+            // If there is a fw or rg keywords, the Calendar constructor already set it
+            // to the fw value or based on the rg value.
+            if (locale.getUnicodeLocaleType("fw") == null &&
+                locale.getUnicodeLocaleType("rg") == null) {
                 cal.setFirstDayOfWeek(MONDAY);
             }
             cal.setMinimalDaysInFirstWeek(4);
@@ -2053,9 +2055,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         areFieldsSet = areAllFieldsSet = false;
         isTimeSet = areFieldsVirtuallySet = true;
 
-        for (int i=0; i<fields.length; ++i) {
-            fields[i] = stamp[i] = 0; // UNSET == 0
-        }
+        Arrays.fill(fields, 0);
+        Arrays.fill(stamp, (byte)0);
+        nextStamp = MINIMUM_USER_STAMP;
 
     }
 
@@ -2073,7 +2075,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * proposal.
      * @return true if the date in the fields is in a Temporal proposal
      *               defined leap year. False otherwise.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public boolean inTemporalLeapYear() {
         // Default to Gregorian based leap year rule.
@@ -2099,7 +2101,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * years are "M01" to "M13".
      *
      * @return       One of 25 possible strings in {"M01".."M13", "M01L".."M12L"}.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public String getTemporalMonthCode() {
         int month = get(MONTH);
@@ -2123,7 +2125,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * years are "M01" to "M13".
      * @param temporalMonth One of 25 possible strings in {"M01".. "M12", "M13", "M01L",
      *  "M12L"}.
-     * @draft ICU 74
+     * @stable ICU 74
      */
     public void setTemporalMonthCode( String temporalMonth ) {
         if (temporalMonth.length() == 3 && temporalMonth.charAt(0) == 'M') {
@@ -2180,15 +2182,16 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         return (stamp[field] > UNSET) ? fields[field] : defaultValue;
     }
 
-    /*
-     * @internal
-     * @deprecated This API is ICU internal only.
+    /**
      * Use this function instead of internalGet(MONTH). The implementation
      * check the timestamp of MONTH and ORDINAL_MONTH and use the
      * one set later. The subclass should override it to conver the value of ORDINAL_MONTH
      * to MONTH correctly if ORDINAL_MONTH has higher priority.
      * @return the value for the given time field.
+     * @internal
+     * @deprecated This API is ICU internal only.
      */
+    @Deprecated
     protected int internalGetMonth()
     {
         if (resolveFields(MONTH_PRECEDENCE) == MONTH) {
@@ -2198,8 +2201,6 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     }
 
     /**
-     * @internal
-     * @deprecated This API is ICU internal only.
      * Use this function instead of internalGet(MONTH, defaultValue). The implementation
      * check the timestamp of MONTH and ORDINAL_MONTH and use the
      * one set later. The subclass should override it to conver the value of ORDINAL_MONTH
@@ -2207,7 +2208,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * @param defaultValue a default value used if the MONTH and
      *   ORDINAL_MONTH are both unset.
      * @return the value for the MONTH.
+     * @internal
+     * @deprecated This API is ICU internal only.
      */
+    @Deprecated
     protected int internalGetMonth(int defaultValue) {
         if (resolveFields(MONTH_PRECEDENCE) == MONTH) {
             return internalGet(MONTH, defaultValue);
@@ -2452,9 +2456,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      */
     public final void clear()
     {
-        for (int i=0; i<fields.length; ++i) {
-            fields[i] = stamp[i] = 0; // UNSET == 0
-        }
+        Arrays.fill(fields, 0);
+        Arrays.fill(stamp, (byte)0);
+        nextStamp = MINIMUM_USER_STAMP;
         isTimeSet = areFieldsSet = areAllFieldsSet = areFieldsVirtuallySet = false;
     }
 
@@ -3069,14 +3073,9 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
             // * Until we have new API per #9393, we temporarily hardcode knowledge of
             //   which calendars have era 0 years that go backwards.
         {
-            boolean era0WithYearsThatGoBackwards = false;
             int era = get(ERA);
-            if (era == 0) {
-                String calType = getType();
-                if (calType.equals("gregorian") || calType.equals("roc") || calType.equals("coptic")) {
-                    amount = -amount;
-                    era0WithYearsThatGoBackwards = true;
-                }
+            if (era == 0 && isEra0CountingBackward()) {
+                amount = -amount;
             }
             int newYear = internalGet(field) + amount;
             if (era > 0 || newYear >= 1) {
@@ -3095,7 +3094,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
                 // else we are in era 0 with newYear < 1;
                 // calendars with years that go backwards must pin the year value at 0,
                 // other calendars can have years < 0 in era 0
-            } else if (era0WithYearsThatGoBackwards) {
+            } else if (era == 0 && isEra0CountingBackward()) {
                 newYear = 1;
             }
             set(field, newYear);
@@ -3412,11 +3411,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
             //   also handle YEAR the same way.
         {
             int era = get(ERA);
-            if (era == 0) {
-                String calType = getType();
-                if (calType.equals("gregorian") || calType.equals("roc") || calType.equals("coptic")) {
-                    amount = -amount;
-                }
+            if (era == 0 && isEra0CountingBackward()) {
+                amount = -amount;
             }
         }
         // Fall through into standard handling
@@ -4096,6 +4092,17 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
     }
 
     /**
+     * The year in this calendar is counting from 1 backward if the era is 0.
+     * @return The year in era 0 of this calendar is counting backward from 1.
+     * @internal
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    protected boolean isEra0CountingBackward() {
+        return false;
+    }
+
+    /**
      * Returns the week number of a day, within a period. This may be the week number in
      * a year or the week number in a month. Usually this will be a value &gt;= 1, but if
      * some initial days of the period are excluded from week 1, because
@@ -4582,7 +4589,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         {           0,            0,            59,            59  }, // MINUTE
         {           0,            0,            59,            59  }, // SECOND
         {           0,            0,           999,           999  }, // MILLISECOND
-        {-16*ONE_HOUR, -16*ONE_HOUR,   12*ONE_HOUR,   30*ONE_HOUR  }, // ZONE_OFFSET
+        {-24*ONE_HOUR, -16*ONE_HOUR,   12*ONE_HOUR,   30*ONE_HOUR  }, // ZONE_OFFSET
         {           0,            0,    2*ONE_HOUR,    2*ONE_HOUR  }, // DST_OFFSET
         {/*                                                      */}, // YEAR_WOY
         {           1,            1,             7,             7  }, // DOW_LOCAL
@@ -4898,7 +4905,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
             Calendar other = (Calendar) super.clone();
 
             other.fields = new int[fields.length];
-            other.stamp = new int[fields.length];
+            other.stamp = new byte[fields.length];
             System.arraycopy(this.fields, 0, other.fields, 0, fields.length);
             System.arraycopy(this.stamp, 0, other.stamp, 0, fields.length);
 
@@ -5859,12 +5866,12 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         }
 
         if (mid == lower) {
-            return Long.valueOf(upper);
+            return upper;
         }
         midOffset = tz.getOffset(mid);
         if (midOffset != upperOffset) {
             if (onUnitTime) {
-                return Long.valueOf(upper);
+                return upper;
             }
             return findPreviousZoneTransitionTime(tz, upperOffset, upper, mid);
         }
@@ -6150,6 +6157,7 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * @stable ICU 2.0
      */
     protected int handleGetMonthLength(int extendedYear, int month) {
+      System.out.printf("handleGetMonthLength(ey=%d, m=%d)",  extendedYear, month);
         return handleComputeMonthStart(extendedYear, month+1, true) -
                 handleComputeMonthStart(extendedYear, month, true);
     }
@@ -6232,6 +6240,10 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         }
 
         internalSet(EXTENDED_YEAR, year);
+
+        if (year > Long.MAX_VALUE / 400) {
+            throw new IllegalArgumentException("year is too large");
+        }
 
         int month = useMonth ? internalGetMonth(getDefaultMonthInYear(year)) : 0;
 

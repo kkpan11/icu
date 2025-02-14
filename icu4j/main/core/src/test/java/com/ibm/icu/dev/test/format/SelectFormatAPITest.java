@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.SelectFormat;
 
 /**
@@ -24,7 +24,7 @@ import com.ibm.icu.text.SelectFormat;
  * This class tests the API functionality of the SelectFormat
  */
 @RunWith(JUnit4.class)
-public class SelectFormatAPITest extends TestFmwk {
+public class SelectFormatAPITest extends CoreTestFmwk {
 
     static final String SIMPLE_PATTERN1 = "feminine {feminineVerbValue1} other{otherVerbValue1}";
     static final String SIMPLE_PATTERN2 = "feminine {feminineVerbValue2} other{otherVerbValue2}";
@@ -151,7 +151,7 @@ public class SelectFormatAPITest extends TestFmwk {
         boolean threwException = false;
         try {
             StringBuffer buf = new StringBuffer("AppendHere-");
-            selFmt1.format(Integer.valueOf(0), buf, new FieldPosition(0));
+            selFmt1.format(0, buf, new FieldPosition(0));
         } catch (IllegalArgumentException e) {
             threwException = true;
         }

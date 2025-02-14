@@ -15,12 +15,12 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.ModuleTest;
 import com.ibm.icu.dev.test.ModuleTest.TestDataPair;
 import com.ibm.icu.dev.test.TestDataModule;
 import com.ibm.icu.dev.test.TestDataModule.DataMap;
 import com.ibm.icu.dev.test.TestDataModule.TestData;
-import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.dev.test.util.CalendarFieldsSet;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -39,7 +39,7 @@ import junitparams.Parameters;
  *
  */
 @RunWith(JUnitParamsRunner.class)
-public class DataDrivenCalendarTest extends TestFmwk {
+public class DataDrivenCalendarTest extends CoreTestFmwk {
 
     public DataDrivenCalendarTest() {
         //super("com/ibm/icu/dev/data/testdata/", "calendar");
@@ -135,9 +135,9 @@ public class DataDrivenCalendarTest extends TestFmwk {
 //        DateFormat fmt = new SimpleDateFormat("EEE MMM dd yyyy / YYYY'-W'ww-ee");
         // Start the processing
         int n = 0;
-        for (Iterator iter = testData.getDataIterator(); iter.hasNext();) {
+        for (Iterator<DataMap> iter = testData.getDataIterator(); iter.hasNext();) {
             ++n;
-            DataMap currentCase = (DataMap) iter.next();
+            DataMap currentCase = iter.next();
 
             String caseString = "["+testData.getName()+"#"+n+" "+"]";
             String locale = testSetting = currentCase.getString("locale");
@@ -180,7 +180,7 @@ public class DataDrivenCalendarTest extends TestFmwk {
 
         boolean useDate = false;
 
-        for (Iterator iter = testData.getDataIterator(); iter.hasNext();) {
+        for (Iterator<DataMap> iter = testData.getDataIterator(); iter.hasNext();) {
             ++n;
             DataMap currentCase = (DataMap) iter.next();
 

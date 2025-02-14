@@ -11,6 +11,7 @@ package com.ibm.icu.text;
 import java.text.ParsePosition;
 
 import com.ibm.icu.impl.number.DecimalQuantity_DualStorageBCD;
+import com.ibm.icu.math.BigDecimal;
 
 //===================================================================
 // NFSubstitution (abstract base class)
@@ -305,16 +306,10 @@ abstract class NFSubstitution {
             ruleSet.format(numberToFormat, toInsertInto, position + pos, recursionCount);
         } else {
             if (number <= MAX_INT64_IN_DOUBLE) {
-                // or perform the transformation on the number (preserving
-                // the result's fractional part if the formatter it set
-                // to show it), then use that formatter's format() method
+                // or perform the transformation on the number,
+                // then use that formatter's format() method
                 // to format the result
-                double numberToFormat = transformNumber((double) number);
-                if (numberFormat.getMaximumFractionDigits() == 0) {
-                    numberToFormat = Math.floor(numberToFormat);
-                }
-
-                toInsertInto.insert(position + pos, numberFormat.format(numberToFormat));
+                toInsertInto.insert(position + pos, numberFormat.format(transformNumber((double) number)));
             }
             else {
                 // We have gone beyond double precision. Something has to give.
@@ -421,11 +416,11 @@ abstract class NFSubstitution {
      * @return If there's a match, this is the result of composing
      * baseValue with whatever was returned from matching the
      * characters.  This will be either a Long or a Double.  If there's
-     * no match this is new Long(0) (not null), and parsePosition
+     * no match this is Long.valueOf(0) (not null), and parsePosition
      * is left unchanged.
      */
     public Number doParse(String text, ParsePosition parsePosition, double baseValue,
-                          double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask) {
+                          double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask, int recursionCount) {
         Number tempResult;
 
         // figure out the highest base value a rule can have and match
@@ -443,7 +438,7 @@ abstract class NFSubstitution {
         // on), then also try parsing the text using a default-
         // constructed NumberFormat
         if (ruleSet != null) {
-            tempResult = ruleSet.parse(text, parsePosition, upperBound, nonNumericalExecutedRuleMask);
+            tempResult = ruleSet.parse(text, parsePosition, upperBound, nonNumericalExecutedRuleMask, recursionCount);
             if (lenientParse && !ruleSet.isFractionSet() && parsePosition.getIndex() == 0) {
                 tempResult = ruleSet.owner.getDecimalFormat().parse(text, parsePosition);
             }
@@ -484,9 +479,9 @@ abstract class NFSubstitution {
             // the result.
             result = composeRuleValue(result, baseValue);
             if (result == (long)result) {
-                return Long.valueOf((long)result);
+                return (long) result;
             } else {
-                return new Double(result);
+                return result;
             }
 
             // if the parse was UNsuccessful, return 0
@@ -666,6 +661,12 @@ class MultiplierSubstitution extends NFSubstitution {
      */
     long divisor;
 
+    /**
+     * A backpointer to the owning rule.  Used in the rounding logic to determine
+     * whether the owning rule also has a modulus substitution.
+     */
+    NFRule owningRule;
+
     //-----------------------------------------------------------------------
     // construction
     //-----------------------------------------------------------------------
@@ -689,6 +690,7 @@ class MultiplierSubstitution extends NFSubstitution {
         // substitution.  Rather than keeping a back-pointer to the
         // rule, we keep a copy of the divisor
         this.divisor = rule.getDivisor();
+        this.owningRule = rule;
 
         if (divisor == 0) { // this will cause recursion
             throw new IllegalStateException("Substitution with divisor 0 " + description.substring(0, pos) +
@@ -749,10 +751,25 @@ class MultiplierSubstitution extends NFSubstitution {
      */
     @Override
   public double transformNumber(double number) {
-        if (ruleSet == null) {
-            return number / divisor;
-        } else {
+        // Most of the time, when a number is handled by an NFSubstitution, we do a floor() on it, but
+        // if a substitution uses a DecimalFormat to format the number instead of a ruleset, we generally
+        // don't want to do a floor()-- we want to keep the value intact so that the DecimalFormat can
+        // either include the fractional part or round properly.  The big exception to this is here in
+        // MultiplierSubstitution.  If the rule includes two substitutions, the MultiplierSubstitution
+        // (which is handling the larger part of the number) really _does_ want to do a floor(), because
+        // the ModulusSubstitution (which is handling the smaller part of the number) will take
+        // care of the fractional part.  (Consider something like `1/12: <0< feet >0.0> inches;`.)
+        // But if there is no ModulusSubstitution, we're shortening the number in some way-- the "larger part"
+        // of the number is the only part we're keeping.  Even if the DecimalFormat doesn't include the
+        // fractional part in its output, we still want it to round.  (Consider something like `1/1000: <0<K;`.)
+        // (TODO: The ROUND_FLOOR thing is a kludge to preserve the previous floor-always behavior.  What we
+        // probably really want to do is just set the rounding mode on the DecimalFormat to match the rounding
+        // mode on the RuleBasedNumberFormat and then pass the number to it whole and let it do its own rounding.
+        // But before making that change, we'd have to make sure it didn't have undesirable side effects.)
+        if (ruleSet != null || owningRule.hasModulusSubstitution() || owningRule.formatter.getRoundingMode() == BigDecimal.ROUND_FLOOR) {
             return Math.floor(number / divisor);
+        } else {
+            return number / divisor;
         }
     }
 
@@ -977,7 +994,7 @@ class ModulusSubstitution extends NFSubstitution {
      */
     @Override
   public double transformNumber(double number) {
-        return Math.floor(number % divisor);
+        return number % divisor;
     }
 
     //-----------------------------------------------------------------------
@@ -995,26 +1012,26 @@ class ModulusSubstitution extends NFSubstitution {
      */
     @Override
   public Number doParse(String text, ParsePosition parsePosition, double baseValue,
-                        double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask) {
+                        double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask, int recursionCount) {
         // if this isn't a >>> substitution, we can just use the
         // inherited parse() routine to do the parsing
         if (ruleToUse == null) {
-            return super.doParse(text, parsePosition, baseValue, upperBound, lenientParse, nonNumericalExecutedRuleMask);
+            return super.doParse(text, parsePosition, baseValue, upperBound, lenientParse, nonNumericalExecutedRuleMask, recursionCount);
 
         } else {
             // but if it IS a >>> substitution, we have to do it here: we
             // use the specific rule's doParse() method, and then we have to
             // do some of the other work of NFRuleSet.parse()
-            Number tempResult = ruleToUse.doParse(text, parsePosition, false, upperBound, nonNumericalExecutedRuleMask);
+            Number tempResult = ruleToUse.doParse(text, parsePosition, false, upperBound, nonNumericalExecutedRuleMask, recursionCount);
 
             if (parsePosition.getIndex() != 0) {
                 double result = tempResult.doubleValue();
 
                 result = composeRuleValue(result, baseValue);
                 if (result == (long)result) {
-                    return Long.valueOf((long)result);
+                    return (long) result;
                 } else {
-                    return new Double(result);
+                    return result;
                 }
             } else {
                 return tempResult;
@@ -1295,16 +1312,16 @@ class FractionalPartSubstitution extends NFSubstitution {
      * @param lenientParse If true, try matching the text as numerals if
      * matching as words doesn't work
      * @return If the match was successful, the current partial parse
-     * result; otherwise new Long(0).  The result is either a Long or
+     * result; otherwise Long.valueOf(0).  The result is either a Long or
      * a Double.
      */
     @Override
   public Number doParse(String text, ParsePosition parsePosition, double baseValue,
-                        double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask) {
+                        double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask, int recursionCount) {
         // if we're not in byDigits mode, we can just use the inherited
         // doParse()
         if (!byDigits) {
-            return super.doParse(text, parsePosition, baseValue, 0, lenientParse, nonNumericalExecutedRuleMask);
+            return super.doParse(text, parsePosition, baseValue, 0, lenientParse, nonNumericalExecutedRuleMask, recursionCount);
         }
         else {
             // if we ARE in byDigits mode, parse the text one digit at a time
@@ -1320,7 +1337,7 @@ class FractionalPartSubstitution extends NFSubstitution {
             int totalDigits = 0;
             while (workText.length() > 0 && workPos.getIndex() != 0) {
                 workPos.setIndex(0);
-                digit = ruleSet.parse(workText, workPos, 10, nonNumericalExecutedRuleMask).intValue();
+                digit = ruleSet.parse(workText, workPos, 10, nonNumericalExecutedRuleMask, recursionCount).intValue();
                 if (lenientParse && workPos.getIndex() == 0) {
                     Number n = ruleSet.owner.getDecimalFormat().parse(workText, workPos);
                     if (n != null) {
@@ -1344,7 +1361,7 @@ class FractionalPartSubstitution extends NFSubstitution {
             result = fq.toDouble();
 
             result = composeRuleValue(result, baseValue);
-            return new Double(result);
+            return result;
         }
     }
 
@@ -1623,7 +1640,7 @@ class NumeratorSubstitution extends NFSubstitution {
      */
     @Override
   public Number doParse(String text, ParsePosition parsePosition, double baseValue,
-                        double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask) {
+                        double upperBound, boolean lenientParse, int nonNumericalExecutedRuleMask, int recursionCount) {
         // we don't have to do anything special to do the parsing here,
         // but we have to turn lenient parsing off-- if we leave it on,
         // it SERIOUSLY messes up the algorithm
@@ -1638,7 +1655,7 @@ class NumeratorSubstitution extends NFSubstitution {
 
             while (workText.length() > 0 && workPos.getIndex() != 0) {
                 workPos.setIndex(0);
-                /*digit = */ruleSet.parse(workText, workPos, 1, nonNumericalExecutedRuleMask).intValue(); // parse zero or nothing at all
+                /*digit = */ruleSet.parse(workText, workPos, 1, nonNumericalExecutedRuleMask, recursionCount).intValue(); // parse zero or nothing at all
                 if (workPos.getIndex() == 0) {
                     // we failed, either there were no more zeros, or the number was formatted with digits
                     // either way, we're done
@@ -1659,7 +1676,7 @@ class NumeratorSubstitution extends NFSubstitution {
         }
 
         // we've parsed off the zeros, now let's parse the rest from our current position
-        Number result =  super.doParse(text, parsePosition, withZeros ? 1 : baseValue, upperBound, false, nonNumericalExecutedRuleMask);
+        Number result =  super.doParse(text, parsePosition, withZeros ? 1 : baseValue, upperBound, false, nonNumericalExecutedRuleMask, recursionCount);
 
         if (withZeros) {
             // any base value will do in this case.  is there a way to
@@ -1677,7 +1694,7 @@ class NumeratorSubstitution extends NFSubstitution {
                 --zeroCount;
             }
             // d is now our true denominator
-            result = new Double(n/(double)d);
+            result = (double)n/(double)d;
         }
 
         return result;

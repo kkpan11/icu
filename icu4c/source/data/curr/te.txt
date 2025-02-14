@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 te{
     Currencies{
         AED{
@@ -515,9 +515,13 @@ te{
             "SHP",
             "సెయింట్ హెలెనా పౌండ్",
         }
+        SLE{
+            "SLE",
+            "సియెరా లియోనియన్ లియోన్",
+        }
         SLL{
             "SLL",
-            "సీయిరు లియోనియన్ లీయోన్",
+            "సీయిరు లియోనియన్ లీయోన్ (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1145,9 +1149,13 @@ te{
             one{"సెయింట్ హెలెనా పౌండ్"}
             other{"సెయింట్ హెలెనా పౌండ్‌లు"}
         }
+        SLE{
+            one{"సియెరా లియోనియన్ లియోన్"}
+            other{"సియెరా లియోనియన్ లియోన్స్"}
+        }
         SLL{
-            one{"సీయిరు లియోనియన్ లీయోన్"}
-            other{"సీయిరు లియోనియన్ లీయోన్‌లు"}
+            one{"సీయిరు లియోనియన్ లీయోన్ (1964—2022)"}
+            other{"సీయిరు లియోనియన్ లీయోన్‌లు (1964—2022)"}
         }
         SOS{
             one{"సొమాలి షిల్లింగ్"}
@@ -1253,9 +1261,5 @@ te{
             one{"జాంబియన్ క్వాచా"}
             other{"జాంబియన్ క్వాచాలు"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

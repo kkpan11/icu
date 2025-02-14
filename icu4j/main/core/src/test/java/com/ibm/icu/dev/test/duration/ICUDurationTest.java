@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.DurationFormat;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
@@ -33,7 +33,7 @@ import com.ibm.icu.util.ULocale;
  *
  */
 @RunWith(JUnit4.class)
-public class ICUDurationTest extends TestFmwk {
+public class ICUDurationTest extends CoreTestFmwk {
     /**
      * Allows us to not depend on javax.xml.datatype.DatatypeFactory.
      * We need just a tiny subset of the Duration API:
@@ -205,7 +205,7 @@ public class ICUDurationTest extends TestFmwk {
             logln("format date from -> " + formatted);
         }
 
-        formatted = df.format(new Long(1000*3600*24*2));
+        formatted = df.format(1000L*3600*24*2);
         expect = "fra due giorni";
         if(!expect.equals(formatted)) {
             errln("Expected " + expect + " but got " + formatted);

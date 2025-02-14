@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 fr{
     Currencies{
         ADP{
@@ -831,9 +831,13 @@ fr{
             "SKK",
             "couronne slovaque",
         }
+        SLE{
+            "SLE",
+            "leone sierra-léonais",
+        }
         SLL{
             "SLL",
-            "leone sierra-léonais",
+            "leone sierra-léonais (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1026,6 +1030,10 @@ fr{
         XCD{
             "XCD",
             "dollar des Caraïbes orientales",
+        }
+        XCG{
+            "Cg.",
+            "florin caribéen",
         }
         XDR{
             "XDR",
@@ -1972,9 +1980,13 @@ fr{
             one{"couronne slovaque"}
             other{"couronnes slovaques"}
         }
-        SLL{
+        SLE{
             one{"leone sierra-léonais"}
             other{"leones sierra-léonais"}
+        }
+        SLL{
+            one{"leone sierra-léonais (1964—2022)"}
+            other{"leones sierra-léonais (1964—2022)"}
         }
         SOS{
             one{"shilling somalien"}
@@ -2164,6 +2176,10 @@ fr{
             one{"dollar des Caraïbes orientales"}
             other{"dollars des Caraïbes orientales"}
         }
+        XCG{
+            one{"florin caribéen"}
+            other{"florins caribéens"}
+        }
         XDR{
             one{"droit de tirage spécial"}
             other{"droits de tirage spéciaux"}
@@ -2260,9 +2276,5 @@ fr{
             one{"dollar zimbabwéen (2008)"}
             other{"dollars zimbabwéens (2008)"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

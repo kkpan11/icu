@@ -9,10 +9,10 @@
 #include "unicode/stringpiece.h"
 #include "unicode/umachine.h"
 #include "unicode/ulocbuilder.h"
+#include "bytesinkutil.h"
 #include "cstring.h"
 #include "ustr_imp.h"
 
-using icu::CheckedArrayByteSink;
 using icu::StringPiece;
 
 #define EXTERNAL(i) (reinterpret_cast<ULocaleBuilder*>(i))
@@ -46,6 +46,13 @@ void ulocbld_setLocale(ULocaleBuilder* builder, const char* locale, int32_t leng
         }
     }
     INTERNAL(builder)->setLocale(l);
+}
+
+void
+ulocbld_adoptULocale(ULocaleBuilder* builder, ULocale* locale) {
+    if (builder == nullptr) return;
+    INTERNAL(builder)->setLocale(*(reinterpret_cast<const icu::Locale*>(locale)));
+    ulocale_close(locale);
 }
 
 #define STRING_PIECE(s, l) ((l)<0 ? StringPiece(s) : StringPiece((s), (l)))
@@ -87,15 +94,32 @@ void ulocbld_clearExtensions(ULocaleBuilder* builder) {
     INTERNAL(builder)->clearExtensions();
 }
 
+
+ULocale* ulocbld_buildULocale(ULocaleBuilder* builder, UErrorCode* err) {
+    if (builder == nullptr) {
+        *err = U_ILLEGAL_ARGUMENT_ERROR;
+        return nullptr;
+    }
+    icu::Locale l = INTERNAL(builder)->build(*err);
+    if (U_FAILURE(*err)) return nullptr;
+    icu::Locale* r = l.clone();
+    if (r == nullptr) {
+        *err = U_MEMORY_ALLOCATION_ERROR;
+        return nullptr;
+    }
+    return reinterpret_cast<ULocale*>(r);
+}
+
 int32_t ulocbld_buildLocaleID(ULocaleBuilder* builder,
                               char* buffer, int32_t bufferCapacity, UErrorCode* err) {
+    if (U_FAILURE(*err)) { return 0; }
     if (builder == nullptr) {
         *err = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
     }
     icu::Locale l = INTERNAL(builder)->build(*err);
-    if (U_FAILURE(*err)) return 0;
-    int32_t length = (int32_t)(uprv_strlen(l.getName()));
+    if (U_FAILURE(*err)) { return 0; }
+    int32_t length = static_cast<int32_t>(uprv_strlen(l.getName()));
     if (0 < length && length <= bufferCapacity) {
         uprv_memcpy(buffer, l.getName(), length);
     }
@@ -104,24 +128,18 @@ int32_t ulocbld_buildLocaleID(ULocaleBuilder* builder,
 
 int32_t ulocbld_buildLanguageTag(ULocaleBuilder* builder,
                   char* buffer, int32_t bufferCapacity, UErrorCode* err) {
+    if (U_FAILURE(*err)) { return 0; }
     if (builder == nullptr) {
         *err = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
     }
     icu::Locale l = INTERNAL(builder)->build(*err);
-    if (U_FAILURE(*err)) return 0;
-    CheckedArrayByteSink sink(buffer, bufferCapacity);
-    l.toLanguageTag(sink, *err);
-    int32_t reslen = sink.NumberOfBytesAppended();
-    if (U_FAILURE(*err)) {
-        return reslen;
-    }
-    if (sink.Overflowed()) {
-        *err = U_BUFFER_OVERFLOW_ERROR;
-    } else {
-        u_terminateChars(buffer, bufferCapacity, reslen, err);
-    }
-    return reslen;
+    return icu::ByteSinkUtil::viaByteSinkToTerminatedChars(
+        buffer, bufferCapacity,
+        [&](icu::ByteSink& sink, UErrorCode& status) {
+            l.toLanguageTag(sink, status);
+        },
+        *err);
 }
 
 UBool ulocbld_copyErrorTo(const ULocaleBuilder* builder, UErrorCode *outErrorCode) {

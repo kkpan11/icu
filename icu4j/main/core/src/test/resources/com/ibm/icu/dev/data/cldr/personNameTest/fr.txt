@@ -1,9 +1,8 @@
-# Test data for unit conversions
-#  Copyright © 1991-2023 Unicode, Inc.
+# Test data for Person Name Data
+#  Copyright © 1991-2025 Unicode, Inc.
 #  For terms of use, see http://www.unicode.org/copyright.html
-#  SPDX-License-Identifier: Unicode-DFS-2016
+#  SPDX-License-Identifier: Unicode-3.0
 #  CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
-#
 # CLDR person name formatting test data for: fr
 #
 # Test lines have the following structure:
@@ -247,15 +246,15 @@ expectedResult; Marie-Agnès Gilot
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; Gilot, M. A. S.
+expectedResult; Gilot, M.-A. S.
 
 parameters; sorting; short; referring; formal
 
-expectedResult; Gilot M. A. S.
+expectedResult; Gilot M.-A. S.
 
 parameters; surnameFirst; short; referring; formal
 
-expectedResult; M. A. S. Gilot
+expectedResult; M.-A. S. Gilot
 
 parameters; givenFirst; short; referring; formal
 
@@ -263,7 +262,7 @@ expectedResult; Marie-Agnès G.
 
 parameters; givenFirst; short; referring; informal
 
-expectedResult; Gilot M. A.
+expectedResult; Gilot M.-A.
 
 parameters; surnameFirst; short; referring; informal
 
@@ -351,19 +350,19 @@ expectedResult; Jean-Nicolas L. M. de Bouchart
 
 parameters; givenFirst; medium; referring; formal
 
-expectedResult; Bouchart, J. N. L. M. de
+expectedResult; Bouchart, J.-N. L. M. de
 
 parameters; sorting; short; referring; formal
 
-expectedResult; de Bouchart J. N. L. M.
+expectedResult; de Bouchart J.-N. L. M.
 
 parameters; surnameFirst; short; referring; formal
 
-expectedResult; J. N. L. M. de Bouchart
+expectedResult; J.-N. L. M. de Bouchart
 
 parameters; givenFirst; short; referring; formal
 
-expectedResult; de Bouchart J. N.
+expectedResult; de Bouchart J.-N.
 
 parameters; surnameFirst; short; referring; informal
 

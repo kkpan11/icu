@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 az{
     Currencies{
         ADP{
@@ -815,9 +815,13 @@ az{
             "SKK",
             "Slovak Korunası",
         }
+        SLE{
+            "SLE",
+            "Sierra Leon Leonu",
+        }
         SLL{
             "SLL",
-            "Sierra Leon Leonu",
+            "Sierra Leon Leonu (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1851,9 +1855,13 @@ az{
             one{"Slovak korunası"}
             other{"Slovak korunası"}
         }
-        SLL{
+        SLE{
             one{"Sierra Leon leonu"}
             other{"Sierra Leon leonu"}
+        }
+        SLL{
+            one{"Sierra Leon leonu (1964—2022)"}
+            other{"Sierra Leon leonu (1964—2022)"}
         }
         SOS{
             one{"Somali şillinqi"}
@@ -2091,9 +2099,5 @@ az{
             one{"Zimbabve dolları (2008)"}
             other{"Zimbabve dolları (2008)"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

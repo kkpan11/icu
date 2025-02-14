@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 
 import com.ibm.icu.impl.CurrencyData;
 import com.ibm.icu.impl.ICUData;
@@ -39,6 +40,7 @@ public class LongNameHandler
     private static final int DNAM_INDEX = StandardPlural.COUNT + i++;
     private static final int PER_INDEX = StandardPlural.COUNT + i++;
     private static final int GENDER_INDEX = StandardPlural.COUNT + i++;
+    private static final int CONSTANT_DENOMINATOR_INDEX = StandardPlural.COUNT + i++;
     static final int ARRAY_LENGTH = StandardPlural.COUNT + i++;
 
     // Returns the array index that corresponds to the given pluralKeyword.
@@ -440,6 +442,22 @@ public class LongNameHandler
         // In ICU4J, this method gets a CurrencyData from CurrencyData.provider.
         // TODO(ICU4J): Implement this without going through CurrencyData, like in ICU4C?
         Map<String, String> data = CurrencyData.provider.getInstance(locale, true).getUnitPatterns();
+    	// Entries in the data map are filled in with any CurrencyUnitPatterns data for locale,
+    	// or if there is no CurrencyUnitPatterns data for locale since the patterns all inherited
+    	// from the "other" pattern in root (which is true for many locales in CLDR 46), then only
+    	// the "other" entry has a currency pattern. So now what we do is: For all valid plural keywords
+    	// for the locale, if the corresponding outArray[] entry is bogus, fill it in from the "other"
+    	// entry. 
+        PluralRules prules = PluralRules.forLocale(locale);
+        Set<String> keywords = prules.getKeywords();
+        String otherPattern = data.get("other");
+        if (keywords != null && otherPattern!= null) {
+            for (String keyword: keywords) {
+                if (!keyword.equals("other") && !data.containsKey(keyword)) {
+                    data.put(keyword, otherPattern);
+                }
+            }
+        } 
         for (Map.Entry<String, String> e : data.entrySet()) {
             String pluralKeyword = e.getKey();
             int index = getIndex(pluralKeyword);
@@ -843,6 +861,13 @@ public class LongNameHandler
         MeasureUnitImpl fullUnit = unit.getCopyOfMeasureUnitImpl();
         unit = null;
         MeasureUnit perUnit = null;
+
+        if (fullUnit.getConstantDenominator() != 0) {
+            MeasureUnitImpl perUnitImpl = new MeasureUnitImpl();
+            perUnitImpl.setConstantDenominator(fullUnit.getConstantDenominator());
+            perUnit = perUnitImpl.build();
+        }
+
         // TODO(icu-units#28): lots of inefficiency in the handling of
         // MeasureUnit/MeasureUnitImpl:
         for (SingleUnitImpl subUnit : fullUnit.getSingleUnits()) {
@@ -1036,7 +1061,7 @@ public class LongNameHandler
             // TODO(icu-units#28): ensure we have unit tests that change/fail if we
             // assign incorrect case variants here:
             if (singleUnitIndex < singleUnits.size() - 1) {
-                // 4.1. If hasMultiple
+                // 4.1. If hasMultipleUnits is true
                 singlePluralCategory = derivedTimesPlurals.value0(pluralCategory);
                 singleCaseVariant = derivedTimesCases.value0(caseVariant);
                 pluralCategory = derivedTimesPlurals.value1(pluralCategory);
@@ -1099,7 +1124,7 @@ public class LongNameHandler
             String prefixPattern = "";
             if (prefix != MeasurePrefix.ONE) {
                 // 4.4.1. set siPrefixPattern to be getValue(that si_prefix, locale,
-                //        length), such as "centy{0}"
+                // length), such as "centy{0}"
                 StringBuilder prefixKey = new StringBuilder();
                 // prefixKey looks like "1024p3" or "10p-2":
                 prefixKey.append(prefix.getBase());
@@ -1126,7 +1151,7 @@ public class LongNameHandler
             }
 
             // 4.5. Set corePattern to be the getValue(singleUnit, locale, length,
-            //      singlePluralCategory, singleCaseVariant), such as "{0} metrem"
+            // singlePluralCategory, singleCaseVariant), such as "{0} metrem"
             String[] singleUnitArray = new String[ARRAY_LENGTH];
             // At this point we are left with a Simple Unit:
             assert singleUnit.build().getIdentifier().equals(singleUnit.getSimpleUnitID())
@@ -1221,8 +1246,9 @@ public class LongNameHandler
                     String prefixCompiled =
                         SimpleFormatterImpl.compileToStringMinMaxArguments(prefixPattern, sb, 1, 1);
 
-                    // 4.9.1. Set coreUnit to be the combineLowercasing(locale, length, siPrefixPattern,
-                    //        coreUnit)
+                    // 4.9.1. Set coreUnit to be the combineLowercasing(locale, length,
+                    // siPrefixPattern,
+                    // coreUnit)
                     // combineLowercasing(locale, length, prefixPattern, coreUnit)
                     //
                     // TODO(icu-units#28): run this only if prefixPattern does not
@@ -1240,7 +1266,7 @@ public class LongNameHandler
                         getWithPlural(dimensionalityPrefixPatterns, plural), sb, 1, 1);
 
                     // 4.10.1. Set coreUnit to be the combineLowercasing(locale, length,
-                    //         dimensionalityPrefixPattern, coreUnit)
+                    // dimensionalityPrefixPattern, coreUnit)
                     // combineLowercasing(locale, length, prefixPattern, coreUnit)
                     //
                     // TODO(icu-units#28): run this only if prefixPattern does not
@@ -1263,6 +1289,39 @@ public class LongNameHandler
                 }
             }
         }
+
+        // 5. Handling constant denominator if it exists.
+        if (productUnit.getConstantDenominator() != 0) {
+            outArray[CONSTANT_DENOMINATOR_INDEX] = String.valueOf(productUnit.getConstantDenominator());
+            Integer pluralIndex = null;
+            for (StandardPlural plural_ : StandardPlural.values()) {
+                if (outArray[plural_.ordinal()] != null) {
+                    pluralIndex = plural_.ordinal();
+                    break;
+                }
+            }
+
+            assert pluralIndex != null : "No plural form found for constant denominator";
+
+            // TODO(ICU-23039):
+            // Improve the handling of constant_denominator representation.
+            // For instance, a constant_denominator of 1000000 should be adaptable to
+            // formats like
+            // 1,000,000, 1e6, or 1 million.
+            // Furthermore, ensure consistent pluralization rules for units. For example,
+            // "meter per 100 seconds" should be evaluated for correct singular/plural
+            // usage: "second" or "seconds"?
+            // Similarly, "kilogram per 1000 meters" should be checked for "meter" or
+            // "meters"?
+            if (outArray[pluralIndex].length() == 0) {
+                outArray[pluralIndex] = outArray[CONSTANT_DENOMINATOR_INDEX];
+            } else {
+                outArray[pluralIndex] = SimpleFormatterImpl.formatCompiledPattern(
+                        timesPatternFormatter, outArray[CONSTANT_DENOMINATOR_INDEX], outArray[pluralIndex]);
+            }
+
+        }
+
         for (StandardPlural plural : StandardPlural.values()) {
             int pluralIndex = plural.ordinal();
             if (globalPlaceholder[pluralIndex] == PlaceholderPosition.BEGINNING) {

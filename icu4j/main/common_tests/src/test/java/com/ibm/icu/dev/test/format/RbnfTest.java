@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.DecimalFormatSymbols;
@@ -31,7 +31,7 @@ import com.ibm.icu.util.ULocale;
  * introduces a dependency on collation.  See RbnfLenientScannerTest.
  */
 @RunWith(JUnit4.class)
-public class RbnfTest extends TestFmwk {
+public class RbnfTest extends CoreTestFmwk {
     static String fracRules =
         "%main:\n" +
         // this rule formats the number if it's 1 or more.  It formats
@@ -362,11 +362,52 @@ public class RbnfTest extends TestFmwk {
 
         doTest(formatter, testData, true);
 
+        String[][] fractionalTestData = {
+                { "1234", "20:34" },
+                { "1234.2", "20:34" },
+                { "1234.7", "20:35" }
+        };
+        doTest(formatter, fractionalTestData, false);
+
         String[][] testDataLenient = {
                 { "2-51-33", "10,293" },
         };
 
         doParsingTest(formatter, testDataLenient, true);
+    }
+
+    @Test
+    public void TestDFRounding() {
+        // test for ICU-22611
+        RuleBasedNumberFormat nf;
+
+        // no decimal places
+        nf = new RuleBasedNumberFormat("1000/1000: <##K<;", Locale.US);
+        assertEquals("-1K", nf.format(-1400));
+        assertEquals("-2K", nf.format(-1900));
+        assertEquals("1K", nf.format(1400));
+        assertEquals("2K", nf.format(1900));
+
+        // 1 decimal place
+        nf = new RuleBasedNumberFormat("1000/1000: <##.0K<;", Locale.US);
+        assertEquals("-1.4K", nf.format(-1440));
+        assertEquals("1.9K", nf.format(1890));
+
+        // with modulus substitution
+        nf = new RuleBasedNumberFormat("1000/1000: <##<K>##>; -x: ->>;", Locale.US);
+        assertEquals("-1K400", nf.format(-1400));
+        assertEquals("-1K900", nf.format(-1900));
+        assertEquals("1K400", nf.format(1400));
+        assertEquals("1K900", nf.format(1900));
+
+        // no decimal places, but with rounding mode set to ROUND_FLOOR
+        nf = new RuleBasedNumberFormat("1000/1000: <##K<;", Locale.US);
+        nf.setMaximumFractionDigits(0);
+        nf.setRoundingMode(BigDecimal.ROUND_FLOOR);
+        assertEquals("-2K", nf.format(-1400));
+        assertEquals("-2K", nf.format(-1900));
+        assertEquals("1K", nf.format(1400));
+        assertEquals("1K", nf.format(1900));
     }
 
     /**
@@ -544,6 +585,7 @@ public class RbnfTest extends TestFmwk {
                 { "200", "zwei\u00ADhundert" },
                 { "579", "f\u00fcnf\u00ADhundert\u00ADneun\u00ADund\u00ADsiebzig" },
                 { "1,000", "ein\u00ADtausend" },
+                { "1,101", "ein\u00adtausend\u00adein\u00adhundert\u00adeins" },
                 { "2,000", "zwei\u00ADtausend" },
                 { "3,004", "drei\u00ADtausend\u00ADvier" },
                 { "4,567", "vier\u00ADtausend\u00ADf\u00fcnf\u00ADhundert\u00ADsieben\u00ADund\u00ADsechzig" },
@@ -559,6 +601,23 @@ public class RbnfTest extends TestFmwk {
         };
 
         doParsingTest(formatter, testDataLenient, true);
+
+        String[][] testDataYear = {
+                { "101", "ein\u00adhundert\u00adeins" },
+                { "900", "neun\u00adhundert" },
+                { "1,001", "ein\u00adtausend\u00adeins" },
+                { "1,100", "elf\u00adhundert" },
+                { "1,101", "elf\u00adhundert\u00adeins" },
+                { "1,234", "zw\u00f6lf\u00adhundert\u00advier\u00adund\u00addrei\u00dfig" },
+                { "2,001", "zwei\u00adtausend\u00adeins" },
+                { "10,001", "zehn\u00adtausend\u00adeins" },
+                { "-100", "minus ein\u00adhundert" },
+                { "12.34", "12,3" },
+        };
+
+        formatter.setDefaultRuleSet("%spellout-numbering-year");
+        logln("testing year rules");
+        doTest(formatter, testDataYear, false);
     }
 
     /**
@@ -1309,7 +1368,7 @@ public class RbnfTest extends TestFmwk {
         // Tests when "if (!(that instanceof RuleBasedNumberFormat))" is true
         RuleBasedNumberFormat rbnf = new RuleBasedNumberFormat("dummy");
         if (rbnf.equals("dummy") ||
-                rbnf.equals(new Character('a')) ||
+                rbnf.equals('a') ||
                 rbnf.equals(new Object()) ||
                 rbnf.equals(-1) ||
                 rbnf.equals(0) ||
@@ -1848,5 +1907,136 @@ public class RbnfTest extends TestFmwk {
 
         rbnf.setDefaultRuleSet("%ethiopic");
         assertEquals("Wrong result with Ethiopic rule set", "፻፳፫", rbnf.format(123));
+    }
+
+    @Test
+    public void TestInfiniteRecursion() {
+        final String[] badRules = {
+                ">>",
+                "<<",
+                "<<<",
+                ">>>",
+                "%foo: x=%foo=",
+                "%one: x>%two>; %two: y>%one>;"
+        };
+
+        for (String badRule : badRules) {
+            try {
+                RuleBasedNumberFormat rbnf = new RuleBasedNumberFormat(badRule);
+                try {
+                    rbnf.format(5);
+                    // we don't actually care about the result; we just want to make sure the function returns
+                } catch (IllegalStateException e) {
+                    // we're supposed to get an IllegalStateException; swallow it and continue
+                }
+
+                try {
+                    rbnf.parse("foo");
+                    errln("Parse test didn't throw an exception!");
+                } catch (IllegalStateException e) {
+                    // we're supposed to get an IllegalStateException; swallow it and continue
+                } catch (ParseException e) {
+                    // if we don't hit the recursion limit, we'll still fail to parse the number,
+                    // so also swallow this exception and continue
+                }
+            } catch (IllegalArgumentException e) {
+                // ">>>" generates a parse exception when you try to create the formatter (so we expect that rather
+                // than re-throwing and triggering a test failure)
+                // (eventually it'd be nice to statically analyze the rules for (at least) the most common
+                // causes of infinite recursion, in which case we'd end up down here and need to check
+                // the error code.  But for now, we probably won't end up here and don't care if we do)
+                if (!badRule.equals("<<<")) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /**
+     * This test is a little contrived for English, but the grammar is relevant for several languages, including:
+     * Latin, Germanic, Slavic and Indic.
+     * It's pretty common, especially for ordinals, to use different words as a magnitude unit and when it's the final word.
+     * Several languages need grammatical agreement between the final and non-final magnitude unit
+     * with the numerical quantity before the unit. This test is the equivalent seen in other languages.
+     */
+    @Test
+    public void testOmissionReplacementWithPluralRules() {
+        final String rules = "%cardinal:\n" +
+                "-x: minus >>;\n" +
+                "x.x: << point >>;\n" +
+                "Inf: infinite;\n" +
+                "NaN: not a number;\n" +
+                "zero; one; two; three; four; five; six; seven; eight; nine;\n" +
+                "ten; eleven; twelve; thirteen; fourteen; fifteen; sixteen; seventeen; eighteen; nineteen;\n" +
+                "20: twenty[->>];\n" +
+                "30: thirty[->>];\n" +
+                "40: forty[->>];\n" +
+                "50: fifty[->>];\n" +
+                "60: sixty[->>];\n" +
+                "70: seventy[->>];\n" +
+                "80: eighty[->>];\n" +
+                "90: ninety[->>];\n" +
+                "100: << hundred[ >>];\n" +
+                "1000: << thousand[ >>];\n" +
+                "1000000: << million[ >>];\n" +
+                "1000000000: << billion[ >>];\n" +
+                "1000000000000: << trillion[ >>];\n" +
+                "1000000000000000: =#,##0=;\n" +
+                "%ordinal:\n" +
+                "-x: minus >>;\n" +
+                "x.x: =#,##0.#=;\n" +
+                "Inf: infinitieth;\n" +
+                "zeroth; first; second; third; fourth; fifth; sixth; seventh; eighth; ninth;\n" +
+                "tenth; eleventh; twelfth;\n" +
+                "13: =%cardinal=th;\n" +
+                "20: twent[y->>|ieth];\n" +
+                "30: thirt[y->>|ieth];\n" +
+                "40: fort[y->>|ieth];\n" +
+                "50: fift[y->>|ieth];\n" +
+                "60: sixt[y->>|ieth];\n" +
+                "70: sevent[y->>|ieth];\n" +
+                "80: eight[y->>|ieth];\n" +
+                "90: ninet[y->>|ieth];\n" +
+                "100: <%cardinal< [$(cardinal,one{hundred}other{hundreds})$ >>|$(cardinal,one{hundredth}other{hundredths})$];\n" +
+                "1000: <%cardinal< [$(cardinal,one{thousand}other{thousands})$ >>|$(cardinal,one{thousandth}other{thousandths})$];\n" +
+                "1000000: <%cardinal< [$(cardinal,one{million}other{millions})$ >>|$(cardinal,one{millionth}other{millionths})$];\n" +
+                "1000000000: <%cardinal< [$(cardinal,one{billion}other{billions})$ >>|$(cardinal,one{billionth}other{billionths})$];\n" +
+                "1000000000000: <%cardinal< [$(cardinal,one{trillion}other{trillions})$ >>|$(cardinal,one{trillionth}other{trillionths})$];\n" +
+                "1000000000000000: =#,##0=$(ordinal,one{st}two{nd}few{rd}other{th})$;";
+        RuleBasedNumberFormat rbnf = new RuleBasedNumberFormat(rules, ULocale.US);
+
+        String[][] enTestFullData = {
+                {"20", "twentieth"},
+                {"21", "twenty-first"},
+                {"29", "twenty-ninth"},
+                {"30", "thirtieth"},
+                {"31", "thirty-first"},
+                {"39", "thirty-ninth"},
+                {"100", "one hundredth"},
+                {"101", "one hundred first"},
+                {"200", "two hundredths"},
+                {"201", "two hundreds first"},
+                {"300", "three hundredths"},
+                {"301", "three hundreds first"},
+                {"1000", "one thousandth"},
+                {"1001", "one thousand first"},
+                {"1100", "one thousand one hundredth"},
+                {"1101", "one thousand one hundred first"},
+                {"1200", "one thousand two hundredths"},
+                {"1201", "one thousand two hundreds first"},
+                {"2000", "two thousandths"},
+                {"2001", "two thousands first"},
+                {"2100", "two thousands one hundredth"},
+                {"2101", "two thousands one hundred first"},
+                {"8000", "eight thousandths"},
+                {"8001", "eight thousands first"},
+                {"888000", "eight hundred eighty-eight thousandths"},
+                {"888001", "eight hundred eighty-eight thousands first"},
+                {"888100", "eight hundred eighty-eight thousands one hundredth"},
+                {"999101", "nine hundred ninety-nine thousands one hundred first"},
+                {"999200", "nine hundred ninety-nine thousands two hundredths"},
+                {"999201", "nine hundred ninety-nine thousands two hundreds first"},
+        };
+        doTest(rbnf, enTestFullData, false);
     }
 }

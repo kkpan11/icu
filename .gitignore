@@ -9,6 +9,7 @@
 *.dll
 *.dylib
 *.exp
+*.iml
 *.lib
 *.lnk
 *.ncb
@@ -79,6 +80,7 @@ pkgdata.inc
 pkgdataMakefile
 rules.mk
 .DS_Store
+.flattened-pom.xml
 
 !icu4c/source/samples/csdet/Makefile
 

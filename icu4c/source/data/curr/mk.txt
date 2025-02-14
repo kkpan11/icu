@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 mk{
     Currencies{
         ADP{
@@ -699,9 +699,13 @@ mk{
             "SKK",
             "Словачка круна",
         }
+        SLE{
+            "SLE",
+            "Сиералеонско леоне",
+        }
         SLL{
             "SLL",
-            "Сиералеонско леоне",
+            "Сиералеонско леоне (1964 – 2022)",
         }
         SOS{
             "SOS",
@@ -1409,9 +1413,13 @@ mk{
             one{"Фунта на Света Елена"}
             other{"Фунти на Света Елена"}
         }
-        SLL{
+        SLE{
             one{"Сиералеонско леоне"}
             other{"Сиералеонски леони"}
+        }
+        SLL{
+            one{"Сиералеонско леоне (1964 – 2022)"}
+            other{"Сиералеонски леони (1964 – 2022)"}
         }
         SOS{
             one{"Сомалијски шилинг"}
@@ -1525,9 +1533,5 @@ mk{
             one{"Замбијска квача"}
             other{"Замбијски квачи"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

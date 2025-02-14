@@ -39,7 +39,7 @@ import com.ibm.icu.impl.TimeZoneAdapter;
 import com.ibm.icu.impl.URLHandler;
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.math.MathContext;
-import com.ibm.icu.message2.Mf2DataModel;
+import com.ibm.icu.message2.MFParseException;
 import com.ibm.icu.util.AnnualTimeZoneRule;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.Currency;
@@ -66,7 +66,7 @@ import com.ibm.icu.util.VTimeZone;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class SerializableTestUtility {
-    private static Class serializable;
+    private static Class<?> serializable;
     static {
         try {
             serializable = Class.forName("java.io.Serializable");
@@ -763,29 +763,16 @@ public class SerializableTestUtility {
         }
     }
 
-    private static class Mf2DataModelOrderedMapHandler implements Handler {
+    private static class MFParseExceptionHandler extends ExceptionHandlerBase {
         @Override
         public Object[] getTestObjects() {
-            Mf2DataModel.OrderedMap<String, Object> mapWithContent = new Mf2DataModel.OrderedMap<>();
-            mapWithContent.put("number", Double.valueOf(3.1416));
-            mapWithContent.put("date", new Date(1664582400000L /* 20221001T000000Z */));
-            mapWithContent.put("string", "testing");
-            return new Mf2DataModel.OrderedMap[] {
-                    new Mf2DataModel.OrderedMap(),
-                    mapWithContent
+            return new MFParseException[] {
+                    new MFParseException("test", 42)
             };
-        }
-
-        @Override
-        public boolean hasSameBehavior(Object a, Object b) {
-            // OrderedMap extends LinkedHashMap, without adding any functionality, nothing to test.
-            Mf2DataModel.OrderedMap ra = (Mf2DataModel.OrderedMap)a;
-            Mf2DataModel.OrderedMap rb = (Mf2DataModel.OrderedMap)b;
-            return ra.equals(rb);
         }
     }
 
-    private static HashMap map = new HashMap();
+    private static HashMap<String, Handler> map = new HashMap<>();
 
     static {
         map.put("com.ibm.icu.util.TimeZone", new TimeZoneHandler());
@@ -882,7 +869,7 @@ public class SerializableTestUtility {
         map.put("com.ibm.icu.util.ICUCloneNotSupportedException", new ICUCloneNotSupportedExceptionHandler());
         map.put("com.ibm.icu.util.ICUInputTooLongException", new ICUInputTooLongExceptionHandler());
 
-        map.put("com.ibm.icu.message2.Mf2DataModel$OrderedMap", new Mf2DataModelOrderedMapHandler());
+        map.put("com.ibm.icu.message2.MFParseException", new MFParseExceptionHandler());
     }
 
     /*
@@ -927,7 +914,7 @@ public class SerializableTestUtility {
     }
 
     static List<String> getSerializationClassList(Object caller) throws IOException {
-        List<String> classList = new ArrayList();
+        List<String> classList = new ArrayList<>();
         Enumeration<URL> urlEnum = caller.getClass().getClassLoader().getResources("com/ibm/icu");
         while (urlEnum.hasMoreElements()) {
             URL url = urlEnum.nextElement();
@@ -964,7 +951,7 @@ public class SerializableTestUtility {
             if (className.startsWith("com.ibm.icu.dev.")) {
                 return;
             }
-            Class c;
+            Class<?> c;
             try {
                 c = Class.forName(className);
             } catch (ClassNotFoundException e) {

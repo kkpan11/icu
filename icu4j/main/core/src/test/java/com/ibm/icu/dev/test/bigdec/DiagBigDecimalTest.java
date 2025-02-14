@@ -17,10 +17,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.dev.test.TestUtil;
 import com.ibm.icu.dev.test.TestUtil.JavaVendor;
-import com.ibm.icu.math.BigDecimal;
 
 /* ------------------------------------------------------------------ */
 /* Decimal diagnostic tests mfc */
@@ -100,7 +100,7 @@ import com.ibm.icu.math.BigDecimal;
  */
 
 @RunWith(JUnit4.class)
-public class DiagBigDecimalTest extends TestFmwk {
+public class DiagBigDecimalTest extends CoreTestFmwk {
     private static final com.ibm.icu.math.BigDecimal zero = com.ibm.icu.math.BigDecimal.ZERO;
     private static final com.ibm.icu.math.BigDecimal one = com.ibm.icu.math.BigDecimal.ONE;
     private static final com.ibm.icu.math.BigDecimal two = new com.ibm.icu.math.BigDecimal(2);
@@ -2917,15 +2917,15 @@ public class DiagBigDecimalTest extends TestFmwk {
         java.lang.String val;
         // 1999.03.07 Infinities no longer errors
         val = "-1";
-        TestFmwk.assertTrue("dov001", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((new java.lang.Double(val)).doubleValue()));
+        TestFmwk.assertTrue("dov001", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((Double.valueOf(val)).doubleValue()));
         val = "-0.1";
-        TestFmwk.assertTrue("dov002", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((new java.lang.Double(val)).doubleValue()));
+        TestFmwk.assertTrue("dov002", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((Double.valueOf(val)).doubleValue()));
         val = "0";
-        TestFmwk.assertTrue("dov003", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((new java.lang.Double(val)).doubleValue()));
+        TestFmwk.assertTrue("dov003", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((Double.valueOf(val)).doubleValue()));
         val = "0.1";
-        TestFmwk.assertTrue("dov004", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((new java.lang.Double(val)).doubleValue()));
+        TestFmwk.assertTrue("dov004", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((Double.valueOf(val)).doubleValue()));
         val = "1";
-        TestFmwk.assertTrue("dov005", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((new java.lang.Double(val)).doubleValue()));
+        TestFmwk.assertTrue("dov005", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == ((Double.valueOf(val)).doubleValue()));
         val = "1e1000";
         TestFmwk.assertTrue("dov006", ((new com.ibm.icu.math.BigDecimal(val)).doubleValue()) == java.lang.Double.POSITIVE_INFINITY);
         val = "-1e1000";
@@ -2956,23 +2956,23 @@ public class DiagBigDecimalTest extends TestFmwk {
         java.lang.String val;
         // 1999.03.07 Infinities no longer errors
         val = "-1";
-        TestFmwk.assertTrue("flv001", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == ((new java.lang.Float(val)).floatValue()));
+        TestFmwk.assertTrue("flv001", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == (Float.valueOf(val).floatValue()));
         val = "-0.1";
-        TestFmwk.assertTrue("flv002", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == ((new java.lang.Float(val)).floatValue()));
+        TestFmwk.assertTrue("flv002", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == (Float.valueOf(val).floatValue()));
         val = "0";
-        TestFmwk.assertTrue("flv003", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == ((new java.lang.Float(val)).floatValue()));
+        TestFmwk.assertTrue("flv003", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == (Float.valueOf(val).floatValue()));
         val = "0.1";
-        TestFmwk.assertTrue("flv004", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == ((new java.lang.Float(val)).floatValue()));
+        TestFmwk.assertTrue("flv004", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == (Float.valueOf(val).floatValue()));
         val = "1";
-        TestFmwk.assertTrue("flv005", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == ((new java.lang.Float(val)).floatValue()));
+        TestFmwk.assertTrue("flv005", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == (Float.valueOf(val).floatValue()));
         val = "1e200";
-        TestFmwk.assertTrue("flv006", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == java.lang.Float.POSITIVE_INFINITY);
+        TestFmwk.assertTrue("flv006", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == Float.POSITIVE_INFINITY);
         val = "-1e200";
-        TestFmwk.assertTrue("flv007", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == java.lang.Float.NEGATIVE_INFINITY);
+        TestFmwk.assertTrue("flv007", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == Float.NEGATIVE_INFINITY);
         val = "1e1000";
-        TestFmwk.assertTrue("flv008", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == java.lang.Float.POSITIVE_INFINITY);
+        TestFmwk.assertTrue("flv008", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == Float.POSITIVE_INFINITY);
         val = "-1e1000";
-        TestFmwk.assertTrue("flv009", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == java.lang.Float.NEGATIVE_INFINITY);
+        TestFmwk.assertTrue("flv009", ((new com.ibm.icu.math.BigDecimal(val)).floatValue()) == Float.NEGATIVE_INFINITY);
     }
 
     /* ----------------------------------------------------------------- */

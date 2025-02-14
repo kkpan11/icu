@@ -26,7 +26,7 @@ import java.util.jar.JarFile;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.serializable.SerializableTestUtility.Handler;
 
 import junitparams.JUnitParamsRunner;
@@ -37,7 +37,7 @@ import junitparams.Parameters;
  * @author emader
  */
 @RunWith(JUnitParamsRunner.class)
-public class CompatibilityTest extends TestFmwk
+public class CompatibilityTest extends CoreTestFmwk
 {
     private static final class FileHolder {
         String className;
@@ -126,7 +126,7 @@ public class CompatibilityTest extends TestFmwk
     }
 
     private List<FileHolder> getFileList(URL dataURL) throws IOException {
-        List<FileHolder> classList = new ArrayList();
+        List<FileHolder> classList = new ArrayList<>();
 
         File topDir = new File(dataURL.getPath());
         File dataDirs[] = topDir.listFiles(new FileFilter() {
@@ -157,7 +157,7 @@ public class CompatibilityTest extends TestFmwk
     }
 
     private List<FileHolder> getJarList(URL jarURL) throws IOException {
-        List<FileHolder> classList = new ArrayList();
+        List<FileHolder> classList = new ArrayList<>();
 
         String prefix = jarURL.getPath();
         int ix = prefix.indexOf("!/");
@@ -175,7 +175,7 @@ public class CompatibilityTest extends TestFmwk
 
             JarURLConnection conn = (JarURLConnection) jarURL.openConnection();
             jarFile = conn.getJarFile();
-            Enumeration entries = jarFile.entries();
+            Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = (JarEntry) entries.nextElement();
                 if (!entry.isDirectory()) {
@@ -198,6 +198,11 @@ public class CompatibilityTest extends TestFmwk
     }
 
     private static final String[][] SKIP_CASES = {
+            // com.ibm.icu.message2.Mf2DataModel$OrderedMap was very drafty
+            {"ICU_72.1", "com.ibm.icu.message2.Mf2DataModel$OrderedMap"},
+            {"ICU_73.1", "com.ibm.icu.message2.Mf2DataModel$OrderedMap"},
+            {"ICU_74.1", "com.ibm.icu.message2.Mf2DataModel$OrderedMap"},
+
             // ICU 52+ PluralRules/PluralFormat/CurrencyPluralInfo are not
             // serialization-compatible with previous versions.
             {"ICU_50.1", "com.ibm.icu.text.CurrencyPluralInfo"},

@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.text.AttributedCharacterIterator;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import com.ibm.icu.impl.FormattedValueFieldPositionIteratorImpl;
 import com.ibm.icu.impl.ICUCache;
 import com.ibm.icu.impl.ICUData;
 import com.ibm.icu.impl.ICUResourceBundle;
+import com.ibm.icu.impl.JavaTimeConverters;
 import com.ibm.icu.impl.SimpleCache;
 import com.ibm.icu.impl.SimpleFormatterImpl;
 import com.ibm.icu.impl.Utility;
@@ -568,7 +570,54 @@ public class DateIntervalFormat extends UFormat {
      * This is a convenient override of
      * getInstance(String skeleton, ULocale locale)
      *
-     * <p>Example code:{@.jcite com.ibm.icu.samples.text.dateintervalformat.DateIntervalFormatSample:---dtitvfmtPreDefinedExample}
+     * <!-- From: com.ibm.icu.samples.text.dateintervalformat.DateIntervalFormatSample:dtitvfmtPreDefinedExample -->
+     * <p>Example code:<p>
+     *
+     * <pre>
+     * import java.util.Date;
+     *
+     * import com.ibm.icu.text.DateFormat;
+     * import com.ibm.icu.text.DateIntervalFormat;
+     * import com.ibm.icu.text.DateIntervalInfo;
+     * import com.ibm.icu.util.Calendar;
+     * import com.ibm.icu.util.DateInterval;
+     * import com.ibm.icu.util.GregorianCalendar;
+     * import com.ibm.icu.util.ULocale;
+     * ...
+     * final Date date[] = {
+     *         new GregorianCalendar(2007,10,10,10,10,10).getTime(),
+     *         new GregorianCalendar(2008,10,10,10,10,10).getTime(),
+     *         new GregorianCalendar(2008,11,10,10,10,10).getTime(),
+     *         new GregorianCalendar(2008,11,10,15,10,10).getTime(),
+     * };
+     * final DateInterval dtitv[] = {
+     *         new DateInterval(date[0].getTime(),date[1].getTime()),
+     *         new DateInterval(date[1].getTime(),date[2].getTime()),
+     *         new DateInterval(date[2].getTime(),date[3].getTime()),
+     * };
+     * final String [] skeletons = {
+     *         DateFormat.YEAR_ABBR_MONTH_DAY,
+     *         DateFormat.MONTH_DAY,
+     *         DateFormat.HOUR_MINUTE,
+     * };
+     * System.out.printf("%-15s%-35s%-35s%-35s%-35s\n", "Skeleton", "from","to","Date Interval in en_US", "Date Interval in Ja");
+     * int i=0;
+     * for (String skeleton:skeletons) {
+     *     System.out.printf("%-15s%-35s%-35s", skeleton,date[i].toString(), date[i+1].toString());
+     *     DateIntervalFormat dtitvfmtEn = DateIntervalFormat.getInstance(skeleton, ULocale.ENGLISH);
+     *     DateIntervalFormat dtitvfmtJa = DateIntervalFormat.getInstance(skeleton, ULocale.JAPANESE);
+     *     System.out.printf("%-35s%-35s\n", dtitvfmtEn.format(dtitv[i]),dtitvfmtJa.format(dtitv[i]));
+     *     i++;
+     * }
+     * /** output of the sample code:
+     *  *********************************************************************************************************************************************************
+     *  Skeleton       from                               to                                 Date Interval in en_US             Date Interval in Ja
+     *  yMMMd          Sat Nov 10 10:10:10 EST 2007       Mon Nov 10 10:10:10 EST 2008       Nov 10, 2007 – Nov 10, 2008        2007年11月10日～2008年11月10日
+     *  MMMMd          Mon Nov 10 10:10:10 EST 2008       Wed Dec 10 10:10:10 EST 2008       November 10 – December 10          11月10日～12月10日
+     *  jm             Wed Dec 10 10:10:10 EST 2008       Wed Dec 10 15:10:10 EST 2008       10:10 AM – 3:10 PM                 10:10～15:10
+     *  *********************************************************************************************************************************************************<code>/</code>
+     * </pre>
+     *
      * @param skeleton  the skeleton on which interval format based.
      * @param locale    the given locale
      * @return          a date time interval formatter.
@@ -648,7 +697,50 @@ public class DateIntervalFormat extends UFormat {
      * This is a convenient override of
      * getInstance(String skeleton, ULocale locale, DateIntervalInfo dtitvinf)
      *
-     * <p>Example code:{@.jcite com.ibm.icu.samples.text.dateintervalformat.DateIntervalFormatSample:---dtitvfmtCustomizedExample}
+     * <!-- From: com.ibm.icu.samples.text.dateintervalformat.DateIntervalFormatSample:dtitvfmtCustomizedExample -->
+     * <p>Example code:<p>
+     *
+     * <pre>
+     * final Date date[] = {
+     *         new GregorianCalendar(2007,9,10,10,10,10).getTime(),
+     *         new GregorianCalendar(2007,10,10,10,10,10).getTime(),
+     *         new GregorianCalendar(2007,10,10,22,10,10).getTime(),
+     * };
+     * final DateInterval dtitv[] = {
+     *         new DateInterval(date[0].getTime(),date[1].getTime()),
+     *         new DateInterval(date[1].getTime(),date[2].getTime()),
+     * };
+     * final String [] skeletons = {
+     *         DateFormat.YEAR_ABBR_MONTH_DAY,
+     *         DateFormat.HOUR24_MINUTE,
+     * };
+     * System.out.printf("%-15s%-35s%-35s%-45s%-35s\n", "Skeleton", "from","to", "Date Interval in en_US", "Date Interval in Ja");
+     * // Create an empty DateIntervalInfo object
+     * DateIntervalInfo dtitvinf = new DateIntervalInfo(ULocale.ENGLISH);
+     * // Set Date Time internal pattern for MONTH, DAY_OF_MONTH, HOUR_OF_DAY
+     * dtitvinf.setIntervalPattern("yMMMd", Calendar.MONTH, "y 'Diff' MMM d --- MMM d");
+     * dtitvinf.setIntervalPattern("Hm", Calendar.HOUR_OF_DAY, "yyyy MMM d HH:mm ~ HH:mm");
+     * // Set fallback interval pattern
+     * dtitvinf.setFallbackIntervalPattern("{0} ~~~ {1}");
+     * // Get the DateIntervalFormat with the custom pattern
+     * for (String skeleton:skeletons){
+     *     for (int i=0;i<2;i++) {
+     *         System.out.printf("%-15s%-35s%-35s", skeleton,date[i].toString(), date[i+1].toString());
+     *         DateIntervalFormat dtitvfmtEn = DateIntervalFormat.getInstance(skeleton,ULocale.ENGLISH,dtitvinf);
+     *         DateIntervalFormat dtitvfmtJa = DateIntervalFormat.getInstance(skeleton,ULocale.JAPANESE,dtitvinf);
+     *         System.out.printf("%-45s%-35s\n", dtitvfmtEn.format(dtitv[i]),dtitvfmtJa.format(dtitv[i]));
+     *     }
+     * }
+     * /** output of the sample code:
+     *  *************************************************************************************************************************************************************************
+     *   Skeleton       from                               to                                 Date Interval in en_US                       Date Interval in Ja
+     *   yMMMd          Wed Oct 10 10:10:10 EDT 2007       Sat Nov 10 10:10:10 EST 2007       2007 Diff Oct 10 --- Nov 10                  2007 Diff 10月 10 --- 11月 10
+     *   yMMMd          Sat Nov 10 10:10:10 EST 2007       Sat Nov 10 22:10:10 EST 2007       Nov 10, 2007                                 2007年11月10日
+     *   Hm             Wed Oct 10 10:10:10 EDT 2007       Sat Nov 10 10:10:10 EST 2007       10/10/2007, 10:10 ~~~ 11/10/2007, 10:10      2007/10/10 10:10 ~~~ 2007/11/10 10:10
+     *   Hm             Sat Nov 10 10:10:10 EST 2007       Sat Nov 10 22:10:10 EST 2007       2007 Nov 10 10:10 ~ 22:10                    2007 11月 10 10:10 ~ 22:10
+     *  *************************************************************************************************************************************************************************<code>/</code>
+     * </pre>
+     *
      * @param skeleton  the skeleton on which interval format based.
      * @param locale    the given locale
      * @param dtitvinf  the DateIntervalInfo object to be adopted.
@@ -890,6 +982,34 @@ public class DateIntervalFormat extends UFormat {
     }
 
     /**
+     * Format two {@link Temporal}s to produce a string.
+     *
+     * @param fromTemporal      temporal set to the start of the interval
+     *                          to be formatted into a string
+     * @param toTemporal        temporal set to the end of the interval
+     *                          to be formatted into a string
+     * @param appendTo          Output parameter to receive result.
+     *                          Result is appended to existing contents.
+     * @param pos               On input: an alignment field, if desired.
+     *                          On output: the offsets of the alignment field.
+     *                          There may be multiple instances of a given field type
+     *                          in an interval format; in this case the fieldPosition
+     *                          offsets refer to the first instance.
+     * @return                  Reference to 'appendTo' parameter.
+     * @throws    IllegalArgumentException  if the two calendars are not equivalent.
+     *
+     * @draft ICU 76
+     */
+    public final StringBuffer format(Temporal fromTemporal,
+            Temporal toTemporal,
+            StringBuffer appendTo,
+            FieldPosition pos) {
+        Calendar fromCalendar = JavaTimeConverters.temporalToCalendar(fromTemporal);
+        Calendar toCalendar = JavaTimeConverters.temporalToCalendar(toTemporal);
+        return formatImpl(fromCalendar, toCalendar, appendTo, pos, null, null);
+    }
+
+    /**
      * Format 2 Calendars to produce a FormattedDateInterval.
      *
      * The FormattedDateInterval exposes field information about the formatted string.
@@ -913,6 +1033,25 @@ public class DateIntervalFormat extends UFormat {
             FormattedValueFieldPositionIteratorImpl.sort(attributes);
         }
         return new FormattedDateInterval(sb, attributes);
+    }
+
+    /**
+     * Format two {@link Temporal}s to produce a FormattedDateInterval.
+     *
+     * The FormattedDateInterval exposes field information about the formatted string.
+     *
+     * @param fromTemporal      temporal set to the start of the interval
+     *                          to be formatted into a string
+     * @param toTemporal        temporal set to the end of the interval
+     *                          to be formatted into a string
+     * @return                  A FormattedDateInterval containing the format result.
+     *
+     * @draft ICU 76
+     */
+    public FormattedDateInterval formatToValue(Temporal fromTemporal, Temporal toTemporal) {
+        Calendar fromCalendar = JavaTimeConverters.temporalToCalendar(fromTemporal);
+        Calendar toCalendar = JavaTimeConverters.temporalToCalendar(toTemporal);
+        return formatToValue(fromCalendar, toCalendar);
     }
 
     private synchronized StringBuffer formatImpl(Calendar fromCalendar,
@@ -2308,7 +2447,17 @@ public class DateIntervalFormat extends UFormat {
     private static boolean fieldExistsInSkeleton(int field, String skeleton)
     {
         String fieldChar = DateIntervalInfo.CALENDAR_FIELD_TO_PATTERN_LETTER[field];
-        return ( (skeleton.indexOf(fieldChar) == -1) ? false : true ) ;
+        boolean result = skeleton.contains(fieldChar);
+        if (!result) {
+            if (fieldChar.equals("M")) {
+                // if the caller specified Calendar.MONTH, check the pattern for both M and L
+                result = skeleton.contains("L");
+            } else if (fieldChar.equals("y")) {
+                // if the caller specified Calendar.YEAR, check the pattern for y, Y, u, U, and r
+                result = skeleton.contains("U") || skeleton.contains("Y") || skeleton.contains("u") || skeleton.contains("r");
+            }
+        }
+        return result;
     }
 
 

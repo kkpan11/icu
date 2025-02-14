@@ -7,11 +7,20 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.ibm.icu</groupId>
-    <artifactId>main</artifactId>
-    <version>74.0.1-SNAPSHOT</version>
+    <artifactId>icu4j-root</artifactId>
+    <version>77.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>icu4j-charset</artifactId>
+  <name>ICU4J Charset Provider</name>
+  <description>icu4j-charset is a supplemental library for icu4j, implementing Java Charset SPI.</description>
+  <url>${proj.url}</url>
+  <scm>
+    <connection>${proj.scm.connection}</connection>
+    <developerConnection>${proj.scm.developerConnection}</developerConnection>
+    <url>${proj.scm.url}</url>
+  </scm>
 
   <properties>
     <icu4j.api.doc.root.dir>${project.basedir}/../..</icu4j.api.doc.root.dir>
@@ -22,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>com.ibm.icu</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>icu4j</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -66,6 +75,17 @@
               <Export-Package>com.ibm.icu.charset</Export-Package>
             </manifestEntries>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <!-- We want to deploy this to Maven -->
+        <configuration>
+          <skip>false</skip>
         </configuration>
       </plugin>
     </plugins>

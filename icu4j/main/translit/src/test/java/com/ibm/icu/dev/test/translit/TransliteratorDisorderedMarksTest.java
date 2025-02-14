@@ -3,7 +3,8 @@
 
 package com.ibm.icu.dev.test.translit;
 
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -11,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.ibm.icu.dev.test.TestFmwk;
-import com.ibm.icu.dev.util.UnicodeMap;
 import com.ibm.icu.text.CanonicalIterator;
 import com.ibm.icu.text.Normalizer2;
 import com.ibm.icu.text.Transliterator;
@@ -58,8 +58,8 @@ public class TransliteratorDisorderedMarksTest extends TestFmwk {
         //        logln("NFKD Source: " + nfkdSource.toPattern(false));
         //        logln("NFKD Target: " + nfkdTarget.toPattern(false));
 
-        UnicodeMap<UnicodeSet> leadToTrail = new UnicodeMap();
-        UnicodeMap<UnicodeSet> leadToSources = new UnicodeMap();
+        Map<Integer, UnicodeSet> leadToTrail = new HashMap<>();
+        Map<Integer, UnicodeSet> leadToSources = new HashMap<>();
         UnicodeSet nonStarters = new UnicodeSet("[:^ccc=0:]").freeze();
         CanonicalIterator can = new CanonicalIterator("");
 
@@ -101,8 +101,8 @@ public class TransliteratorDisorderedMarksTest extends TestFmwk {
         }
 
 
-        for (Entry<String, UnicodeSet> x : leadToSources.entrySet()) {
-            String lead = x.getKey();
+        for (Map.Entry<Integer, UnicodeSet> x : leadToSources.entrySet()) {
+            Integer lead = x.getKey();
             UnicodeSet sources = x.getValue();
             UnicodeSet trailSet = leadToTrail.get(lead);
             for (String source : sources) {

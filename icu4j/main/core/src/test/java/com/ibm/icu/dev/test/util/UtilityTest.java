@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.impl.Assert;
 import com.ibm.icu.impl.InvalidFormatException;
@@ -36,7 +37,7 @@ import com.ibm.icu.util.CaseInsensitiveString;
  * @summary Test of internal Utility class
  */
 @RunWith(JUnit4.class)
-public class UtilityTest extends TestFmwk {
+public class UtilityTest extends CoreTestFmwk {
     @Test
     public void TestUnescape() {
         final String input =
@@ -194,8 +195,8 @@ public class UtilityTest extends TestFmwk {
     @Test
     public void TestUnicodeSet(){
         String[] array = new String[]{"a", "b", "c", "{de}"};
-        List list = Arrays.asList(array);
-        Set aset = new HashSet(list);
+        List<String> list = Arrays.asList(array);
+        Set<String> aset = new HashSet<>(list);
         logln(" *** The source set's size is: " + aset.size());
     //The size reads 4
         UnicodeSet set = new UnicodeSet();

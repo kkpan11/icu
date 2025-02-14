@@ -11,6 +11,8 @@ package com.ibm.icu.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.ibm.icu.impl.ICUData;
+
 /**
  * Class to store version numbers of the form major.minor.milli.micro.
  * @author synwee
@@ -218,19 +220,26 @@ public final class VersionInfo implements Comparable<VersionInfo>
     public static final VersionInfo UNICODE_15_1;
 
     /**
+     * Unicode 16.0 version
+     * @stable ICU 76
+     */
+    public static final VersionInfo UNICODE_16_0;
+
+    /**
      * ICU4J current release version
      * @stable ICU 2.8
      */
     public static final VersionInfo ICU_VERSION;
 
     /**
-     * Data version string for ICU's internal data.
+     * Data version string for ICU's data file.
+     * Not used when loading from resources packaged in the .jar.
      * Used for appending to data path (e.g. icudt43b)
      * @internal
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public static final String ICU_DATA_VERSION_PATH = "74b";
+    public static final String ICU_DATA_VERSION_PATH = "77b";
 
     /**
      * Data version in ICU4J.
@@ -336,7 +345,7 @@ public final class VersionInfo implements Comparable<VersionInfo>
             throw new IllegalArgumentException(INVALID_VERSION_NUMBER_);
         }
         int     version = getInt(major, minor, milli, micro);
-        Integer key     = Integer.valueOf(version);
+        Integer key     = version;
         VersionInfo  result  = MAP_.get(key);
         if (result == null) {
             result = new VersionInfo(version);
@@ -573,10 +582,11 @@ public final class VersionInfo implements Comparable<VersionInfo>
         UNICODE_14_0   = getInstance(14, 0, 0, 0);
         UNICODE_15_0   = getInstance(15, 0, 0, 0);
         UNICODE_15_1   = getInstance(15, 1, 0, 0);
+        UNICODE_16_0   = getInstance(16, 0, 0, 0);
 
-        ICU_VERSION   = getInstance(74, 0, 1, 0);
+        ICU_VERSION   = getInstance(77, 0, 1, 0);
         ICU_DATA_VERSION = ICU_VERSION;
-        UNICODE_VERSION = UNICODE_15_1;
+        UNICODE_VERSION = UNICODE_16_0;
 
         UCOL_RUNTIME_VERSION = getInstance(9);
         UCOL_BUILDER_VERSION = getInstance(9);
@@ -696,8 +706,8 @@ public final class VersionInfo implements Comparable<VersionInfo>
         if (TZDATA_VERSION == null) {
             synchronized (VersionInfo.class) {
                 if (TZDATA_VERSION == null) {
-                    UResourceBundle tzbundle = UResourceBundle.getBundleInstance("com/ibm/icu/impl/data/icudt"
-                            + VersionInfo.ICU_DATA_VERSION_PATH, "zoneinfo64");
+                    UResourceBundle tzbundle =
+                            UResourceBundle.getBundleInstance("com/ibm/icu/impl/" + ICUData.ICU_BUNDLE, "zoneinfo64");
                     TZDATA_VERSION = tzbundle.getString("TZVersion");
                 }
             }

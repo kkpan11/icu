@@ -89,7 +89,7 @@
  * \code{.c}
  * UErrorCode status = U_ZERO_ERROR;
  * // These strings look identical when rendered in a left-to-right context.
- * // They look distinct in a left-to-right context.
+ * // They look distinct in a right-to-left context.
  * UChar* str1 = (UChar*) u"A1\u05D0";  // A1א
  * UChar* str2 = (UChar*) u"A\u05D01";  // Aא1
  *
@@ -358,6 +358,51 @@
  * allowed characters set in {@link uspoof_setAllowedChars}. Note that characters which have script code
  * COMMON or INHERITED, such as numbers and punctuation, are ignored when computing whether a string has multiple
  * scripts.
+ *
+ * <h2>Advanced bidirectional usage</h2>
+ * If the paragraph direction with which the identifiers will be displayed is not known, there are
+ * multiple options for confusable detection depending on the circumstances.
+ *
+ * <p>
+ * In some circumstances, the only concern is confusion between identifiers displayed with the same
+ * paragraph direction.
+ *
+ * <p>
+ * An example is the case where identifiers are usernames prefixed with the @ symbol.
+ * That symbol will appear to the left in a left-to-right context, and to the right in a
+ * right-to-left context, so that an identifier displayed in a left-to-right context can never be
+ * confused with an identifier displayed in a right-to-left context:
+ * <ul>
+ * <li>
+ * The usernames "A1א" (A one aleph) and "Aא1" (A aleph 1)
+ * would be considered confusable, since they both appear as \@A1א in a left-to-right context, and the
+ * usernames "אA_1" (aleph A underscore one) and "א1_A" (aleph one underscore A) would be considered
+ * confusable, since they both appear as A_1א@ in a right-to-left context.
+ * </li>
+ * <li>
+ * The username "Mark_" would not be considered confusable with the username "_Mark",
+ * even though the latter would appear as Mark_@ in a right-to-left context, and the
+ * former as \@Mark_ in a left-to-right context.
+ * </li>
+ * </ul>
+ * <p>
+ * In that case, the caller should check for both LTR-confusability and RTL-confusability:
+ *
+ * \code{.cpp}
+ * bool confusableInEitherDirection =
+ *     uspoof_areBidiConfusableUnicodeString(sc, UBIDI_LTR, id1, id2, &status) ||
+ *     uspoof_areBidiConfusableUnicodeString(sc, UBIDI_RTL, id1, id2, &status);
+ * \endcode
+ *
+ * If the bidiSkeleton is used, the LTR and RTL skeleta should be kept separately and compared, LTR
+ * with LTR and RTL with RTL.
+ *
+ * <p>
+ * In cases where confusability between the visual appearances of an identifier displayed in a
+ * left-to-right context with another identifier displayed in a right-to-left context is a concern,
+ * the LTR skeleton of one can be compared with the RTL skeleton of the other.  However, this
+ * very broad definition of confusability may have unexpected results; for instance, it treats the
+ * ASCII identifiers "Mark_" and "_Mark" as confusable.
  *
  * <h2>Additional Information</h2>
  *
@@ -1179,7 +1224,6 @@ uspoof_areConfusable(const USpoofChecker *sc,
                      const UChar *id2, int32_t length2,
                      UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * Check whether two specified strings are visually confusable when
  * displayed in a context with the given paragraph direction.
@@ -1224,13 +1268,12 @@ uspoof_areConfusable(const USpoofChecker *sc,
  *                enum USpoofChecks.  Zero is returned if the identifiers
  *                are not confusable.
  *
- * @draft ICU 74
+ * @stable ICU 74
  */
 U_CAPI uint32_t U_EXPORT2 uspoof_areBidiConfusable(const USpoofChecker *sc, UBiDiDirection direction,
                                                   const UChar *id1, int32_t length1,
                                                   const UChar *id2, int32_t length2,
                                                   UErrorCode *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
  * A version of {@link uspoof_areConfusable} accepting strings in UTF-8 format.
@@ -1263,7 +1306,6 @@ uspoof_areConfusableUTF8(const USpoofChecker *sc,
                          const char *id2, int32_t length2,
                          UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * A version of {@link uspoof_areBidiConfusable} accepting strings in UTF-8 format.
  *
@@ -1287,7 +1329,7 @@ uspoof_areConfusableUTF8(const USpoofChecker *sc,
  *                enum USpoofChecks.  Zero is returned if the strings
  *                are not confusable.
  *
- * @draft ICU 74
+ * @stable ICU 74
  *
  * @see uspoof_areBidiConfusable
  */
@@ -1295,7 +1337,6 @@ U_CAPI uint32_t U_EXPORT2 uspoof_areBidiConfusableUTF8(const USpoofChecker *sc, 
                                                       const char *id1, int32_t length1,
                                                       const char *id2, int32_t length2,
                                                       UErrorCode *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
  *  Get the "skeleton" for an identifier.
@@ -1335,7 +1376,6 @@ uspoof_getSkeleton(const USpoofChecker *sc,
                    UChar *dest, int32_t destCapacity,
                    UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  *  Get the "bidiSkeleton" for an identifier and a direction.
  *  Skeletons are a transformation of the input identifier;
@@ -1365,14 +1405,13 @@ uspoof_getSkeleton(const USpoofChecker *sc,
  *                is always that of the complete skeleton, even when the
  *                supplied buffer is too small (or of zero length)
  *
- * @draft ICU 74
+ * @stable ICU 74
  * @see uspoof_areBidiConfusable
  */
 U_CAPI int32_t U_EXPORT2 uspoof_getBidiSkeleton(const USpoofChecker *sc,
                                                 UBiDiDirection direction,
                                                 const UChar *id, int32_t length,
                                                 UChar *dest, int32_t destCapacity, UErrorCode *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
  *  Get the "skeleton" for an identifier.
@@ -1414,7 +1453,6 @@ uspoof_getSkeletonUTF8(const USpoofChecker *sc,
                        char *dest, int32_t destCapacity,
                        UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  *  Get the "bidiSkeleton" for an identifier and a direction.
  *  Skeletons are a transformation of the input identifier;
@@ -1447,12 +1485,11 @@ uspoof_getSkeletonUTF8(const USpoofChecker *sc,
  *                is always that of the complete skeleton, even when the
  *                supplied buffer is too small (or of zero length)
  *
- * @draft ICU 74
+ * @stable ICU 74
  */
 U_CAPI int32_t U_EXPORT2 uspoof_getBidiSkeletonUTF8(const USpoofChecker *sc, UBiDiDirection direction,
                                                     const char *id, int32_t length, char *dest,
                                                     int32_t destCapacity, UErrorCode *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
   * Get the set of Candidate Characters for Inclusion in Identifiers, as defined
@@ -1691,7 +1728,6 @@ uspoof_areConfusableUnicodeString(const USpoofChecker *sc,
                                   const icu::UnicodeString &s2,
                                   UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * A version of {@link uspoof_areBidiConfusable} accepting UnicodeStrings.
  *
@@ -1711,7 +1747,7 @@ uspoof_areConfusableUnicodeString(const USpoofChecker *sc,
  *                enum USpoofChecks.  Zero is returned if the identifiers
  *                are not confusable.
  *
- * @draft ICU 74
+ * @stable ICU 74
  *
  * @see uspoof_areBidiConfusable
  */
@@ -1720,7 +1756,6 @@ U_CAPI uint32_t U_EXPORT2 uspoof_areBidiConfusableUnicodeString(const USpoofChec
                                                                const icu::UnicodeString &s1,
                                                                const icu::UnicodeString &s2,
                                                                UErrorCode *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
  *  Get the "skeleton" for an identifier.
@@ -1752,7 +1787,6 @@ uspoof_getSkeletonUnicodeString(const USpoofChecker *sc,
                                 icu::UnicodeString &dest,
                                 UErrorCode *status);
 
-#ifndef U_HIDE_DRAFT_API
 /**
  *  Get the "bidiSkeleton" for an identifier and a direction.
  *  Skeletons are a transformation of the input identifier;
@@ -1775,12 +1809,11 @@ uspoof_getSkeletonUnicodeString(const USpoofChecker *sc,
  *                perform the check.
  * @return        A reference to the destination (skeleton) string.
  *
- * @draft ICU 74.0
+ * @stable ICU 74
  */
 U_I18N_API icu::UnicodeString &U_EXPORT2 uspoof_getBidiSkeletonUnicodeString(
     const USpoofChecker *sc, UBiDiDirection direction, const icu::UnicodeString &id,
     icu::UnicodeString &dest, UErrorCode *status);
-#endif /* U_HIDE_DRAFT_API */
 
 /**
   * Get the set of Candidate Characters for Inclusion in Identifiers, as defined

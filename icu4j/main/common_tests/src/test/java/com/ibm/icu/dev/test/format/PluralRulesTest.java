@@ -23,12 +23,12 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -42,9 +42,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.serializable.SerializableTestUtility;
-import com.ibm.icu.dev.util.CollectionUtilities;
 import com.ibm.icu.impl.Relation;
 import com.ibm.icu.impl.Utility;
 import com.ibm.icu.impl.number.DecimalQuantity;
@@ -73,7 +72,7 @@ import com.ibm.icu.util.ULocale;
  * @author markdavis (Mark Davis) [for fractional support]
  */
 @RunWith(JUnit4.class)
-public class PluralRulesTest extends TestFmwk {
+public class PluralRulesTest extends CoreTestFmwk {
 
     PluralRulesFactory factory = PluralRulesFactory.NORMAL;
 
@@ -168,8 +167,8 @@ public class PluralRulesTest extends TestFmwk {
                 { "a:n in 3 .. 10 , 13 .. 19 ,", ParseException.class }, };
         for (Object[] shouldFailTest : shouldFail) {
             String rules = (String) shouldFailTest[0];
-            Class exception = shouldFailTest.length < 2 ? null : (Class) shouldFailTest[1];
-            Class actualException = null;
+            Class<?> exception = shouldFailTest.length < 2 ? null : (Class<?>) shouldFailTest[1];
+            Class<?> actualException = null;
             try {
                 PluralRules.parseDescription(rules);
             } catch (Exception e) {
@@ -279,8 +278,8 @@ public class PluralRulesTest extends TestFmwk {
 
         // Collect actual (oldSamples) and expected (expectedSamplesList) into the
         // same concrete collection for comparison purposes.
-        ArrayList<DecimalQuantity> oldSamplesList = new ArrayList(oldSamples);
-        ArrayList<DecimalQuantity> expectedSamplesList = new ArrayList(Arrays.asList(expected));
+        ArrayList<DecimalQuantity> oldSamplesList = new ArrayList<>(oldSamples);
+        ArrayList<DecimalQuantity> expectedSamplesList = new ArrayList<>(Arrays.asList(expected));
 
         if (!assertEquals("getOldSamples; " + keyword + "; " + description, expectedSamplesList,
                 oldSamplesList)) {
@@ -329,7 +328,7 @@ public class PluralRulesTest extends TestFmwk {
             "a:2,3,5,6,7,13,15,16,17", "a: n in 2..6,3..7", "a:2,3,4,5,6,7", };
 
     private String[] getTargetStrings(String targets) {
-        List list = new ArrayList(50);
+        List<String> list = new ArrayList<>(50);
         String[] valSets = Utility.split(targets, ';');
         for (int i = 0; i < valSets.length; ++i) {
             String[] temp = Utility.split(valSets[i], ':');
@@ -459,7 +458,7 @@ public class PluralRulesTest extends TestFmwk {
                 keywordToRule.put(keyword, singleRule);
             }
 
-            Map<DecimalQuantity, String> collisionTest = new LinkedHashMap();
+            Map<DecimalQuantity, String> collisionTest = new LinkedHashMap<>();
 
             // get all of the sample ranges from all of the samples
             Stream<DecimalQuantitySamplesRange> ranges = samples.stream()
@@ -474,7 +473,7 @@ public class PluralRulesTest extends TestFmwk {
 
             items.forEach(item -> {
                 collisionTest.clear();
-                for (Entry<String, PluralRules> entry : keywordToRule.entrySet()) {
+                for (Map.Entry<String, PluralRules> entry : keywordToRule.entrySet()) {
                     PluralRules rule = entry.getValue();
                     String foundKeyword = rule.select(item);
                     if (foundKeyword.equals("other")) {
@@ -724,7 +723,7 @@ public class PluralRulesTest extends TestFmwk {
     @Test
     public void testAvailableULocales() {
         ULocale[] locales = factory.getAvailableULocales();
-        Set localeSet = new HashSet();
+        Set<ULocale> localeSet = new HashSet<>();
         localeSet.addAll(Arrays.asList(locales));
 
         assertEquals("locales are unique in list", locales.length, localeSet.size());
@@ -1072,7 +1071,7 @@ public class PluralRulesTest extends TestFmwk {
                 }
                 Collection<DecimalQuantity> values;
                 if (valueList == null || valueList.length() == 0) {
-                    values = Collections.EMPTY_SET;
+                    values = Collections.emptySet();
                 } else if ("null".equals(valueList)) {
                     values = null;
                 } else {
@@ -1186,7 +1185,7 @@ public class PluralRulesTest extends TestFmwk {
 
     @Test
     public void TestKeywords() {
-        Set<String> possibleKeywords = new LinkedHashSet(Arrays.asList("zero", "one", "two", "few", "many", "other"));
+        Set<String> possibleKeywords = new LinkedHashSet<>(Arrays.asList("zero", "one", "two", "few", "many", "other"));
         DecimalQuantity ONE_INTEGER = DecimalQuantity_DualStorageBCD.fromExponentString("1");
         Object[][][] tests = {
                 // format is locale, explicits, then triples of keyword, status, unique value.
@@ -1205,7 +1204,7 @@ public class PluralRulesTest extends TestFmwk {
             // NumberType numberType = (NumberType) test[1];
             Set<DecimalQuantity> explicits = (Set<DecimalQuantity>) test[0][1];
             PluralRules pluralRules = factory.forLocale(locale);
-            LinkedHashSet<String> remaining = new LinkedHashSet(possibleKeywords);
+            LinkedHashSet<String> remaining = new LinkedHashSet<>(possibleKeywords);
             for (int i = 1; i < test.length; ++i) {
                 Object[] row = test[i];
                 String keyword = (String) row[0];
@@ -1505,25 +1504,45 @@ public class PluralRulesTest extends TestFmwk {
         }
     };
 
+    private static final Comparator<Collection<StandardPluralCategories>> STDPLURALCATEG_COLLECTION_COMPARATOR = (o1, o2) -> {
+        int diff = o1.size() - o2.size();
+        if (diff != 0) {
+            return diff;
+        }
+        Iterator<StandardPluralCategories> iterator1 = o1.iterator();
+        Iterator<StandardPluralCategories> iterator2 = o2.iterator();
+        while (true) {
+            // We already know they have the same length, we tested if first thing.
+            if (!iterator1.hasNext() || !iterator2.hasNext()) {
+                // At the end of both iterators, and everything was equal until here.
+                return 0;
+            }
+            diff = iterator1.next().compareTo(iterator2.next());
+            if (diff != 0) {
+                return diff;
+            }
+        }
+    };
+
     private void generateLOCALE_SNAPSHOT() {
-        Comparator c = new CollectionUtilities.CollectionComparator<>();
         Relation<Set<StandardPluralCategories>, PluralRules> setsToRules = Relation.of(
-                new TreeMap<Set<StandardPluralCategories>, Set<PluralRules>>(c), TreeSet.class, PLURAL_RULE_COMPARATOR);
+                new TreeMap<>(STDPLURALCATEG_COLLECTION_COMPARATOR), TreeSet.class, PLURAL_RULE_COMPARATOR);
         Relation<PluralRules, ULocale> data = Relation.of(
-                new TreeMap<PluralRules, Set<ULocale>>(PLURAL_RULE_COMPARATOR), TreeSet.class);
+                new TreeMap<>(PLURAL_RULE_COMPARATOR), TreeSet.class);
         for (ULocale locale : PluralRules.getAvailableULocales()) {
             PluralRules pr = PluralRules.forLocale(locale);
             EnumSet<StandardPluralCategories> set = getCanonicalSet(pr.getKeywords());
             setsToRules.put(set, pr);
             data.put(pr, locale);
         }
-        for (Entry<Set<StandardPluralCategories>, Set<PluralRules>> entry1 : setsToRules.keyValuesSet()) {
+        for (Map.Entry<Set<StandardPluralCategories>, Set<PluralRules>> entry1 : setsToRules.keyValuesSet()) {
             Set<StandardPluralCategories> set = entry1.getKey();
             Set<PluralRules> rules = entry1.getValue();
             System.out.println("\n        // " + set);
             for (PluralRules rule : rules) {
                 Set<ULocale> locales = data.get(rule);
-                System.out.print("        \"" + CollectionUtilities.join(locales, ","));
+                String toShow = locales.stream().map(ULocale::toString).collect(Collectors.joining(","));
+                System.out.print("        \"" + toShow);
                 for (StandardPluralCategories spc : set) {
                     String keyword = spc.toString();
                     DecimalQuantitySamples samples = rule.getDecimalSamples(keyword, SampleType.INTEGER);
@@ -1554,7 +1573,7 @@ public class PluralRulesTest extends TestFmwk {
             // [one, other]
             "am,as,bn,doi,fa,gu,hi,kn,pcm,zu; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
             "ff,hy,kab; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
-            "ast,de,en,et,fi,fy,gl,ia,io,lij,nl,sc,scn,sv,sw,ur,yi; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
+            "ast,de,en,et,fi,fy,gl,ia,io,lij,nl,sc,sv,sw,ur,yi; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
             "si; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
             "ak,bho,guw,ln,mg,nso,pa,ti,wa; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
             "tzm; one: @integer 0, 1, 11~24; other: @integer 2~10, 100~106, 1000, 10000, 100000, 1000000, …",
@@ -1581,7 +1600,7 @@ public class PluralRulesTest extends TestFmwk {
             // [one, many, other]
             "fr; one: @integer 0, 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 2~17, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
             "pt; one: @integer 0, 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 2~17, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
-            "ca,it,pt_PT,vec; one: @integer 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
+            "ca,it,pt_PT,scn,vec; one: @integer 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
             "es; one: @integer 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
 
             // [one, two, few, other]
@@ -1712,6 +1731,8 @@ public class PluralRulesTest extends TestFmwk {
 
     @Test
     public void testBug20264() {
+        Locale startLocale = Locale.getDefault();
+
         String expected = "1.23400";
         FixedDecimal fd = new FixedDecimal(1.234, 5, 2);
         assertEquals("FixedDecimal toString", expected, fd.toString());
@@ -1719,6 +1740,8 @@ public class PluralRulesTest extends TestFmwk {
         assertEquals("FixedDecimal toString", expected, fd.toString());
         Locale.setDefault(Locale.GERMAN);
         assertEquals("FixedDecimal toString", expected, fd.toString());
+
+        Locale.setDefault(startLocale);
     }
 
     @Test
@@ -1752,5 +1775,12 @@ public class PluralRulesTest extends TestFmwk {
         PluralRules xyz = PluralRules.forLocale(new ULocale("xyz"));
         form = xyz.select(range);
         assertEquals("Fallback form", "other", form);
+    }
+    @Test
+    public void test22638LongNumberValue() {
+        PluralRules test = PluralRules.createRules(
+            "g:c%4422322222232222222222232222222322222223222222232222222322222223" +
+            "2222222322222232222222322222223222232222222222222322222223222222");
+        assertEquals("Long number value should get null", null, test);
     }
 }

@@ -24,6 +24,7 @@ import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.ParsePosition;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import com.ibm.icu.text.MessagePattern.ArgType;
 import com.ibm.icu.text.MessagePattern.Part;
 import com.ibm.icu.text.PluralRules.IFixedDecimal;
 import com.ibm.icu.text.PluralRules.PluralType;
+import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ICUUncheckedIOException;
 import com.ibm.icu.util.ULocale;
 import com.ibm.icu.util.ULocale.Category;
@@ -1305,7 +1307,7 @@ public class MessageFormat extends UFormat {
             String key = null;
             if(args!=null) {
                 argNumber=part.getValue();  // ARG_NUMBER
-                argId = Integer.valueOf(argNumber);
+                argId = argNumber;
             } else {
                 if(part.getType()==MessagePattern.Part.Type.ARG_NAME) {
                     key=msgPattern.getSubstring(part);
@@ -1673,7 +1675,7 @@ public class MessageFormat extends UFormat {
                 int argNumber=part.getValue();  // ARG_NUMBER
                 if (dest.attributes != null) {
                     // We only need argId if we add it into the attributes.
-                    argId = Integer.valueOf(argNumber);
+                    argId = argNumber;
                 }
                 if(0<=argNumber && argNumber<args.length) {
                     arg=args[argNumber];
@@ -1745,8 +1747,14 @@ public class MessageFormat extends UFormat {
                 if (arg instanceof Number) {
                     // format number if can
                     dest.formatAndAppend(getStockNumberFormatter(), arg);
-                 } else if (arg instanceof Date) {
+                } else if (arg instanceof Date) {
                     // format a Date if can
+                    dest.formatAndAppend(getStockDateFormatter(), arg);
+                } else if (arg instanceof Calendar) {
+                    // format a Calendar if can
+                    dest.formatAndAppend(getStockDateFormatter(), arg);
+                } else if (arg instanceof Temporal) {
+                    // format a Temporal if can
                     dest.formatAndAppend(getStockDateFormatter(), arg);
                 } else {
                     dest.append(arg.toString());

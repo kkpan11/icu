@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 yue_Hans{
     %%Parent{"root"}
     AuxExemplarCharacters{
@@ -206,9 +206,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "GyMEEEEd",
-                "GyMd",
-                "GyMd",
+                "GyMMMEEEEd",
+                "GyMMMd",
+                "GyMMMd",
                 "GyMd",
             }
             availableFormats{
@@ -766,9 +766,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "GyMMEEEEd",
-                "GyMMd",
-                "GyMMd",
+                "GyMMMEEEEd",
+                "GyMMMd",
+                "GyMMMd",
                 "GyMd",
             }
             availableFormats{
@@ -972,9 +972,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "yMEEEEd",
-                "yMd",
-                "yMd",
+                "yMMMEEEEd",
+                "yMMMd",
+                "yMMMd",
                 "yMd",
             }
             appendItems{
@@ -1287,9 +1287,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "GyMEEEEd",
-                "GyMd",
-                "GyMd",
+                "GyMMMEEEEd",
+                "GyMMMd",
+                "GyMMMd",
                 "GyMd",
             }
             eras{
@@ -1364,9 +1364,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "GyMEEEEd",
-                "GyMd",
-                "GyMd",
+                "GyMMMEEEEd",
+                "GyMMMd",
+                "GyMMMd",
                 "GyMd",
             }
             availableFormats{
@@ -1446,9 +1446,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "GyMEEEEd",
-                "GyMd",
-                "GyMd",
+                "GyMMMEEEEd",
+                "GyMMMd",
+                "GyMMMd",
                 "GyyMMdd",
             }
             availableFormats{
@@ -1756,9 +1756,9 @@ yue_Hans{
                 "HHmmssz",
                 "HHmmss",
                 "HHmm",
-                "GyMEEEEd",
-                "GyMd",
-                "GyMd",
+                "GyMMMEEEEd",
+                "GyMMMd",
+                "GyMMMd",
                 "GyyMd",
             }
             availableFormats{
@@ -2165,6 +2165,37 @@ yue_Hans{
     personNames{
         initialPattern{
             initial{"{0}"}
+        }
+        namePattern{
+            givenFirst-long-addressing-formal{"{surname}{title}"}
+            givenFirst-long-addressing-informal{"{given-informal}"}
+            givenFirst-medium-addressing-formal{"{surname}{title}"}
+            givenFirst-medium-addressing-informal{"{given-informal}"}
+            givenFirst-short-addressing-formal{"{surname}{title}"}
+            givenFirst-short-addressing-informal{"{given-informal}"}
+            sorting-long-referring-formal{"{surname} {given} {credentials} {given2}"}
+            sorting-long-referring-informal{"{surname} {given-informal}"}
+            sorting-medium-referring-formal{"{surname} {given} {credentials} {given2-initial}"}
+            sorting-medium-referring-informal{"{surname} {given-informal}"}
+            sorting-short-referring-formal{"{surname} {given} {given2-initial}"}
+            sorting-short-referring-informal{"{surname} {given-informal}"}
+            surnameFirst-long-addressing-formal{"{surname}{title}"}
+            surnameFirst-long-addressing-informal{"{given-informal}"}
+            surnameFirst-long-monogram-informal{"{surname-monogram-allCaps}{given-monogram-allCaps}"}
+            surnameFirst-long-referring-formal{"{surname} {given} {credentials} {given2}"}
+            surnameFirst-long-referring-informal{"{surname} {given-informal}"}
+            surnameFirst-medium-addressing-formal{"{surname}{title}"}
+            surnameFirst-medium-addressing-informal{"{given-informal}"}
+            surnameFirst-medium-monogram-formal{"{surname-monogram}"}
+            surnameFirst-medium-monogram-informal{"{given-informal-monogram}"}
+            surnameFirst-medium-referring-formal{"{surname} {given} {credentials} {given2-initial}"}
+            surnameFirst-medium-referring-informal{"{surname} {given-informal}"}
+            surnameFirst-short-addressing-formal{"{surname}{title}"}
+            surnameFirst-short-addressing-informal{"{given-informal}"}
+            surnameFirst-short-monogram-formal{"{surname-monogram-allCaps}"}
+            surnameFirst-short-monogram-informal{"{given-informal-monogram-allCaps}"}
+            surnameFirst-short-referring-formal{"{surname} {given} {given2-initial}"}
+            surnameFirst-short-referring-informal{"{surname} {given}"}
         }
         nativeSpaceReplacement{""}
     }

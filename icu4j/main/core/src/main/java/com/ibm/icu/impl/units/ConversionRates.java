@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import com.ibm.icu.impl.ICUData;
 import com.ibm.icu.impl.ICUResourceBundle;
+import com.ibm.icu.impl.IllegalIcuArgumentException;
 import com.ibm.icu.impl.UResource;
 import com.ibm.icu.util.MeasureUnit;
 import com.ibm.icu.util.UResourceBundle;
@@ -56,6 +57,10 @@ public class ConversionRates {
             result = result.multiply(getFactorToBase(singleUnit));
         }
 
+        if (measureUnit.getConstantDenominator() != 0) {
+            result = result.divide(BigDecimal.valueOf(measureUnit.getConstantDenominator()));
+        }
+
         return result;
     }
 
@@ -75,6 +80,15 @@ public class ConversionRates {
                 .divide(targetToBase.getConversionRate(), MathContext.DECIMAL128);
 
 
+    }
+
+    // Map the MeasureUnitImpl for a simple unit to its corresponding SimpleUnitID,
+    // then get the specialMappingName for that SimpleUnitID (which may be null if
+    // the simple unit converts to base using factor + offset instelad of a special mapping).
+    protected String getSpecialMappingName(MeasureUnitImpl simpleUnit) {
+        if (!checkSimpleUnit(simpleUnit)) return null;
+        String simpleIdentifier = simpleUnit.getSingleUnits().get(0).getSimpleUnitID();
+        return this.mapToConversionRate.get(simpleIdentifier).getSpecialMappingName();
     }
 
     public MeasureUnitImpl extractCompoundBaseUnit(MeasureUnitImpl measureUnit) {
@@ -120,6 +134,13 @@ public class ConversionRates {
     }
 
     /**
+     * @return The measurement systems for the specified unit.
+     */
+    public String extractSystems(SingleUnitImpl singleUnit) {
+        return mapToConversionRate.get(singleUnit.getSimpleUnitID()).getSystems();
+    }
+
+    /**
      * Checks if the {@code MeasureUnitImpl} is simple or not.
      *
      * @param measureUnitImpl
@@ -155,6 +176,8 @@ public class ConversionRates {
                 String target = null;
                 String factor = null;
                 String offset = "0";
+                String special = null;
+                String systems = null;
                 for (int j = 0; simpleUnitConversionInfo.getKeyAndValue(j, key, value); j++) {
                     assert (value.getType() == UResourceBundle.STRING);
 
@@ -167,18 +190,20 @@ public class ConversionRates {
                         factor = valueString;
                     } else if ("offset".equals(keyString)) {
                         offset = valueString;
+                    } else if ("special".equals(keyString)) {
+                        special = valueString; // the name of a special mapping used instead of factor + optional offset.
                     } else if ("systems".equals(keyString)) {
-                        // just ignore for time being
+                        systems = value.toString(); // still want the spaces here
                     } else {
-                        assert false : "The key must be target, factor, systems or offset";
+                        assert false : "The key must be target, factor, offset, special, or systems";
                     }
                 }
 
                 // HERE a single conversion rate data should be loaded
                 assert (target != null);
-                assert (factor != null);
+                assert (factor != null || special != null);
 
-                mapToConversionRate.put(simpleUnit, new ConversionRateInfo(simpleUnit, target, factor, offset));
+                mapToConversionRate.put(simpleUnit, new ConversionRateInfo(simpleUnit, target, factor, offset, special, systems));
             }
 
 
@@ -196,12 +221,16 @@ public class ConversionRates {
         private final String target;
         private final String conversionRate;
         private final BigDecimal offset;
+        private final String specialMappingName; // the name of a special mapping used instead of factor + optional offset.
+        private final String systems;
 
-        public ConversionRateInfo(String simpleUnit, String target, String conversionRate, String offset) {
+        public ConversionRateInfo(String simpleUnit, String target, String conversionRate, String offset, String special, String systems) {
             this.simpleUnit = simpleUnit;
             this.target = target;
             this.conversionRate = conversionRate;
             this.offset = forNumberWithDivision(offset);
+            this.specialMappingName = special;
+            this.systems = systems;
         }
 
         private static BigDecimal forNumberWithDivision(String numberWithDivision) {
@@ -236,7 +265,24 @@ public class ConversionRates {
          * @return The conversion rate from this unit to the base unit.
          */
         public String getConversionRate() {
+            if (conversionRate==null) {
+                throw new IllegalIcuArgumentException("trying to use a null conversion rate (for special?)");
+            }
             return conversionRate;
+        }
+
+        /**
+         * @return The name of the special conversion system for this unit (used instead of factor + optional offset).
+         */
+        public String getSpecialMappingName() {
+            return specialMappingName;
+        }
+
+        /**
+         * @return The measurement systems this unit belongs to.
+         */
+        public String getSystems() {
+            return systems;
         }
     }
 }
