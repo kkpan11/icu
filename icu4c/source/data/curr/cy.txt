@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 cy{
     Currencies{
         AED{
@@ -791,9 +791,13 @@ cy{
             "SHP",
             "Punt St Helena",
         }
+        SLE{
+            "SLE",
+            "Leone Sierra Leone",
+        }
         SLL{
             "SLL",
-            "Leone Sierra Leone",
+            "Leone Sierra Leone (1964—2022)",
         }
         SOS{
             "SOS",
@@ -2622,13 +2626,21 @@ cy{
             two{"bunt St. Helena"}
             zero{"punt St. Helena"}
         }
-        SLL{
+        SLE{
             few{"leone Sierra Leone"}
             many{"leone Sierra Leone"}
             one{"leone Sierra Leone"}
             other{"leone Sierra Leone"}
             two{"leone Sierra Leone"}
             zero{"leone Sierra Leone"}
+        }
+        SLL{
+            few{"leone Sierra Leone (1964—2022)"}
+            many{"leone Sierra Leone (1964—2022)"}
+            one{"leone Sierra Leone (1964—2022)"}
+            other{"leone Sierra Leone (1964—2022)"}
+            two{"leone Sierra Leone (1964—2022)"}
+            zero{"leone Sierra Leone (1964—2022)"}
         }
         SOS{
             few{"swllt Somalia"}
@@ -3094,13 +3106,5 @@ cy{
             two{"ddoler Zimbabwe (2008)"}
             zero{"doler Zimbabwe (2008)"}
         }
-    }
-    CurrencyUnitPatterns{
-        few{"{0} {1}"}
-        many{"{0} {1}"}
-        one{"{0} {1}"}
-        other{"{0} {1}"}
-        two{"{0} {1}"}
-        zero{"{0} {1}"}
     }
 }

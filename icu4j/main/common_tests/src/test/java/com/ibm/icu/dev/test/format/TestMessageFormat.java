@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.DecimalFormatSymbols;
@@ -46,7 +46,7 @@ import com.ibm.icu.util.TimeZone;
 import com.ibm.icu.util.ULocale;
 
 @RunWith(JUnit4.class)
-public class TestMessageFormat extends TestFmwk {
+public class TestMessageFormat extends CoreTestFmwk {
     @Test
     public void TestBug3()
     {
@@ -154,7 +154,7 @@ public class TestMessageFormat extends TestFmwk {
     public void TestPattern() // aka PatternTest()
     {
         Object testArgs[] = {
-            new Double(1), new Double(3456),
+            1d, 3456d,
             "Disk", new Date(1000000000L)
         };
         String testCases[] = {
@@ -272,7 +272,7 @@ public class TestMessageFormat extends TestFmwk {
     public void TestStaticFormat()
     {
         Object arguments[] = {
-            new Integer(7),
+            7,
             new Date(871068000000L),
             "a disturbance in the Force"
         };
@@ -288,9 +288,9 @@ public class TestMessageFormat extends TestFmwk {
     @Test
     public void TestSimpleFormat()
     {
-        Object testArgs1[] = {new Integer(0), "MyDisk"};
-        Object testArgs2[] = {new Integer(1), "MyDisk"};
-        Object testArgs3[] = {new Integer(12), "MyDisk"};
+        Object testArgs1[] = {0, "MyDisk"};
+        Object testArgs2[] = {1, "MyDisk"};
+        Object testArgs3[] = {12, "MyDisk"};
 
         MessageFormat form = new MessageFormat(
             "The disk \"{1}\" contains {0} file(s).");
@@ -326,21 +326,21 @@ public class TestMessageFormat extends TestFmwk {
 
         FieldPosition ignore = new FieldPosition(FieldPosition_DONT_CARE);
         StringBuffer string = new StringBuffer();
-        Object testArgs1[] = {new Integer(0), "MyDisk"};
+        Object testArgs1[] = {0, "MyDisk"};
         form.format(testArgs1, string, ignore);
         assertEquals("format#1",
                      "The disk \"MyDisk\" contains no files.",
                      string.toString());
 
         string.setLength(0);
-        Object testArgs2[] = {new Integer(1), "MyDisk"};
+        Object testArgs2[] = {1, "MyDisk"};
         form.format(testArgs2, string, ignore);
         assertEquals("format#2",
                      "The disk \"MyDisk\" contains one file.",
                      string.toString());
 
         string.setLength(0);
-        Object testArgs3[] = {new Integer(1273), "MyDisk"};
+        Object testArgs3[] = {1273, "MyDisk"};
         form.format(testArgs3, string, ignore);
         assertEquals("format#3",
                      "The disk \"MyDisk\" contains 1,273 files.",
@@ -434,7 +434,7 @@ public class TestMessageFormat extends TestFmwk {
     public void TestSetLocale()
     {
         Object arguments[] = {
-            new Double(456.83),
+            456.83d,
             new Date(871068000000L),
             "deposit"
             };
@@ -819,9 +819,9 @@ public class TestMessageFormat extends TestFmwk {
 
             final Object ARGS[] = {
                 new Date(10000000000000L),
-                new Integer(1303),
-                new Integer(1202),
-                new Double(1303.0/1202 - 1),
+                1303,
+                1202,
+                1303.0d/1202 - 1,
                 "Glimmung",
                 "the printers",
                 "Nick",
@@ -903,7 +903,7 @@ public class TestMessageFormat extends TestFmwk {
     public void TestSetGetFormats()
     {
         Object arguments[] = {
-            new Double(456.83),
+            456.83d,
             new Date(871068000000L),
             "deposit"
             };
@@ -1001,7 +1001,7 @@ public class TestMessageFormat extends TestFmwk {
     // This tests passing named arguments instead of numbers to format().
     @Test
     public void testFormatNamedArguments() {
-        Map arguments = new HashMap();
+        Map<String, Object> arguments = new HashMap<>();
         arguments.put("startDate", new Date(871068000000L));
 
         StringBuffer result = new StringBuffer();
@@ -1035,7 +1035,7 @@ public class TestMessageFormat extends TestFmwk {
         String source = "abc =sep= def";
 
         try {
-            Map fmt_map = msg.parseToMap(source);
+            Map<String, Object> fmt_map = msg.parseToMap(source);
             if (fmt_map.keySet().size() != 2) {
                 errln("*** MSG parse (ustring, count, err) count err.");
             } else {
@@ -1047,7 +1047,7 @@ public class TestMessageFormat extends TestFmwk {
         }
 
         ParsePosition pp = new ParsePosition(0);
-        Map fmt_map = msg.parseToMap(source, pp);
+        Map<String, Object> fmt_map = msg.parseToMap(source, pp);
         if (pp.getIndex()==0 || fmt_map==null) {
             errln("*** MSG parse (ustring, parsepos., count) error.");
         } else {
@@ -1061,7 +1061,7 @@ public class TestMessageFormat extends TestFmwk {
 
         pp.setIndex(0);
 
-        Map fmta = (Map) msg.parseObject( source, pp );
+        Map<String, Object> fmta = (Map<String, Object>) msg.parseObject( source, pp );
         if (pp.getIndex() == 0) {
             errln("*** MSG parse (ustring, Object, parsepos ) error.");
         } else {
@@ -1119,7 +1119,7 @@ public class TestMessageFormat extends TestFmwk {
 
         gotException = false;
         try {
-            Object args[] = {new Long(42)};
+            Object args[] = {42L};
             msg.format(args, new StringBuffer(), new FieldPosition(FieldPosition_DONT_CARE));
         } catch (IllegalArgumentException e) {
             gotException = true;
@@ -1132,7 +1132,7 @@ public class TestMessageFormat extends TestFmwk {
 
         gotException = false;
         try {
-            Object args[] = {new Long(42)};
+            Object args[] = {42L};
             msg.format((Object) args, new StringBuffer(), new FieldPosition(FieldPosition_DONT_CARE));
         } catch (IllegalArgumentException e) {
             gotException = true;
@@ -1229,7 +1229,7 @@ public class TestMessageFormat extends TestFmwk {
             errln("should not use named arguments");
         }
 
-        Map map12 = new HashMap();
+        Map<String, Object> map12 = new HashMap<>();
         map12.put("1", "one");
         map12.put("2", "two");
 
@@ -1240,7 +1240,7 @@ public class TestMessageFormat extends TestFmwk {
         }
 
         try {
-            Map mapResult = mf.parseToMap(target);
+            Map<String, Object> mapResult = mf.parseToMap(target);
             if (!map12.equals(mapResult)) {
                 errln("expected " + map12 + " but got " + mapResult);
             }
@@ -1248,7 +1248,7 @@ public class TestMessageFormat extends TestFmwk {
             errln("unexpected exception: " + e.getMessage());
         }
 
-        Map map10 = new HashMap();
+        Map<String, Object> map10 = new HashMap<>();
         map10.put("1", "one");
         map10.put("0", "zero");
         target = "X:{2} Y:one";
@@ -1259,7 +1259,7 @@ public class TestMessageFormat extends TestFmwk {
 
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
         DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
-        Map fmtMap = new HashMap();
+        Map<String, Format> fmtMap = new HashMap<>();
         fmtMap.put("1", dateFormat);
         fmtMap.put("2", timeFormat);
         mf.setFormatsByArgumentName(fmtMap);
@@ -1272,7 +1272,7 @@ public class TestMessageFormat extends TestFmwk {
             // expect this
         }
 
-        Map argMap = new HashMap();
+        Map<String, Object> argMap = new HashMap<>();
         argMap.put("1", date);
         argMap.put("2", date);
         target = "X:5:17:00\u202FAM Y:Dec 17, 1990";
@@ -1290,8 +1290,8 @@ public class TestMessageFormat extends TestFmwk {
                     "{0, plural, one {{0, number,C''est #,##0.0# fichier}} " +
                     "other {Ce sont # fichiers}} dans la liste.",
                     new ULocale("fr"));
-            Object objArray[] = {new Long(0)};
-            HashMap objMap = new HashMap();
+            Object objArray[] = {0L};
+            HashMap<String, Object> objMap = new HashMap<>();
             objMap.put("argument", objArray[0]);
             String result = msgFmt.format(objArray);
             if (!result.equals("C'est 0,0 fichier dans la liste.")) {
@@ -1315,8 +1315,8 @@ public class TestMessageFormat extends TestFmwk {
                     "{argument, plural, one{C''est # fichier} other {Ce " +
                       "sont # fichiers}} dans la liste.",
                     new ULocale("fr"));
-            Object objArray[] = {new Long(0)};
-            HashMap objMap = new HashMap();
+            Object objArray[] = {0L};
+            HashMap<String, Object> objMap = new HashMap<>();
             objMap.put("argument", objArray[0]);
             String result = mfNum.format(objArray);
             if (!result.equals(mfAlpha.format(objMap))) {
@@ -1338,8 +1338,8 @@ public class TestMessageFormat extends TestFmwk {
                       "are {argument, number,###.0} zavoda} other{are # " +
                       "zavodov}} in the directory.",
                     new ULocale("uk"));
-            Object objArray[] = {new Long(4)};
-            HashMap objMap = new HashMap();
+            Object objArray[] = {4L};
+            HashMap<String, Object> objMap = new HashMap<>();
             objMap.put("argument", objArray[0]);
             String result = mfNum.format(objArray);
             if (!result.equals(mfAlpha.format(objMap))) {
@@ -1586,12 +1586,12 @@ public class TestMessageFormat extends TestFmwk {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("'year:'yy 'month:'MM 'day:'dd");
         dateFormat.setTimeZone(TimeZone.getTimeZone("Etc/GMT"));
         ms.setFormatByArgumentName("date", dateFormat);
-        Map map = new HashMap();
-        map.put("number", new Integer(1234));
+        Map<String, Object> map = new HashMap<>();
+        map.put("number", 1234);
         map.put("date", new Date(0,0,0));
         String result = ms.format(map);
         assertEquals("setFormatByArgumentName", "1234.000 year:99 month:12 day:31", result);
-        Set formatNames = ms.getArgumentNames();
+        Set<String> formatNames = ms.getArgumentNames();
         assertEquals("Format Names match", formatNames, map.keySet());
         assertEquals("Decimal", decimalFormat, ms.getFormatByArgumentName("number"));
         assertEquals("Date", dateFormat, ms.getFormatByArgumentName("date"));
@@ -1617,15 +1617,15 @@ public class TestMessageFormat extends TestFmwk {
         ChoiceFormat fileform = new ChoiceFormat(filelimits, filepart);
         msgfmts[2].setFormat(0, fileform);
 
-        Object[] args0 = new Object[] { "tmp", new Date(1184777888000L), new Integer(15), new Integer(2) };
+        Object[] args0 = new Object[] { "tmp", new Date(1184777888000L), 15, 2 };
 
-        HashMap args1 = new HashMap();
+        HashMap<String, Object> args1 = new HashMap<>();
         args1.put("arg0", "tmp");
         args1.put("arg1", new Date(1184777888000L));
-        args1.put("arg2", new Integer(15));
-        args1.put("arg3", new Integer(2));
+        args1.put("arg2", 15);
+        args1.put("arg3", 2);
 
-        Object[] args2 = new Object[] { new Integer(34) };
+        Object[] args2 = new Object[] { 34 };
 
         Object[] args = { args0, args1, args2 };
 
@@ -1638,18 +1638,18 @@ public class TestMessageFormat extends TestFmwk {
                 new AttributedString(expectedStrings[1]), new AttributedString(expectedStrings[2]) };
 
         // Add expected attributes to the expectedAttributedStrings[0]
-        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, new Integer(3), 4, 7);
-        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, new Integer(0), 16, 19);
-        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, new Integer(2), 30, 32);
+        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, 3, 4, 7);
+        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, 0, 16, 19);
+        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, 2, 30, 32);
         expectedAttributedStrings[0].addAttribute(NumberFormat.Field.INTEGER, NumberFormat.Field.INTEGER, 30, 32);
-        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, new Integer(1), 53, 63);
+        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, 1, 53, 63);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.HOUR1, DateFormat.Field.HOUR1, 53, 54);
         //expectedAttributedStrings[0].addAttribute(DateFormat.Field.TIME_SEPARATOR, DateFormat.Field.TIME_SEPARATOR, 54, 55);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.MINUTE, DateFormat.Field.MINUTE, 55, 57);
         //expectedAttributedStrings[0].addAttribute(DateFormat.Field.TIME_SEPARATOR, DateFormat.Field.TIME_SEPARATOR, 57, 58);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.SECOND, DateFormat.Field.SECOND, 58, 60);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.AM_PM, DateFormat.Field.AM_PM, 61, 63);
-        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, new Integer(1), 67, 79);
+        expectedAttributedStrings[0].addAttribute(MessageFormat.Field.ARGUMENT, 1, 67, 79);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.MONTH, DateFormat.Field.MONTH, 67, 70);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.DAY_OF_MONTH, DateFormat.Field.DAY_OF_MONTH, 71, 73);
         expectedAttributedStrings[0].addAttribute(DateFormat.Field.YEAR, DateFormat.Field.YEAR, 75, 79);
@@ -1672,7 +1672,7 @@ public class TestMessageFormat extends TestFmwk {
         expectedAttributedStrings[1].addAttribute(DateFormat.Field.YEAR, DateFormat.Field.YEAR, 75, 79);
 
         // Add expected attributes to the expectedAttributedStrings[2]
-        expectedAttributedStrings[2].addAttribute(MessageFormat.Field.ARGUMENT, new Integer(0), 20, 28);
+        expectedAttributedStrings[2].addAttribute(MessageFormat.Field.ARGUMENT, 0, 20, 28);
         expectedAttributedStrings[2].addAttribute(NumberFormat.Field.INTEGER, NumberFormat.Field.INTEGER, 20, 22);
 
         for (int i = 0; i < msgfmts.length; i++) {
@@ -1680,12 +1680,12 @@ public class TestMessageFormat extends TestFmwk {
             AttributedCharacterIterator expectedAcit = expectedAttributedStrings[i].getIterator();
 
             // Check available attributes
-            Set attrSet = acit.getAllAttributeKeys();
-            Set expectedAttrSet = expectedAcit.getAllAttributeKeys();
+            Set<AttributedCharacterIterator.Attribute> attrSet = acit.getAllAttributeKeys();
+            Set<AttributedCharacterIterator.Attribute> expectedAttrSet = expectedAcit.getAllAttributeKeys();
             if (attrSet.size() != expectedAttrSet.size()) {
                 errln("FAIL: Number of attribute keys is " + attrSet.size() + " expected: " + expectedAttrSet.size());
             }
-            Iterator attrIterator = attrSet.iterator();
+            Iterator<AttributedCharacterIterator.Attribute> attrIterator = attrSet.iterator();
             while (attrIterator.hasNext()) {
                 AttributedCharacterIterator.Attribute attr = (AttributedCharacterIterator.Attribute) attrIterator
                         .next();
@@ -1708,16 +1708,16 @@ public class TestMessageFormat extends TestFmwk {
                     buf.append(c);
                     expectedAcit.setIndex(indexExp);
 
-                    Map attrs = acit.getAttributes();
-                    Map attrsExp = expectedAcit.getAttributes();
+                    Map<AttributedCharacterIterator.Attribute, Object> attrs = acit.getAttributes();
+                    Map<AttributedCharacterIterator.Attribute, Object> attrsExp = expectedAcit.getAttributes();
                     if (attrs.size() != attrsExp.size()) {
                         errln("FAIL: Number of attributes associated with index " + index + " is " + attrs.size()
                                 + " expected: " + attrsExp.size());
                     } else {
                         // Check all attributes at the index
-                        Iterator entryIterator = attrsExp.entrySet().iterator();
+                        Iterator<Map.Entry<AttributedCharacterIterator.Attribute, Object>> entryIterator = attrsExp.entrySet().iterator();
                         while (entryIterator.hasNext()) {
-                            Map.Entry entry = (Map.Entry) entryIterator.next();
+                            Map.Entry<AttributedCharacterIterator.Attribute, Object> entry = entryIterator.next();
                             if (attrs.containsKey(entry.getKey())) {
                                 Object value = attrs.get(entry.getKey());
                                 assertEquals("Attribute value at index " + index, entry.getValue(), value);
@@ -1877,7 +1877,7 @@ public class TestMessageFormat extends TestFmwk {
 
         m.applyPattern("x { _oOo_ , number , integer } y");
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("_oOo_", new Integer(3));
+        map.put("_oOo_", 3);
         StringBuffer result = new StringBuffer();
         assertEquals("trim-named-arg format() failed", "x 3 y",
                      m.format(map, result, new FieldPosition(FieldPosition_DONT_CARE)).toString());

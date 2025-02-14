@@ -16,12 +16,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.ULocale;
 
 @RunWith(JUnit4.class)
-public class RBNFParseTest extends TestFmwk {
+public class RBNFParseTest extends CoreTestFmwk {
     @Test
     public void TestParse() {
 
@@ -165,6 +165,18 @@ public class RBNFParseTest extends TestFmwk {
         parseList(rbnf_en, rbnf_fr, lists);
     }
 
+    @Test
+    public void TestParseRuleDescriptorOverflow23002() {
+        try {
+            RuleBasedNumberFormat rbnf =
+                new RuleBasedNumberFormat(
+                    "0110110/300113001103000113001103000110i/3013033:",
+                    new Locale("as"));
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        errln("expected exception but didn't get one!");
+    }
     @Test
     public void TestBadParse() {
         RuleBasedNumberFormat rbnf = new RuleBasedNumberFormat(Locale.JAPAN, RuleBasedNumberFormat.SPELLOUT);

@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 qu{
     Currencies{
         AED{
@@ -499,9 +499,13 @@ qu{
             "SHP",
             "Libra de Santa Helena",
         }
+        SLE{
+            "SLE",
+            "Leone qullqi de Sierra Leona",
+        }
         SLL{
             "SLL",
-            "Leone de Sierra Leona",
+            "Leone qullqi de Sierra Leona (1964–2022)",
         }
         SOS{
             "SOS",
@@ -954,8 +958,11 @@ qu{
         SHP{
             other{"Libra de santa helena"}
         }
+        SLE{
+            other{"Leone qullqi de Sierra Leona"}
+        }
         SLL{
-            other{"Leone de sierra leona"}
+            other{"Leones qullqi de Sierra Leona (1964–2022)"}
         }
         SOS{
             other{"Chelín somalí"}
@@ -1041,8 +1048,5 @@ qu{
         ZMW{
             other{"Kwacha zambiano"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }

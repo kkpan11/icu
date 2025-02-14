@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 tk{
     Currencies{
         AED{
@@ -507,9 +507,13 @@ tk{
             "SHP",
             "Keramatly Ýelena adasynyň funty",
         }
+        SLE{
+            "SLE",
+            "Sýerra-Leone leony",
+        }
         SLL{
             "SLL",
-            "Sýerra-Leone leony",
+            "Sýerra-Leone leony (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1148,9 +1152,13 @@ tk{
             one{"keramatly ýelena adasynyň funty"}
             other{"keramatly ýelena adasynyň funty"}
         }
-        SLL{
+        SLE{
             one{"sýerra-leone leony"}
             other{"sýerra-leone leony"}
+        }
+        SLL{
+            one{"sýerra-leone leony (1964—2022)"}
+            other{"sýerra-leone leony (1964—2022)"}
         }
         SOS{
             one{"somali şillingi"}
@@ -1276,9 +1284,5 @@ tk{
             one{"zambiýa kwaçasy"}
             other{"zambiýa kwaçasy"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

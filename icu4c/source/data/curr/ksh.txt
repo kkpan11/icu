@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 ksh{
     Currencies{
         AED{
@@ -531,9 +531,13 @@ ksh{
             "SKK",
             "ßlovaakesche Kruhne",
         }
+        SLE{
+            "SLE",
+            "ẞjärra-lejoneesesche Leone",
+        }
         SLL{
             "SLL",
-            "ẞjärra-lejoneesesche Leone",
+            "ẞjärra-lejoneesesche Leone (1964—2022)",
         }
         SOS{
             "SOS",

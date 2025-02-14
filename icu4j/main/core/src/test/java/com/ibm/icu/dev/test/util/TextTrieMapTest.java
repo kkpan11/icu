@@ -15,29 +15,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.impl.TextTrieMap;
 import com.ibm.icu.text.UnicodeSet;
 
 @RunWith(JUnit4.class)
-public class TextTrieMapTest extends TestFmwk {
+public class TextTrieMapTest extends CoreTestFmwk {
 
-    private static final Integer SUN = new Integer(1);
-    private static final Integer MON = new Integer(2);
-    private static final Integer TUE = new Integer(3);
-    private static final Integer WED = new Integer(4);
-    private static final Integer THU = new Integer(5);
-    private static final Integer FRI = new Integer(6);
-    private static final Integer SAT = new Integer(7);
+    private static final Integer SUN = 1;
+    private static final Integer MON = 2;
+    private static final Integer TUE = 3;
+    private static final Integer WED = 4;
+    private static final Integer THU = 5;
+    private static final Integer FRI = 6;
+    private static final Integer SAT = 7;
 
-    private static final Integer SUP1 = new Integer(8);
-    private static final Integer SUP2 = new Integer(9);
-    private static final Integer SUP3 = new Integer(10);
-    private static final Integer SUP4 = new Integer(11);
-    private static final Integer SUP5 = new Integer(12);
+    private static final Integer SUP1 = 8;
+    private static final Integer SUP2 = 9;
+    private static final Integer SUP3 = 10;
+    private static final Integer SUP4 = 11;
+    private static final Integer SUP5 = 12;
 
-    private static final Integer FOO = new Integer(-1);
-    private static final Integer BAR = new Integer(-2);
+    private static final Integer FOO = -1;
+    private static final Integer BAR = -2;
 
     private static final Object[][] TESTDATA = {
         {"Sunday", SUN},
@@ -87,8 +87,8 @@ public class TextTrieMapTest extends TestFmwk {
 
     @Test
     public void TestCaseSensitive() {
-        Iterator itr = null;
-        TextTrieMap map = new TextTrieMap(false);
+        Iterator<Object> itr = null;
+        TextTrieMap<Object> map = new TextTrieMap<>(false);
         for (int i = 0; i < TESTDATA.length; i++) {
             map.put((String)TESTDATA[i][0], TESTDATA[i][1]);
         }
@@ -147,8 +147,8 @@ public class TextTrieMapTest extends TestFmwk {
 
     @Test
     public void TestCaseInsensitive() {
-        Iterator itr = null;
-        TextTrieMap map = new TextTrieMap(true);
+        Iterator<Object> itr = null;
+        TextTrieMap<Object> map = new TextTrieMap<>(true);
         for (int i = 0; i < TESTDATA.length; i++) {
             map.put((String)TESTDATA[i][0], TESTDATA[i][1]);
         }
@@ -214,7 +214,7 @@ public class TextTrieMapTest extends TestFmwk {
         return o1.equals(o2);
     }
 
-    private void checkResult(String memo, Iterator itr, Object expected) {
+    private void checkResult(String memo, Iterator<Object> itr, Object expected) {
         if (itr == null) {
             if (expected != null) {
                 String expectedStr = (expected instanceof Object[])

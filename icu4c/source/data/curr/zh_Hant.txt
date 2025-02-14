@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 zh_Hant{
     %%Parent{"root"}
     Currencies{
@@ -896,9 +896,13 @@ zh_Hant{
             "SKK",
             "斯洛伐克克朗",
         }
+        SLE{
+            "SLE",
+            "獅子山利昂",
+        }
         SLL{
             "SLL",
-            "獅子山利昂",
+            "獅子山利昂 (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1221,8 +1225,5 @@ zh_Hant{
         XXX{
             other{"（未知貨幣）"}
         }
-    }
-    CurrencyUnitPatterns{
-        other{"{0} {1}"}
     }
 }

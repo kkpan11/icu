@@ -7,8 +7,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.ibm.icu</groupId>
-    <artifactId>main</artifactId>
-    <version>74.0.1-SNAPSHOT</version>
+    <artifactId>icu4j-root</artifactId>
+    <version>77.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>regiondata</artifactId>

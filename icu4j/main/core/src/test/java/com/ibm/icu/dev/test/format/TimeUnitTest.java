@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.MeasureFormat;
 import com.ibm.icu.text.NumberFormat;
@@ -32,7 +32,7 @@ import com.ibm.icu.util.ULocale;
  *
  */
 @RunWith(JUnit4.class)
-public class TimeUnitTest extends TestFmwk {
+public class TimeUnitTest extends CoreTestFmwk {
     @Test
     public void Test10219FractionalPlurals() {
         TimeUnitFormat tuf = new TimeUnitFormat(ULocale.ENGLISH, TimeUnitFormat.FULL_NAME);
@@ -402,7 +402,7 @@ public class TimeUnitTest extends TestFmwk {
     public void TestFormat() {
         TimeUnitFormat tuf = new TimeUnitFormat();
         try {
-            tuf.format(new Integer("1"), null, null);
+            tuf.format(Integer.parseInt("1"), null, null);
             errln("TimeUnitFormat.format(Object,StringBuffer,FieldPosition) "
                     + "was suppose to return an exception because the Object "
                     + "parameter was not of type TimeUnitAmount.");

@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 is{
     Currencies{
         ADP{
@@ -695,9 +695,13 @@ is{
             "SKK",
             "Slóvakísk króna",
         }
+        SLE{
+            "SLE",
+            "síerraleónsk ljóna",
+        }
         SLL{
             "SLL",
-            "síerraleónsk ljóna",
+            "síerraleónsk ljóna (1964—2022)",
         }
         SOS{
             "SOS",
@@ -1035,6 +1039,10 @@ is{
         CHF{
             one{"svissneskur franki"}
             other{"svissneskir frankar"}
+        }
+        CLF{
+            one{"síleskt Unidad de Fomento"}
+            other{"síleskt Unidad de Fomento"}
         }
         CLP{
             one{"síleskur pesi"}
@@ -1432,9 +1440,13 @@ is{
             one{"helenskt pund"}
             other{"helensk pund"}
         }
-        SLL{
+        SLE{
             one{"síerraleónsk ljóna"}
             other{"síerraleónskar ljónur"}
+        }
+        SLL{
+            one{"síerraleónsk ljóna (1964—2022)"}
+            other{"síerraleónskar ljónur (1964—2022)"}
         }
         SOS{
             one{"sómalískur skildingur"}
@@ -1572,9 +1584,5 @@ is{
             one{"sambísk kvaka"}
             other{"sambískar kvökur"}
         }
-    }
-    CurrencyUnitPatterns{
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }

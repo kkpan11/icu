@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.dev.test.format.FormattedValueTest;
 import com.ibm.icu.impl.ICUData;
 import com.ibm.icu.impl.ICUResourceBundle;
@@ -41,7 +41,7 @@ import com.ibm.icu.util.UResourceBundle;
  * @author sffc
  *
  */
-public class NumberRangeFormatterTest extends TestFmwk {
+public class NumberRangeFormatterTest extends CoreTestFmwk {
 
     private static final Currency USD = Currency.getInstance("USD");
     private static final Currency CHF = Currency.getInstance("CHF");
@@ -823,6 +823,22 @@ public class NumberRangeFormatterTest extends TestFmwk {
         }
     }
 
+    @Test
+    public void locale() {
+        LocalizedNumberRangeFormatter lnf = NumberRangeFormatter.withLocale(ULocale.ENGLISH)
+            .identityFallback(RangeIdentityFallback.RANGE);
+        UnlocalizedNumberRangeFormatter unf1 = lnf.withoutLocale();
+        UnlocalizedNumberRangeFormatter unf2 = NumberRangeFormatter.with()
+            .identityFallback(RangeIdentityFallback.RANGE)
+            .locale(ULocale.forLanguageTag("ar-EG"))
+            .withoutLocale();
+    
+        FormattedNumberRange res1 = unf1.locale(ULocale.forLanguageTag("bn")).formatRange(5, 5);
+        assertEquals("res1", "\u09EB\u2013\u09EB", res1.toString());
+        FormattedNumberRange res2 = unf2.locale(ULocale.forLanguageTag("ja-JP")).formatRange(5, 5);
+        assertEquals("res2", "5\uFF5E5", res2.toString());
+    }
+
     static final String[] allNSNames = NumberingSystem.getAvailableNames();
 
     private class RangePatternSink extends UResource.Sink {
@@ -951,7 +967,6 @@ public class NumberRangeFormatterTest extends TestFmwk {
         }
 
         {
-            // TODO(CLDR-14111): Add spacing between range separator and sign
             LocalizedNumberRangeFormatter lnrf = NumberRangeFormatter
                 .withLocale(ULocale.forLanguageTag("de-CH"));
             String actual = lnrf.formatRange(2, -3).toString();

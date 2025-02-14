@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.impl.Utility;
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.text.UTF16;
@@ -22,7 +22,7 @@ import com.ibm.icu.text.UTF16;
  * Test JDK 1.5 cover APIs.
  */
 @RunWith(JUnit4.class)
-public final class UCharacterSurrogateTest extends TestFmwk {
+public final class UCharacterSurrogateTest extends CoreTestFmwk {
     @Test
     public void TestUnicodeBlockForName() {
       String[] names = {"Latin-1 Supplement",
@@ -263,7 +263,7 @@ public final class UCharacterSurrogateTest extends TestFmwk {
                 }
             }
 
-            void fail(String s, int start, int limit, Class exc) {
+            void fail(String s, int start, int limit, Class<? extends RuntimeException> exc) {
                 try {
                     UCharacter.codePointCount(s, start, limit);
                     errln("unexpected success " + str(s, start, limit));
@@ -350,7 +350,7 @@ public final class UCharacterSurrogateTest extends TestFmwk {
             }
 
             void fail(char[] text, int start, int count, int index, int offset,
-                    Class exc) {
+                    Class<? extends RuntimeException> exc) {
                 try {
                     UCharacter.offsetByCodePoints(text, start, count, index,
                             offset);
@@ -365,7 +365,7 @@ public final class UCharacterSurrogateTest extends TestFmwk {
                 }
             }
 
-            void fail(String text, int index, int offset, Class exc) {
+            void fail(String text, int index, int offset, Class<? extends RuntimeException> exc) {
                 try {
                     UCharacter.offsetByCodePoints(text, index, offset);
                     errln("unexpected success "

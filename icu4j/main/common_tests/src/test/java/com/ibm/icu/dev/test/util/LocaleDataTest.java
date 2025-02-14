@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.ibm.icu.dev.test.TestFmwk;
+import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.impl.ICUResourceBundle;
 import com.ibm.icu.lang.UScript;
 import com.ibm.icu.text.UnicodeSet;
@@ -32,7 +32,7 @@ import com.ibm.icu.util.ULocale;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 @RunWith(JUnit4.class)
-public class LocaleDataTest extends TestFmwk{
+public class LocaleDataTest extends CoreTestFmwk{
     private ULocale[] availableLocales = null;
 
     public LocaleDataTest(){
@@ -199,7 +199,7 @@ public class LocaleDataTest extends TestFmwk{
 
     @Test
     public void TestExemplarSet(){
-        HashSet  testedExemplars = new HashSet();
+        HashSet<ExemplarGroup> testedExemplars = new HashSet<>();
         int equalCount = 0;
         for(int i=0; i<availableLocales.length; i++){
             ULocale locale = availableLocales[i];
@@ -271,7 +271,7 @@ public class LocaleDataTest extends TestFmwk{
     @Test
     public void TestExemplarSet2(){
         int equalCount = 0;
-        HashSet  testedExemplars = new HashSet();
+        HashSet<ExemplarGroup> testedExemplars = new HashSet<>();
         for(int i=0; i<availableLocales.length; i++){
             ULocale locale = availableLocales[i];
             LocaleData ld = LocaleData.getInstance(locale);

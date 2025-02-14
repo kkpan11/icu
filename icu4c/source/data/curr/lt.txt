@@ -1,6 +1,6 @@
 ﻿// © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
-// Generated using tools/cldr/cldr-to-icu/build-icu-data.xml
+// Generated using tools/cldr/cldr-to-icu/
 lt{
     Currencies{
         ADP{
@@ -899,9 +899,13 @@ lt{
             "SKK",
             "Slovakijos krona",
         }
+        SLE{
+            "SLE",
+            "Siera Leonės leonė",
+        }
         SLL{
             "SLL",
-            "Siera Leonės leonė",
+            "Siera Leonės leonė (1964—2022)",
         }
         SOS{
             "SOS",
@@ -2537,11 +2541,17 @@ lt{
             one{"Slovakijos krona"}
             other{"Slovakijos kronų"}
         }
-        SLL{
+        SLE{
             few{"Siera Leonės leonės"}
             many{"Siera Leonės leonės"}
             one{"Siera Leonės leonė"}
             other{"Siera Leonės leonių"}
+        }
+        SLL{
+            few{"Siera Leonės leonės (1964—2022)"}
+            many{"Siera Leonės leonės (1964—2022)"}
+            one{"Siera Leonės leonė (1964—2022)"}
+            other{"Siera Leonės leonių (1964—2022)"}
         }
         SOS{
             few{"Somalio šilingai"}
@@ -2963,11 +2973,5 @@ lt{
             one{"Zimbabvės doleris (2008)"}
             other{"Zimbabvės dolerių (2008)"}
         }
-    }
-    CurrencyUnitPatterns{
-        few{"{0} {1}"}
-        many{"{0} {1}"}
-        one{"{0} {1}"}
-        other{"{0} {1}"}
     }
 }
